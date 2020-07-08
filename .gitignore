@@ -1,0 +1,5 @@
+dist
+libredte.api_client.egg-info
+libredte/__pycache__
+libredte/*.pyc
+ejemplos/*.pdf
