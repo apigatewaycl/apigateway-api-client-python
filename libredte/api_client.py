@@ -22,6 +22,18 @@ Debería haber recibido una copia de la GNU Lesser General Public License
 import requests
 import json
 
+# excepción para los errores estándares del cliente de la API
+class LibreDTEApiException(Exception):
+
+    message = None
+
+    def __init__(self, message, code=None, params=None):
+        self.message = message
+        super().__init__(message, code, params)
+
+    def __str__(self):
+        return self.message
+
 """
 Clase con las funcionalidades para integrar con la API de LibreDTE
 @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
@@ -56,7 +68,7 @@ class LibreDTE:
         elif method == 'DELETE':
             r = requests.delete(uri, headers=headers)
         else:
-            raise Exception('Método ' + method + ' no soportado')
+            raise LibreDTEApiException('Método ' + method + ' no soportado')
         return self.check_and_return_response(r)
 
     def delete(self, resource, headers = {}):
@@ -84,7 +96,7 @@ class LibreDTE:
         elif method == 'PUT':
             r = requests.put(uri, data=payload, headers=headers)
         else:
-            raise Exception('Método ' + method + ' no soportado')
+            raise LibreDTEApiException('Método ' + method + ' no soportado')
         return self.check_and_return_response(r)
 
     def put(self, resource, data = None, headers = {}):
@@ -107,5 +119,5 @@ class LibreDTE:
                 message = error['exception']
             else:
                 message = 'Ocurrió un error inesperado (sin mensaje ni excepción)'
-            raise Exception(message)
+            raise LibreDTEApiException(message)
         return response
