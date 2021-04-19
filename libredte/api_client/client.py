@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-LibreDTE
+LibreDTE API Client
 Copyright (C) SASCO SpA (https://sasco.cl)
 
 Este programa es software libre: usted puede redistribuirlo y/o modificarlo
@@ -22,17 +22,8 @@ Debería haber recibido una copia de la GNU Lesser General Public License
 import requests
 import json
 
-# excepción para los errores estándares del cliente de la API
-class LibreDTEApiException(Exception):
+from .exceptions import LibreDTEApiException
 
-    message = None
-
-    def __init__(self, message, code=None, params=None):
-        self.message = message
-        super().__init__(message, code, params)
-
-    def __str__(self):
-        return self.message
 
 """
 Clase con las funcionalidades para integrar con la API de LibreDTE

@@ -1,5 +1,8 @@
 dist
 libredte.api_client.egg-info
-libredte/__pycache__
-libredte/*.pyc
-ejemplos/*.pdf
+__pycache__
+*.pyc
+*.json
+*.csv
+*.pdf
+*.html
