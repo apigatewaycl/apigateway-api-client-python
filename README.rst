@@ -24,9 +24,6 @@ Instalar desde PIP con:
 
     $ sudo pip install libredte.api-client
 
-Si estás en Microsoft Windows, debes instalar además
-`pypiwin32 <https://pypi.python.org/pypi/pypiwin32>`_.
-
 Actualización
 -------------
 
