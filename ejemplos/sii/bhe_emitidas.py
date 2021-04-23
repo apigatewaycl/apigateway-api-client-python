@@ -54,9 +54,9 @@ datos = {
             'RUTEmisor': EMISOR_RUT
         },
         'Receptor': {
-            'RUTRecep': '76192083-9',
-            'RznSocRecep': 'SASCO SpA',
-            'DirRecep': 'Daniel Barros Grez 191',
+            'RUTRecep': '66666666-6',
+            'RznSocRecep': 'Receptor generico',
+            'DirRecep': 'Santa Cruz',
             'CmnaRecep': 'Santa Cruz'
         }
     },

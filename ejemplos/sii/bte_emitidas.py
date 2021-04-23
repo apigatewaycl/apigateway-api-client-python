@@ -59,3 +59,47 @@ if len(documentos) > 0:
     }
     with open(filename, 'wb') as f:
         f.write(html)
+
+
+# CASO 3: emitir boleta
+datos = {
+    'Encabezado': {
+        'IdDoc': {
+            'FchEmis': '2021-04-23'
+        },
+        'Emisor': {
+            'RUTEmisor': EMISOR_RUT
+        },
+        'Receptor': {
+            'RUTRecep': '66666666-6',
+            'RznSocRecep': 'Receptor generico',
+            'DirRecep': 'Santa Cruz',
+            'CmnaRecep': 'Santa Cruz'
+        }
+    },
+    'Detalle': [
+        {
+            'NmbItem': 'Prueba integracion LibreDTE API 1',
+            'MontoItem': 50
+        },
+        {
+            'NmbItem': 'Prueba integracion LibreDTE API 2',
+            'MontoItem': 100
+        }
+    ]
+}
+boleta = bte.emitir(datos)
+boleta_folio = boleta['Encabezado']['IdDoc']['Folio']
+filename = '%(emisor)s_bte_%(numero)s' % {
+    'emisor': EMISOR_RUT,
+    'numero': str(boleta_folio),
+}
+json_save(filename, boleta)
+
+# CASO 4: anular boleta
+resultado = bte.anular(EMISOR_RUT, boleta_folio)
+filename = '%(emisor)s_bte_%(numero)s_anulada' % {
+    'emisor': EMISOR_RUT,
+    'numero': str(boleta_folio),
+}
+json_save(filename, boleta)

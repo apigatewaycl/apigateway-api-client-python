@@ -49,3 +49,27 @@ class BteEmitidas(LibreDTEApiBase):
             'codigo': str(codigo),
         }, body)
         return r.content
+
+    def emitir(self, datos):
+        body = {
+            'auth': self.get_auth_pass(),
+            'boleta': datos
+        }
+        r = self.client.post('/sii/bte/emitidas/emitir', body)
+        return r.json()
+
+    def anular(self, emisor, numero, causa = 3, periodo = None):
+        body = {
+            'auth': self.get_auth_pass()
+        }
+        resource = '/sii/bte/emitidas/anular/%(emisor)s/%(numero)s?causa=%(causa)s' % {
+            'emisor': str(emisor),
+            'numero': str(numero),
+            'causa': str(causa),
+        }
+        if periodo is not None:
+            resource += '&periodo=%(periodo)s' % {
+                'periodo': str(periodo),
+            }
+        r = self.client.post(resource, body)
+        return r.json()
