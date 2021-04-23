@@ -117,3 +117,14 @@ class BheRecibidas(LibreDTEApiBase):
             'codigo': str(codigo),
         }, body)
         return r.content
+
+    def observar(self, emisor, numero, causa = 1):
+        body = {
+            'auth': self.get_auth_pass()
+        }
+        r = self.client.post('/sii/bhe/recibidas/observar/%(emisor)s/%(numero)s?causa=%(causa)s' % {
+            'emisor': str(emisor),
+            'numero': str(numero),
+            'causa': str(causa),
+        }, body)
+        return r.json()

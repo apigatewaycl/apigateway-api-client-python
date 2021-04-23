@@ -33,6 +33,10 @@ RECEPTOR_RUT = ''
 RECEPTOR_CLAVE = ''
 PERIODO = 202102
 
+# datos para observar una boleta
+OBSERVAR_EMISOR_RUT = ''
+OBSERVAR_NUMERO = 3166
+
 # importaciones para el ejemplo
 import sys
 import json
@@ -59,3 +63,12 @@ if len(documentos) > 0:
     }
     with open(filename, 'wb') as f:
         f.write(pdf)
+
+# CASO 3: observar una boleta
+if OBSERVAR_EMISOR_RUT != '':
+    resultado = bhe.observar(OBSERVAR_EMISOR_RUT, OBSERVAR_NUMERO)
+    filename = '%(emisor)s_bhe_%(numero)s_observada' % {
+        'emisor': OBSERVAR_EMISOR_RUT,
+        'numero': str(OBSERVAR_NUMERO),
+    }
+    json_save(filename, resultado)
