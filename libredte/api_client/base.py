@@ -19,8 +19,6 @@ Debería haber recibido una copia de la GNU Lesser General Public License
 <http://www.gnu.org/licenses/lgpl.html>.
 """
 
-from os import getenv
-
 from .client import LibreDTE
 from .exceptions import LibreDTEApiException
 
@@ -30,22 +28,9 @@ class LibreDTEApiBase:
 
     auth = {}
 
-    def __init__(self, api_url = None, api_token = None, **kwargs):
-        # asignar parámetros de la API (url y token)
-        if api_url is not None:
-            self.api_url = str(api_url).strip()
-        else:
-            self.api_url = str(getenv('LIBREDTE_API_URL', 'https://api.libredte.cl')).strip()
-        if self.api_url == '':
-            raise LibreDTEApiException('LIBREDTE_API_URL missing')
-        if api_token is not None:
-            self.api_token = str(api_token).strip()
-        else:
-            self.api_token = str(getenv('LIBREDTE_API_TOKEN')).strip()
-        if self.api_token == '':
-            raise LibreDTEApiException('LIBREDTE_API_TOKEN missing')
+    def __init__(self, api_token = None, api_url = None, **kwargs):
         # crear cliente de la API
-        self.client = LibreDTE(self.api_token, self.api_url)
+        self.client = LibreDTE(api_token, api_url)
         # autenticación en SII mediante usuario y clave
         usuario_rut = kwargs.get('usuario_rut', None)
         usuario_clave = kwargs.get('usuario_clave', None)

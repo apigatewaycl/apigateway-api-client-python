@@ -19,6 +19,7 @@ Debería haber recibido una copia de la GNU Lesser General Public License
 <http://www.gnu.org/licenses/lgpl.html>.
 """
 
+from os import getenv
 import requests
 import json
 
@@ -28,23 +29,40 @@ from .exceptions import LibreDTEApiException
 """
 Clase con las funcionalidades para integrar con la API de LibreDTE
 @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
-@version 2020-07-07
+@version 2021-04-25
 """
 class LibreDTE:
 
-    def __init__(self, token, url = 'https://api.libredte.cl', version = 'v1'):
+    DEFAULT_URL = 'https://api.libredte.cl'
+    DEFAULT_VERSION = 'v1'
+
+    def __init__(self, token = None, url = None, version = None):
         """Constructor de la clase LibreDTE
         :param token: Access Token de autenticación del usuario
         :param url: Host con la dirección web base de LibreDTE
         :param version: Versión de la API que se está usando
         """
-        self.url = url
+        # validar token
+        if token is not None:
+            self.token = str(token).strip()
+        else:
+            self.token = str(getenv('LIBREDTE_API_TOKEN')).strip()
+        if self.token == '':
+            raise LibreDTEApiException('LIBREDTE_API_TOKEN missing')
+        # validar url
+        if url is not None:
+            self.url = str(url).strip()
+        else:
+            self.url = str(getenv('LIBREDTE_API_URL', self.DEFAULT_URL)).strip()
+        if self.url == '':
+            raise LibreDTEApiException('LIBREDTE_API_URL missing')
+        # asignar cabecera y versión
         self.headers = {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
+          'Authorization': 'Bearer ' + self.token
         }
-        self.version = version
+        self.version = version if version is not None else self.DEFAULT_VERSION
 
     def get(self, resource, headers = {}, method = 'GET'):
         """Método que consume un servicio web de LibreDTE a través de GET
@@ -60,7 +78,7 @@ class LibreDTE:
             r = requests.delete(uri, headers=headers)
         else:
             raise LibreDTEApiException('Método ' + method + ' no soportado')
-        return self.check_and_return_response(r)
+        return self._check_and_return_response(r)
 
     def delete(self, resource, headers = {}):
         """Método que consume un servicio web de LibreDTE a través de DELETE
@@ -88,7 +106,7 @@ class LibreDTE:
             r = requests.put(uri, data=payload, headers=headers)
         else:
             raise LibreDTEApiException('Método ' + method + ' no soportado')
-        return self.check_and_return_response(r)
+        return self._check_and_return_response(r)
 
     def put(self, resource, data = None, headers = {}):
         """Método que consume un servicio web de LibreDTE a través de POST
@@ -98,7 +116,7 @@ class LibreDTE:
         """
         return self.post(resource, data, headers, 'PUT')
 
-    def check_and_return_response(self, response):
+    def _check_and_return_response(self, response):
         """Método privado que valida la respuesta HTTP para verificar si hubo errores
         :param response: respuesta de requests que se valida antes de ser entregada
         """

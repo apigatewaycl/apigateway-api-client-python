@@ -33,6 +33,46 @@ Actualizar desde PIP con:
 
     $ sudo pip install libredte.api-client --upgrade
 
+Cliente genérico vs clientes específicos
+----------------------------------------
+
+Este cliente de LibreDTE API tiene 2 formas de acceder a los recursos:
+
+-   Cliente genérico: es un cliente que permite consumir de manera sencilla cualquier
+    recurso de la API. Que actualmente exista o sea añadido en el futuro. Esto se logra
+    porque el cliente recibe los nombres de los recursos, la parte de la URL que permite
+    acceder al servicio web solicitado. Se proveen métodos que sólo sirven para acceder
+    a la API de manera genérica, pero no para hacer acciones específicas ni obtener los
+    datos en un formato específico. Este cliente es el que entrega mayor flexibilidad, ya
+    que cada programador decide qué recursos desea consumir y cómo desea obtener los datos.
+
+-   Clientes específicos: son clases que permiten acceder de forma más natural a los
+    recursos de la API. Al instanciar la clase, se tendrán métodos sencillos con parámetros
+    para consumir la API. Sin ser necesario preocuparse de recordar o buscar en la
+    documentación el nombre de los recursos que se deben consumir. Además de entregar los
+    datos ya "listos" para ser usados en vez de tener que preocuparse de qué método del
+    cliente genérico usar para obtenerlos en el formato requerido.
+    
+Autenticación en la API de LibreDTE
+-----------------------------------
+
+Lo más simple es usar una variable de entorno con el *access token* de api.libredte.cl:
+
+    export LIBREDTE_API_TOKEN=""
+    
+Si no se desea usar una variable de entorno, al crear los objetos clientes se
+deberá indicar el *access token*. Ejemplo con el cliente genérico:
+
+    cliente_libredte = LibreDTE(ACCESS_TOKEN)
+
+El siguiente es un ejemplo con el cliente específico de Rcv, se pasan los datos
+obligatorios de RUT y clave del usuario y además se pasa el *access token* de
+la API.
+    
+    cliente_rcv = Rcv(USUARIO_RUT, USUARIO_CLAVE, api_token = ACCESS_TOKEN)
+    
+Si se usan variables de entorno, en ambos ejemplos se puede omitir el *access token*.
+
 Desarrolladores (ayuda mental)
 ------------------------------
 
