@@ -40,6 +40,6 @@ json_save('actividades_economicas_todas', listado)
 listado = ae.listado_primera_categoria()
 json_save('actividades_economicas_1era', listado)
 
-# CASO 2: sólo actividades de segunda categoría
+# CASO 3: sólo actividades de segunda categoría
 listado = ae.listado_segunda_categoria()
 json_save('actividades_economicas_2da', listado)
