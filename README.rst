@@ -58,17 +58,23 @@ Autenticación en la API de LibreDTE
 
 Lo más simple es usar una variable de entorno con el *access token* de api.libredte.cl:
 
+.. code:: shell
+
     export LIBREDTE_API_TOKEN=""
     
 Si no se desea usar una variable de entorno, al crear los objetos clientes se
 deberá indicar el *access token*. Ejemplo con el cliente genérico:
+
+.. code:: python
 
     cliente_libredte = LibreDTE(ACCESS_TOKEN)
 
 El siguiente es un ejemplo con el cliente específico de Rcv, se pasan los datos
 obligatorios de RUT y clave del usuario y además se pasa el *access token* de
 la API.
-    
+
+.. code:: python
+
     cliente_rcv = Rcv(USUARIO_RUT, USUARIO_CLAVE, api_token = ACCESS_TOKEN)
     
 Si se usan variables de entorno, en ambos ejemplos se puede omitir el *access token*.
