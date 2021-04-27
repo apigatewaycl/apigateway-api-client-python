@@ -25,7 +25,7 @@ app_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file
 sys.path.insert(0, app_dir)
 
 from libredte.api_client.sii.bte import BteEmitidas
-from ejemplos.json_save import json_save
+from sasco_utils.dict import dict_save_to_json
 
 
 # datos del emisor
@@ -42,11 +42,11 @@ bte = BteEmitidas(EMISOR_RUT, EMISOR_CLAVE)
 
 # CASO 1: boletas del periodo
 documentos = bte.documentos(EMISOR_RUT, PERIODO)
-filename = '%(emisor)s_bte_%(periodo)s' % {
+filename = '%(emisor)s_bte_%(periodo)s.json' % {
     'emisor': EMISOR_RUT,
     'periodo': str(PERIODO),
 }
-json_save(filename, documentos)
+dict_save_to_json(filename, documentos)
 
 # CASO 2: bajar HTML
 if len(documentos) > 0:
@@ -90,16 +90,16 @@ datos = {
 }
 boleta = bte.emitir(datos)
 boleta_folio = boleta['Encabezado']['IdDoc']['Folio']
-filename = '%(emisor)s_bte_%(numero)s' % {
+filename = '%(emisor)s_bte_%(numero)s.json' % {
     'emisor': EMISOR_RUT,
     'numero': str(boleta_folio),
 }
-json_save(filename, boleta)
+dict_save_to_json(filename, boleta)
 
 # CASO 4: anular boleta
 resultado = bte.anular(EMISOR_RUT, boleta_folio)
-filename = '%(emisor)s_bte_%(numero)s_anulada' % {
+filename = '%(emisor)s_bte_%(numero)s_anulada.json' % {
     'emisor': EMISOR_RUT,
     'numero': str(boleta_folio),
 }
-json_save(filename, boleta)
+dict_save_to_json(filename, boleta)

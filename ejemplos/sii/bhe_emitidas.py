@@ -25,7 +25,6 @@ app_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file
 sys.path.insert(0, app_dir)
 
 from libredte.api_client.sii.bhe import BheEmitidas
-from ejemplos.json_save import json_save
 
 
 # datos del emisor

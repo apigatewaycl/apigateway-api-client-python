@@ -25,7 +25,7 @@ app_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file
 sys.path.insert(0, app_dir)
 
 from libredte.api_client.sii.portal_mipyme import Contribuyentes, DteEmitidos, DteRecibidos
-from ejemplos.json_save import json_save
+from sasco_utils.dict import dict_save_to_json
 
 
 # datos del contribuyente
@@ -46,20 +46,20 @@ dte_recibidos = DteRecibidos(USUARIO_RUT, USUARIO_CLAVE)
 
 # CASO 1: datos de un contribuyente
 datos = contribuyentes.info('76192083-9', CONTRIBUYENTE_RUT, 34)
-filename = '%(contribuyente)s_mipyme_info' % {
+filename = '%(contribuyente)s_mipyme_info.json' % {
     'contribuyente': CONTRIBUYENTE_RUT,
 }
-json_save(filename, datos)
+dict_save_to_json(filename, datos)
 
 # CASO 2: documentos emitidos
 documentos = dte_emitidos.documentos(CONTRIBUYENTE_RUT, {
     'FEC_DESDE': FECHA_DESDE,
     'FEC_HASTA': FECHA_HASTA,
 })
-filename = '%(contribuyente)s_mipyme_dte_emitidos' % {
+filename = '%(contribuyente)s_mipyme_dte_emitidos.json' % {
     'contribuyente': CONTRIBUYENTE_RUT,
 }
-json_save(filename, documentos)
+dict_save_to_json(filename, documentos)
 
 for documento in documentos:
 
@@ -93,10 +93,10 @@ documentos = dte_recibidos.documentos(CONTRIBUYENTE_RUT, {
     'FEC_DESDE': FECHA_DESDE,
     'FEC_HASTA': FECHA_HASTA,
 })
-filename = '%(contribuyente)s_mipyme_dte_recibidos' % {
+filename = '%(contribuyente)s_mipyme_dte_recibidos.json' % {
     'contribuyente': CONTRIBUYENTE_RUT,
 }
-json_save(filename, documentos)
+dict_save_to_json(filename, documentos)
 
 for documento in documentos:
 

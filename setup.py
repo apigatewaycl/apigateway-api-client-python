@@ -36,7 +36,7 @@ setup(
     name='libredte.api_client',
 
     # Versions should comply with PEP440
-    version='2.2.0',
+    version='2.3.0',
 
     description='Cliente para realizar la integración con los servicios web de la API de LibreDTE desde Python',
     long_description="\n"+long_description,
@@ -80,6 +80,6 @@ setup(
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
 
     # List run-time dependencies here
-    install_requires=['requests', 'datetime'],
+    install_requires=['requests', 'datetime', 'sasco_utils'],
 
 )

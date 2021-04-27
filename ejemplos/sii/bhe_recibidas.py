@@ -25,7 +25,7 @@ app_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file
 sys.path.insert(0, app_dir)
 
 from libredte.api_client.sii.bhe import BheRecibidas
-from ejemplos.json_save import json_save
+from sasco_utils.dict import dict_save_to_json
 
 
 # datos del receptor
@@ -46,11 +46,11 @@ bhe = BheRecibidas(RECEPTOR_RUT, RECEPTOR_CLAVE)
 
 # CASO 1: boletas del periodo
 documentos = bhe.documentos(RECEPTOR_RUT, PERIODO)
-filename = '%(receptor)s_bhe_%(periodo)s' % {
+filename = '%(receptor)s_bhe_%(periodo)s.json' % {
     'receptor': RECEPTOR_RUT,
     'periodo': str(PERIODO),
 }
-json_save(filename, documentos)
+dict_save_to_json(filename, documentos)
 
 # CASO 2: bajar PDF
 if len(documentos) > 0:
@@ -67,8 +67,8 @@ if len(documentos) > 0:
 # CASO 3: observar una boleta
 if OBSERVAR_EMISOR_RUT != '':
     resultado = bhe.observar(OBSERVAR_EMISOR_RUT, OBSERVAR_NUMERO)
-    filename = '%(emisor)s_bhe_%(numero)s_observada' % {
+    filename = '%(emisor)s_bhe_%(numero)s_observada.json' % {
         'emisor': OBSERVAR_EMISOR_RUT,
         'numero': str(OBSERVAR_NUMERO),
     }
-    json_save(filename, resultado)
+    dict_save_to_json(filename, resultado)

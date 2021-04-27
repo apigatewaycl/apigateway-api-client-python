@@ -25,7 +25,7 @@ app_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file
 sys.path.insert(0, app_dir)
 
 from libredte.api_client.sii.rcv import Rcv
-from ejemplos.json_save import json_save
+from sasco_utils.dict import dict_save_to_json
 
 
 # datos del contribuyente
@@ -40,54 +40,54 @@ rcv = Rcv(CONTRIBUYENTE_RUT, CONTRIBUYENTE_CLAVE)
 # CASO 1: resumen de compras y detalle de compras con tipo rcv
 for estado in estados:
     resumen = rcv.compras_resumen(CONTRIBUYENTE_RUT, PERIODO, estado)
-    filename = '%(contribuyente)s_compras_resumen_%(periodo)s_%(estado)s' % {
+    filename = '%(contribuyente)s_compras_resumen_%(periodo)s_%(estado)s.json' % {
         'contribuyente': CONTRIBUYENTE_RUT,
         'periodo': str(PERIODO),
         'estado': str(estado),
     }
-    json_save(filename, resumen)
+    dict_save_to_json(filename, resumen)
     for r in resumen:
         if r['rsmnTotDoc'] == 0:
             continue
         detalle = rcv.compras_detalle(CONTRIBUYENTE_RUT, PERIODO, r['rsmnTipoDocInteger'], estado)
-        filename = '%(contribuyente)s_compras_detalle_%(periodo)s_%(dte)s_%(estado)s' % {
+        filename = '%(contribuyente)s_compras_detalle_%(periodo)s_%(dte)s_%(estado)s.json' % {
             'contribuyente': CONTRIBUYENTE_RUT,
             'periodo': str(PERIODO),
             'dte': str(r['rsmnTipoDocInteger']),
             'estado': str(estado),
         }
-        json_save(filename, detalle)
+        dict_save_to_json(filename, detalle)
 
 # CASO 2: detalle de compras con tipo rcv_csv
 detalle = rcv.compras_detalle(CONTRIBUYENTE_RUT, PERIODO)
-filename = '%(contribuyente)s_compras_detalle_%(periodo)s' % {
+filename = '%(contribuyente)s_compras_detalle_%(periodo)s.json' % {
     'contribuyente': CONTRIBUYENTE_RUT,
     'periodo': str(PERIODO),
 }
-json_save(filename, detalle)
+dict_save_to_json(filename, detalle)
 
 # CASO 3: resumen de ventas y detalle de ventas con tipo rcv
 resumen = rcv.ventas_resumen(CONTRIBUYENTE_RUT, PERIODO)
-filename = '%(contribuyente)s_ventas_resumen_%(periodo)s' % {
+filename = '%(contribuyente)s_ventas_resumen_%(periodo)s.json' % {
     'contribuyente': CONTRIBUYENTE_RUT,
     'periodo': str(PERIODO),
 }
-json_save(filename, resumen)
+dict_save_to_json(filename, resumen)
 for r in resumen:
     if r['rsmnTotDoc'] == 0:
         continue
     detalle = rcv.ventas_detalle(CONTRIBUYENTE_RUT, PERIODO, r['rsmnTipoDocInteger'])
-    filename = '%(contribuyente)s_ventas_detalle_%(periodo)s_%(dte)s' % {
+    filename = '%(contribuyente)s_ventas_detalle_%(periodo)s_%(dte)s.json' % {
         'contribuyente': CONTRIBUYENTE_RUT,
         'periodo': str(PERIODO),
         'dte': str(r['rsmnTipoDocInteger']),
     }
-    json_save(filename, detalle)
+    dict_save_to_json(filename, detalle)
 
 # CASO 4: detalle de ventas
 detalle = rcv.ventas_detalle(CONTRIBUYENTE_RUT, PERIODO)
-filename = '%(contribuyente)s_ventas_detalle_%(periodo)s' % {
+filename = '%(contribuyente)s_ventas_detalle_%(periodo)s.json' % {
     'contribuyente': CONTRIBUYENTE_RUT,
     'periodo': str(PERIODO),
 }
-json_save(filename, detalle)
+dict_save_to_json(filename, detalle)
