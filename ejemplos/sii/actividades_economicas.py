@@ -26,7 +26,7 @@ app_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file
 sys.path.insert(0, app_dir)
 
 from libredte.api_client.sii.actividades_economicas import ActividadesEconomicas
-from sasco_utils.dict import dict_save_to_json
+from sasco_utils.dict import dict_save_to_json, dict_save_to_csv
 
 
 # crear cliente de la API
@@ -35,6 +35,14 @@ ae = ActividadesEconomicas()
 # CASO 1: todas las actividades
 listado = ae.listado()
 dict_save_to_json('actividades_economicas_todas.json', listado)
+
+# guardar el CASO 1 en un csv
+actividades = []
+for categoria in listado:
+    for subcategoria in listado[categoria]:
+        for actividad in listado[categoria][subcategoria]:
+            actividades.append(actividad)
+dict_save_to_csv('actividades_economicas_todas.csv', actividades)
 
 # CASO 2: sólo actividades de primera categoría
 listado = ae.listado_primera_categoria()
