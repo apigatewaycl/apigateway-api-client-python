@@ -47,7 +47,7 @@ for estado in estados:
     }
     dict_save_to_json(filename, resumen)
     for r in resumen:
-        if r['rsmnTotDoc'] == 0:
+        if r['dcvTipoIngresoDoc'] != 'DET_ELE' or r['rsmnTotDoc'] == 0:
             continue
         detalle = rcv.compras_detalle(CONTRIBUYENTE_RUT, PERIODO, r['rsmnTipoDocInteger'], estado)
         filename = '%(contribuyente)s_compras_detalle_%(periodo)s_%(dte)s_%(estado)s.json' % {
@@ -74,7 +74,7 @@ filename = '%(contribuyente)s_ventas_resumen_%(periodo)s.json' % {
 }
 dict_save_to_json(filename, resumen)
 for r in resumen:
-    if r['rsmnTotDoc'] == 0:
+    if r['dcvTipoIngresoDoc'] != 'DET_ELE' or r['rsmnTotDoc'] == 0:
         continue
     detalle = rcv.ventas_detalle(CONTRIBUYENTE_RUT, PERIODO, r['rsmnTipoDocInteger'])
     filename = '%(contribuyente)s_ventas_detalle_%(periodo)s_%(dte)s.json' % {
@@ -84,7 +84,7 @@ for r in resumen:
     }
     dict_save_to_json(filename, detalle)
 
-# CASO 4: detalle de ventas
+# CASO 4: detalle de ventas con tipo rcv_csv
 detalle = rcv.ventas_detalle(CONTRIBUYENTE_RUT, PERIODO)
 filename = '%(contribuyente)s_ventas_detalle_%(periodo)s.json' % {
     'contribuyente': CONTRIBUYENTE_RUT,
