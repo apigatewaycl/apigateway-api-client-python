@@ -24,14 +24,42 @@ import os, sys
 app_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, app_dir)
 
-from libredte.api_client.sii.dte import Contribuyentes
+from libredte.api_client.sii.dte import Contribuyentes, Emitidos
 
+### CONTRIBUYENTES ###
 
 # datos del ejemplo
 RUT = ''
 
-# crear cliente de la API
-c = Contribuyentes()
+if RUT != '':
 
-# CASO 1: autorización DTE
-print(c.autorizacion(RUT), end="\n\n")
+    # crear cliente de la API
+    c = Contribuyentes()
+
+    # CASO 1: autorización DTE
+    print(c.autorizacion(RUT), end="\n\n")
+
+### DOCUMENTOS EMITIDOS ###
+
+EMISOR = '76192083-9'
+CLAVE = ''
+RECEPTOR = '77666555-4'
+DTE = 33
+FOLIO = 12018
+FECHA = '2021-08-26'
+TOTAL = 30000
+FIRMA = None
+
+if CLAVE != '':
+
+    e = Emitidos(EMISOR, CLAVE)
+    estado = e.verificar(
+        EMISOR,
+        RECEPTOR,
+        DTE,
+        FOLIO,
+        FECHA,
+        TOTAL,
+        FIRMA
+    )
+    print(estado)

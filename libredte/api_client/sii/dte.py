@@ -24,9 +24,43 @@ from ..base import LibreDTEApiBase
 
 class Contribuyentes(LibreDTEApiBase):
 
-    def autorizacion(self, rut, certificacion = False):
+    def __init__(self, usuario_rut, usuario_clave, **kwargs):
+        super(Contribuyentes, self).__init__(
+            usuario_rut = usuario_rut,
+            usuario_clave = usuario_clave,
+            **kwargs
+        )
+
+    def autorizacion(self, rut, certificacion = None):
         r = self.client.get('/sii/dte/contribuyentes/autorizado/%(rut)s?certificacion=%(certificacion)d' % {
             'rut': str(rut),
-            'certificacion': 1 if certificacion else 0,
+            'certificacion': 1 if certificacion is True else 0,
         })
+        return r.json()
+
+class Emitidos(LibreDTEApiBase):
+
+    def __init__(self, usuario_rut, usuario_clave, **kwargs):
+        super(Emitidos, self).__init__(
+            usuario_rut = usuario_rut,
+            usuario_clave = usuario_clave,
+            **kwargs
+        )
+
+    def verificar(self, emisor, receptor, dte, folio, fecha, total, firma = None, certificacion = None):
+        body = {
+            'auth': self.get_auth_pass(),
+            'dte': {
+                'emisor': emisor,
+                'receptor': receptor,
+                'dte': dte,
+                'folio': folio,
+                'fecha': fecha,
+                'total': total,
+                'firma': firma
+            }
+        }
+        r = self.client.post('/sii/dte/emitidos/verificar?certificacion=%(certificacion)d' % {
+            'certificacion': 1 if certificacion is True else 0,
+        }, body)
         return r.json()
