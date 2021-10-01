@@ -24,13 +24,6 @@ from ..base import LibreDTEApiBase
 
 class Contribuyentes(LibreDTEApiBase):
 
-    def __init__(self, usuario_rut, usuario_clave, **kwargs):
-        super(Contribuyentes, self).__init__(
-            usuario_rut = usuario_rut,
-            usuario_clave = usuario_clave,
-            **kwargs
-        )
-
     def autorizacion(self, rut, certificacion = None):
         r = self.client.get('/sii/dte/contribuyentes/autorizado/%(rut)s?certificacion=%(certificacion)d' % {
             'rut': str(rut),
