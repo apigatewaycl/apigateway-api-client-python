@@ -73,3 +73,18 @@ class BteEmitidas(LibreDTEApiBase):
             }
         r = self.client.post(resource, body)
         return r.json()
+
+    def receptor_tasa(self, emisor, receptor, periodo = None):
+        body = {
+            'auth': self.get_auth_pass()
+        }
+        resource = '/sii/bte/emitidas/receptor_tasa/%(emisor)s/%(receptor)s' % {
+            'emisor': str(emisor),
+            'receptor': str(receptor),
+        }
+        if periodo is not None:
+            resource += '?periodo=%(periodo)s' % {
+                'periodo': str(periodo),
+            }
+        r = self.client.post(resource, body)
+        return r.json()

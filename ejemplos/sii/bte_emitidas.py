@@ -32,6 +32,7 @@ from sasco_utils.dict import dict_save_to_json
 EMISOR_RUT = ''
 EMISOR_CLAVE = ''
 PERIODO = 202102
+RECEPTOR_RUT = '66666666-6'
 
 # importaciones para el ejemplo
 import sys
@@ -71,7 +72,7 @@ datos = {
             'RUTEmisor': EMISOR_RUT
         },
         'Receptor': {
-            'RUTRecep': '66666666-6',
+            'RUTRecep': RECEPTOR_RUT,
             'RznSocRecep': 'Receptor generico',
             'DirRecep': 'Santa Cruz',
             'CmnaRecep': 'Santa Cruz'
@@ -103,3 +104,10 @@ filename = '%(emisor)s_bte_%(numero)s_anulada.json' % {
     'numero': str(boleta_folio),
 }
 dict_save_to_json(filename, boleta)
+
+# CASO 5: tasa de receptor
+tasa = bte.receptor_tasa(EMISOR_RUT, RECEPTOR_RUT)
+filename = 'bte_receptor_tasa_%(receptor)s.json' % {
+    'receptor': RECEPTOR_RUT,
+}
+dict_save_to_json(filename, tasa)
