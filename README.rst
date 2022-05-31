@@ -1,5 +1,5 @@
-Cliente API de LibreDTE para Python
-===================================
+Cliente API SII para Python
+===========================
 
 .. image:: https://badge.fury.io/py/libredte.api-client.svg
     :target: https://pypi.python.org/pypi/libredte.api-client
@@ -10,7 +10,7 @@ Cliente API de LibreDTE para Python
 .. .. image:: https://img.shields.io/pypi/l/libredte.api-client.svg
     :target: https://raw.githubusercontent.com/LibreDTE/libredte-api-client-python/master/COPYING
 
-Cliente para realizar la integración con los servicios web de la API de LibreDTE desde Python.
+Cliente para realizar la integración con los servicios web de API SII (<https://apisii.cl/>) desde Python.
 
 Este código está liberado bajo licencia `LGPL <http://www.gnu.org/licenses/lgpl-3.0.en.html>`_.
 O sea, puede ser utilizado tanto en software libre como en software privativo.
