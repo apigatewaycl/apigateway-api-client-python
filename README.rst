@@ -10,7 +10,7 @@ Cliente API SII para Python
 .. .. image:: https://img.shields.io/pypi/l/libredte.api-client.svg
     :target: https://raw.githubusercontent.com/LibreDTE/libredte-api-client-python/master/COPYING
 
-Cliente para realizar la integración con los servicios web de API SII (<https://apisii.cl/>) desde Python.
+Cliente para realizar la integración con los servicios web de API SII (www.apisii.cl) desde Python.
 
 Este código está liberado bajo licencia `LGPL <http://www.gnu.org/licenses/lgpl-3.0.en.html>`_.
 O sea, puede ser utilizado tanto en software libre como en software privativo.
@@ -36,7 +36,7 @@ Actualizar desde PIP con:
 Cliente genérico vs clientes específicos
 ----------------------------------------
 
-Este cliente de LibreDTE API tiene 2 formas de acceder a los recursos:
+Este cliente de API SII tiene 2 formas de acceder a los recursos:
 
 -   Cliente genérico: es un cliente que permite consumir de manera sencilla cualquier
     recurso de la API. Que actualmente exista o sea añadido en el futuro. Esto se logra
@@ -53,10 +53,10 @@ Este cliente de LibreDTE API tiene 2 formas de acceder a los recursos:
     datos ya "listos" para ser usados en vez de tener que preocuparse de qué método del
     cliente genérico usar para obtenerlos en el formato requerido.
     
-Autenticación en la API de LibreDTE
------------------------------------
+Autenticación en API SII
+------------------------
 
-Lo más simple es usar una variable de entorno con el *access token* de api.libredte.cl:
+Lo más simple es usar una variable de entorno con el *access token* de www.apisii.cl:
 
 .. code:: shell
 
@@ -86,8 +86,8 @@ Modificar el cliente de la API:
 
 .. code:: shell
 
-    $ git clone https://github.com/LibreDTE/libredte-api-client-python
-    $ cd libredte-api-client-python
+    $ git clone https://github.com/LibreDTE/apisii-client-python
+    $ cd apisii-client-python
     $ sudo pip install -e .
 
 Crear el paquete que se desea distribuir:
