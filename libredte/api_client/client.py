@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-LibreDTE API Client
+API Gateway: Cliente en Python
 Copyright (C) SASCO SpA (https://sasco.cl)
 
 Este programa es software libre: usted puede redistribuirlo y/o modificarlo
@@ -33,7 +33,7 @@ Clase con las funcionalidades para integrar con la API de LibreDTE
 """
 class LibreDTE:
 
-    DEFAULT_URL = 'https://api.libredte.cl'
+    DEFAULT_URL = 'https://apigateway.cl'
     DEFAULT_VERSION = 'v1'
 
     def __init__(self, token = None, url = None, version = None):

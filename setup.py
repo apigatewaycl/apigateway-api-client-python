@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-LibreDTE API Client
+API Gateway: Cliente en Python
 Copyright (C) SASCO SpA (https://sasco.cl)
 
 Este programa es software libre: usted puede redistribuirlo y/o modificarlo
@@ -36,13 +36,13 @@ setup(
     name='libredte.api_client',
 
     # Versions should comply with PEP440
-    version='2.5.0',
+    version='2.5.1',
 
-    description='Cliente para realizar la integración con los servicios web de la API de LibreDTE desde Python',
+    description='Cliente para realizar la integración con los servicios web de API Gateway desde Python',
     long_description="\n"+long_description,
 
     # The project's main homepage.
-    url='https://github.com/LibreDTE/libredte-api-client-python',
+    url='https://github.com/LibreDTE/apigateway-client-python',
 
     # Author details
     author='Esteban De La Fuente Rubio, DeLaF',

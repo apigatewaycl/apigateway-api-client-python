@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-LibreDTE API Client
+API Gateway: Cliente en Python
 Copyright (C) SASCO SpA (https://sasco.cl)
 
 Este programa es software libre: usted puede redistribuirlo y/o modificarlo
