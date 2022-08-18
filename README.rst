@@ -54,7 +54,7 @@ Este cliente de API Gateway tiene 2 formas de acceder a los recursos:
     cliente genérico usar para obtenerlos en el formato requerido.
 
 Autenticación en API Gateway
-------------------------
+----------------------------
 
 Lo más simple es usar una variable de entorno con el *access token* de www.apigateway.cl:
 
