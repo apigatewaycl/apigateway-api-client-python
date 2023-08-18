@@ -2,6 +2,7 @@ venv
 dist
 libredte.api_client.egg-info
 __pycache__
+.DS_Store
 *.pyc
 *.json
 *.csv
