@@ -99,14 +99,25 @@ class BheRecibidas(LibreDTEApiBase):
             **kwargs
         )
 
-    def documentos(self, receptor, periodo):
+    def documentos(self, receptor, periodo, pagina = None, pagina_sig_codigo = None):
         body = {
             'auth': self.get_auth_pass()
         }
-        r = self.client.post('/sii/bhe/recibidas/documentos/%(receptor)s/%(periodo)s' % {
-            'receptor': str(receptor),
-            'periodo': str(periodo),
-        }, body)
+        # traer BHE sin paginación
+        if pagina is None:
+            r = self.client.post('/sii/bhe/recibidas/documentos/%(receptor)s/%(periodo)s' % {
+                'receptor': str(receptor),
+                'periodo': str(periodo),
+            }, body)
+        # traer BHE paginadas
+        else:
+            r = self.client.post('/sii/bhe/recibidas/documentos/%(receptor)s/%(periodo)s?pagina=%(pagina)s&pagina_sig_codigo=%(pagina_sig_codigo)s' % {
+                'receptor': str(receptor),
+                'periodo': str(periodo),
+                'pagina': pagina,
+                'pagina_sig_codigo': pagina_sig_codigo if pagina_sig_codigo is not None else '00000000000000'
+            }, body)
+        # retornar datos con boletas
         return r.json()
 
     def pdf(self, codigo):

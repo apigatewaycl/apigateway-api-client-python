@@ -103,3 +103,9 @@ Publicar el paquete a distribuir:
     $ twine upload dist/*
 
 Más información en `<http://python-packaging-user-guide.readthedocs.io/en/latest/distributing>`_
+
+Lo anterior requiere:
+
+.. code:: shell
+
+    $ pip install twine

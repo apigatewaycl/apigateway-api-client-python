@@ -1,13 +1,13 @@
 all: install dist
 
 install:
-	sudo pip install -e .
+	pip install -e .
 
 dist:
-	sudo python setup.py sdist
+	python setup.py sdist
 
 upload: dist
 	twine upload dist/*
 
 clean:
-	sudo rm -rf dist libredte.egg-info libredte/__pycache__ libredte/*.pyc ejemplos/*.pdf
+	rm -rf dist libredte.egg-info libredte/__pycache__ libredte/*.pyc ejemplos/*.pdf
