@@ -1,10 +1,13 @@
 all: install dist
 
 install:
-	pip install -e .
+	\
+	python3 -m venv venv; \
+	source venv/bin/activate; \
+	pip install -r requirements.txt; \
 
 dist:
-	python setup.py sdist
+	python3 setup.py sdist
 
 upload: dist
 	twine upload dist/*

@@ -22,7 +22,7 @@ Instalar desde PIP con:
 
 .. code:: shell
 
-    $ sudo pip install libredte.api-client
+    pip install libredte.api-client
 
 Actualización
 -------------
@@ -31,7 +31,7 @@ Actualizar desde PIP con:
 
 .. code:: shell
 
-    $ sudo pip install libredte.api-client --upgrade
+    pip install libredte.api-client --upgrade
 
 Cliente genérico vs clientes específicos
 ----------------------------------------
@@ -82,30 +82,37 @@ Si se usan variables de entorno, en ambos ejemplos se puede omitir el *access to
 Desarrolladores (ayuda mental)
 ------------------------------
 
-Modificar el cliente de la API:
+
+En primer lugar se debe clonar el repositorio:
 
 .. code:: shell
 
-    $ git clone https://github.com/LibreDTE/apigateway-client-python
-    $ cd apigateway-client-python
-    $ sudo pip install -e .
+    git clone https://github.com/LibreDTE/apigateway-client-python
+
+Crear ambiente virtual, ingresar e instalar dependencias de Python ejecutando línea por línea:
+
+.. code:: shell
+
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
 
 Crear el paquete que se desea distribuir:
 
 .. code:: shell
 
-    $ sudo python setup.py sdist
+    python3 setup.py sdist
 
 Publicar el paquete a distribuir:
 
 .. code:: shell
 
-    $ twine upload dist/*
+    twine upload dist/*
 
-Más información en `<http://python-packaging-user-guide.readthedocs.io/en/latest/distributing>`_
-
-Lo anterior requiere:
+Eliminar archivos que no se usaran posterior a la distribución del paquete:
 
 .. code:: shell
 
-    $ pip install twine
+    rm -rf dist libredte.egg-info libredte/__pycache__ libredte/*.pyc ejemplos/*.pdf
+
+Más información en `<http://python-packaging-user-guide.readthedocs.io/en/latest/distributing>`_
