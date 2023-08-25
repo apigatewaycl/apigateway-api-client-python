@@ -71,7 +71,7 @@ class TestLog:
         # guardar logs como JSON
         dict_save_to_json( self.filename, listado_bhe)
         # resultado
-        print('Se guardaron %(n_boletas)s en el archivo %(filename)s del periodo %(periodo)s', {
+        print('Se guardaron %(n_boletas)s en el archivo %(filename)s del periodo %(periodo)s' % {
             'n_boletas': len(listado_bhe),
             'filename': self.filename,
             'periodo': periodo
