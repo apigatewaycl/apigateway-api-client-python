@@ -1,23 +1,21 @@
-# -*- coding: utf-8 -*-
-
-"""
-API Gateway: Cliente en Python
-Copyright (C) SASCO SpA (https://sasco.cl)
-
-Este programa es software libre: usted puede redistribuirlo y/o modificarlo
-bajo los términos de la GNU Lesser General Public License (LGPL) publicada
-por la Fundación para el Software Libre, ya sea la versión 3 de la Licencia,
-o (a su elección) cualquier versión posterior de la misma.
-
-Este programa se distribuye con la esperanza de que sea útil, pero SIN
-GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD
-PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de la GNU Lesser General
-Public License (LGPL) para obtener una información más detallada.
-
-Debería haber recibido una copia de la GNU Lesser General Public License
-(LGPL) junto a este programa. En caso contrario, consulte
-<http://www.gnu.org/licenses/lgpl.html>.
-"""
+#
+# API Gateway: Cliente de API en Python.
+# Copyright (C) API Gateway <https://www.apigateway.cl>
+#
+# Este programa es software libre: usted puede redistribuirlo y/o modificarlo
+# bajo los términos de la GNU Lesser General Public License (LGPL) publicada
+# por la Fundación para el Software Libre, ya sea la versión 3 de la Licencia,
+# o (a su elección) cualquier versión posterior de la misma.
+#
+# Este programa se distribuye con la esperanza de que sea útil, pero SIN
+# GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD
+# PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de la GNU Lesser General
+# Public License (LGPL) para obtener una información más detallada.
+#
+# Debería haber recibido una copia de la GNU Lesser General Public License
+# (LGPL) junto a este programa. En caso contrario, consulte
+# <http://www.gnu.org/licenses/lgpl.html>.
+#
 
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
@@ -33,20 +31,20 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
 
-    name='libredte.api_client',
+    name='apigatewaycl',
 
     # Versions should comply with PEP440
-    version='2.5.1',
+    version='3.0.0',
 
     description='Cliente para realizar la integración con los servicios web de API Gateway desde Python',
     long_description="\n"+long_description,
 
     # The project's main homepage.
-    url='https://github.com/LibreDTE/apigateway-client-python',
+    url='https://github.com/apigatewaycl/apigateway-api-client-python',
 
     # Author details
-    author='Esteban De La Fuente Rubio, DeLaF',
-    author_email='esteban@sasco.cl',
+    author='API Gateway',
+    author_email='dev@apigateway.cl',
 
     # Choose your license
     license='LGPL',
@@ -73,13 +71,14 @@ setup(
     ],
 
     # What does your project relate to?
-    keywords='facturación electrónica',
+    keywords='sii chile',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    #packages=find_packages(exclude=['contrib', 'docs', 'tests', 'venv']),
+    packages=['apigatewaycl'],
 
     # List run-time dependencies here
-    install_requires=['requests', 'datetime', 'sasco_utils'],
+    install_requires=['requests'],
 
 )

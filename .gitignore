@@ -1,10 +1,25 @@
+# Archivos de desarrollo
 venv
-dist
-libredte.api_client.egg-info
 __pycache__
-.DS_Store
 *.pyc
+
+# Archivos de documentación
+docs/_build/
+docs/html/
+docs/*.doctrees
+docs/.buildinfo
+
+# Archivos de distribución
+dist
+apigatewaycl.egg-info
+
+# Archivos del sistema
+.DS_Store
+
+# Archivos de tests
+tests/test.env
 *.json
 *.csv
 *.pdf
 *.html
+
