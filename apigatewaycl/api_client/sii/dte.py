@@ -20,7 +20,7 @@
 """
 Módulo para interactuar con las opciones de Documentos Tributarios Electrónicos (DTE) del SII.
 
-Para más información sobre la API, consulte la `documentación completa <https://developers.apigateway.cl/#8c113b9a-ea05-4981-9273-73e3f20ef991>`_.
+Para más información sobre la API, consulte la `documentación completa de los DTE <https://developers.apigateway.cl/#8c113b9a-ea05-4981-9273-73e3f20ef991>`_.
 """
 
 from .. import ApiBase

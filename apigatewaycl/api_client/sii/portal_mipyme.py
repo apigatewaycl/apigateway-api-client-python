@@ -20,12 +20,13 @@
 """
 Módulo para consultas al Portal MIPYME del SII.
 
-Para más información sobre la API, consulte la `documentación completa <https://developers.apigateway.cl/#d545a096-09be-4c9e-8d12-7b86b6bf1be6>`_.
+Para más información sobre la API, consulte la `documentación completa del Portal MIPYME <https://developers.apigateway.cl/#d545a096-09be-4c9e-8d12-7b86b6bf1be6>`_.
 """
 
+from abc import ABC
 from .. import ApiBase
 
-class PortalMipyme(ApiBase):
+class PortalMipyme(ApiBase, ABC):
     """
     Base para los clientes específicos del Portal Mipyme.
 

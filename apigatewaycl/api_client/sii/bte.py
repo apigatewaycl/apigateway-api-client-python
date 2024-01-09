@@ -20,7 +20,7 @@
 """
 Módulo para la emisión de Boletas de Terceros Electrónicas del SII.
 
-Para más información sobre la API, consulte la `documentación completa <https://developers.apigateway.cl/#e08f50ab-5509-48ab-81ab-63fc8e5985e1>`_.
+Para más información sobre la API, consulte la `documentación completa de las BTE <https://developers.apigateway.cl/#e08f50ab-5509-48ab-81ab-63fc8e5985e1>`_.
 """
 
 from .. import ApiBase

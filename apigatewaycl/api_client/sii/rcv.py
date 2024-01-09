@@ -20,7 +20,7 @@
 """
 Módulo para interactuar con el Registro de Compra y Venta del SII.
 
-Para más información sobre la API, consulte la `documentación completa <https://developers.apigateway.cl/#ef1f7d54-2e86-4732-bb91-d3448b383d66>`_.
+Para más información sobre la API, consulte la `documentación completa del RCV <https://developers.apigateway.cl/#ef1f7d54-2e86-4732-bb91-d3448b383d66>`_.
 """
 
 from .. import ApiBase

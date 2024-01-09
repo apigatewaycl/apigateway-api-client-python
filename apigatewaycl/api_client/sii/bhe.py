@@ -20,7 +20,7 @@
 """
 Módulo para interactuar con Boletas de Honorarios Electrónicas, tanto emitidas como recibidas, del SII.
 
-Para más información sobre la API, consulte la `documentación completa <https://developers.apigateway.cl/#4df9775f-2cd3-4b35-80a5-373f2501230c>`_.
+Para más información sobre la API, consulte la `documentación completa de las BHE <https://developers.apigateway.cl/#4df9775f-2cd3-4b35-80a5-373f2501230c>`_.
 """
 
 from .. import ApiBase

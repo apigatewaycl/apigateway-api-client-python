@@ -20,7 +20,7 @@
 """
 Módulo para obtener las actividades económicas del SII.
 
-Para más información sobre la API, consulte la `documentación completa <https://developers.apigateway.cl/#e64eb128-173a-48c7-ab0b-b6152e59c327>`_.
+Para más información sobre la API, consulte la `documentación completa de Actividades Económicas <https://developers.apigateway.cl/#e64eb128-173a-48c7-ab0b-b6152e59c327>`_.
 """
 
 from .. import ApiBase

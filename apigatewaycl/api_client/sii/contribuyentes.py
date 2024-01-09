@@ -20,7 +20,7 @@
 """
 Módulo para obtener datos de los contribuyentes a través del SII.
 
-Para más información sobre la API, consulte la `documentación completa <https://developers.apigateway.cl/#c88f90b6-36bb-4dc2-ba93-6e418ff42098>`_.
+Para más información sobre la API, consulte la `documentación completa de los Contribuyentes <https://developers.apigateway.cl/#c88f90b6-36bb-4dc2-ba93-6e418ff42098>`_.
 """
 
 from .. import ApiBase

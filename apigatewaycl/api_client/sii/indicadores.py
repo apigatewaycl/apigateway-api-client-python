@@ -20,7 +20,7 @@
 """
 Módulo para obtener indicadores desde el SII.
 
-Para más información sobre la API, consulte la `documentación completa <https://developers.apigateway.cl/#65aa568c-4c5a-448b-9f3b-95c3d9153e4d>`_.
+Para más información sobre la API, consulte la `documentación completa de los Indicadores <https://developers.apigateway.cl/#65aa568c-4c5a-448b-9f3b-95c3d9153e4d>`_.
 """
 
 from .. import ApiBase
