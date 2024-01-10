@@ -99,3 +99,11 @@ Public License (LGPL) para obtener una información más detallada.
 Debería haber recibido una copia de la GNU Lesser General Public License
 (LGPL) junto a este programa. En caso contrario, consulte
 `GNU Lesser General Public License <http://www.gnu.org/licenses/lgpl.html>`_.
+
+Enlaces
+-------
+
+- `Sitio web API Gateway <https://www.apigateway.cl>`_.
+- `Código fuente en GitHub <https://github.com/apigatewaycl/apigateway-api-client-python>`_.
+- `Paquete en PyPI <https://pypi.org/project/apigatewaycl>`_.
+- `Documentación en Read the Docs <https://apigatewaycl.readthedocs.io/es/latest>`_.

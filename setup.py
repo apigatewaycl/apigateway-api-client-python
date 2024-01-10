@@ -34,7 +34,7 @@ setup(
     name='apigatewaycl',
 
     # Versions should comply with PEP440
-    version='3.0.0',
+    version='3.0.1',
 
     description='Cliente para realizar la integración con los servicios web de API Gateway desde Python',
     long_description="\n"+long_description,
@@ -75,8 +75,7 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    #packages=find_packages(exclude=['contrib', 'docs', 'tests', 'venv']),
-    packages=['apigatewaycl'],
+    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
 
     # List run-time dependencies here
     install_requires=['requests'],
