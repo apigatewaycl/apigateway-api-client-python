@@ -30,6 +30,7 @@ class ApiClient:
     :param str token: Token de autenticación del usuario. Si no se proporciona, se intentará obtener de una variable de entorno.
     :param str url: URL base de la API. Si no se proporciona, se usará una URL por defecto.
     :param str version: Versión de la API. Si no se proporciona, se usará una versión por defecto.
+    :param bool raise_for_status: Si se debe lanzar una excepción automáticamente para respuestas de error HTTP. Por defecto es True.
     """
 
     __DEFAULT_URL = 'https://apigateway.cl'
@@ -196,13 +197,14 @@ class ApiBase(ABC):
     :param str api_token: Token de autenticación para la API.
     :param str api_url: URL base para la API.
     :param str api_version: Versión de la API.
+    :param bool api_raise_for_status: Si se debe lanzar una excepción automáticamente para respuestas de error HTTP. Por defecto es True.
     :param dict kwargs: Argumentos adicionales para la autenticación.
     """
 
     auth = {}
 
-    def __init__(self, api_token=None, api_url=None, api_version=None, **kwargs):
-        self.client = ApiClient(api_token, api_url, api_version)
+    def __init__(self, api_token=None, api_url=None, api_version=None, api_raise_for_status=True, **kwargs):
+        self.client = ApiClient(api_token, api_url, api_version, api_raise_for_status)
         self.__setup_auth(kwargs)
 
     def __setup_auth(self, kwargs):
