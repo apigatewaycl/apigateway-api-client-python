@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'Cliente API Gateway para Python'
+project = 'API Gateway: Cliente de API en Python'
 copyright = '2024, API Gateway'
 author = 'API Gateway'
 release = '3'

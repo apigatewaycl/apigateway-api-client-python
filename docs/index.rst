@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Cliente API Gateway para Python's documentation!
-===========================================================
+API Gateway: Cliente de API en Python - Documentación
+=====================================================
 
 .. toctree::
    :maxdepth: 2
@@ -12,7 +12,7 @@ Welcome to Cliente API Gateway para Python's documentation!
 
    modules
 
-Indices and tables
+Índices y tablas
 ==================
 
 * :ref:`genindex`
