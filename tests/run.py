@@ -64,4 +64,7 @@ suite = loader.loadTestsFromName(args.test_case) if args.test_case else loader.d
 
 # Ejecutar los tests
 runner = unittest.TextTestRunner(failfast=True, resultclass=CustomTestResult)
-runner.run(suite)
+try:
+    runner.run(suite)
+except KeyboardInterrupt:
+    pass

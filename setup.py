@@ -34,9 +34,9 @@ setup(
     name='apigatewaycl',
 
     # Versions should comply with PEP440
-    version='3.1.0',
+    version='3.1.1',
 
-    description='Cliente para realizar la integración con los servicios web de API Gateway desde Python',
+    description='Cliente para realizar la integración con los servicios web de API Gateway desde Python.',
     long_description="\n"+long_description,
 
     # The project's main homepage.

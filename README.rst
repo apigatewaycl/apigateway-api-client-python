@@ -1,5 +1,5 @@
-Cliente API Gateway para Python
-===============================
+API Gateway: Cliente de API en Python
+=====================================
 
 .. image:: https://badge.fury.io/py/apigatewaycl.svg
     :target: https://pypi.org/project/apigatewaycl
@@ -67,7 +67,7 @@ deberá indicar el token del usuario. Ejemplo con el cliente genérico:
 
     import apigatewaycl
     APIGATEWAY_API_TOKEN = "aquí-tu-token-de-usuario"
-    client = apigatewaycl.Client(APIGATEWAY_API_TOKEN)
+    client = apigatewaycl.api_client.ApiClient(APIGATEWAY_API_TOKEN)
 
 El siguiente es un ejemplo con el cliente específico de Rcv. Primero se pasan
 los datos obligatorios de RUT y clave del usuario. Luego además se pasa el token

@@ -17,12 +17,11 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-from abc import ABC
 from os import getenv
 import requests
-import json
-from requests.exceptions import ConnectionError
 import urllib
+import json
+from abc import ABC
 
 class ApiClient:
     """
@@ -36,11 +35,12 @@ class ApiClient:
     __DEFAULT_URL = 'https://apigateway.cl'
     __DEFAULT_VERSION = 'v1'
 
-    def __init__(self, token=None, url=None, version=None):
+    def __init__(self, token=None, url=None, version=None, raise_for_status=True):
         self.token = self.__validate_token(token)
         self.url = self.__validate_url(url)
         self.headers = self.__generate_headers()
-        self.version = version if version is not None else self.__DEFAULT_VERSION
+        self.version = version or self.__DEFAULT_VERSION
+        self.raise_for_status = raise_for_status
 
     def __validate_token(self, token):
         """
@@ -53,8 +53,8 @@ class ApiClient:
         """
         token = token or getenv('APIGATEWAY_API_TOKEN')
         if not token:
-            raise ApiException('APIGATEWAY_API_TOKEN missing')
-        return token.strip()
+            raise ApiException('Se debe configurar la variable de entorno: APIGATEWAY_API_TOKEN.')
+        return str(token).strip()
 
     def __validate_url(self, url):
         """
@@ -65,7 +65,7 @@ class ApiClient:
         :rtype: str
         :raises ApiException: Si la URL no es válida o está ausente.
         """
-        return url.strip() if url else getenv('APIGATEWAY_API_URL', self.__DEFAULT_URL).strip()
+        return str(url).strip() if url else getenv('APIGATEWAY_API_URL', self.__DEFAULT_URL).strip()
 
     def __generate_headers(self):
         """
@@ -75,12 +75,13 @@ class ApiClient:
         :rtype: dict
         """
         return {
-            'Accept': 'application/json',
+            'User-Agent': 'API Gateway: Cliente de API en Python.',
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'Authorization': 'Bearer ' + self.token
         }
 
-    def get(self, resource, headers={}):
+    def get(self, resource, headers=None):
         """
         Realiza una solicitud GET a la API.
 
@@ -91,7 +92,7 @@ class ApiClient:
         """
         return self.__request('GET', resource, headers=headers)
 
-    def delete(self, resource, headers={}):
+    def delete(self, resource, headers=None):
         """
         Realiza una solicitud DELETE a la API.
 
@@ -102,7 +103,7 @@ class ApiClient:
         """
         return self.__request('DELETE', resource, headers=headers)
 
-    def post(self, resource, data=None, headers={}):
+    def post(self, resource, data=None, headers=None):
         """
         Realiza una solicitud POST a la API.
 
@@ -114,7 +115,7 @@ class ApiClient:
         """
         return self.__request('POST', resource, data, headers)
 
-    def put(self, resource, data=None, headers={}):
+    def put(self, resource, data=None, headers=None):
         """
         Realiza una solicitud PUT a la API.
 
@@ -126,7 +127,7 @@ class ApiClient:
         """
         return self.__request('PUT', resource, data, headers)
 
-    def __request(self, method, resource, data=None, headers={}):
+    def __request(self, method, resource, data=None, headers=None):
         """
         Método privado para realizar solicitudes HTTP.
 
@@ -140,14 +141,19 @@ class ApiClient:
         """
         api_path = f'/api/{self.version}{resource}'
         full_url = urllib.parse.urljoin(self.url + '/', api_path.lstrip('/'))
+        headers = headers or {}
         headers = {**self.headers, **headers}
         if data and not isinstance(data, str):
             data = json.dumps(data)
         try:
             response = requests.request(method, full_url, data=data, headers=headers)
-        except ConnectionError as e:
-            raise ApiException(f'Error al conectar con el servidor: {e}')
-        return self.__check_and_return_response(response)
+            return self.__check_and_return_response(response)
+        except requests.exceptions.ConnectionError as error:
+            raise ApiException(f'Error de conexión: {error}')
+        except requests.exceptions.Timeout as error:
+            raise ApiException(f'Error de timeout: {error}')
+        except requests.exceptions.RequestException as error:
+            raise ApiException(f'Error en la solicitud: {error}')
 
     def __check_and_return_response(self, response):
         """
@@ -158,13 +164,16 @@ class ApiClient:
         :rtype: requests.Response
         :raises ApiException: Si la respuesta contiene un error HTTP.
         """
-        if response.status_code != 200:
+        if response.status_code != 200 and self.raise_for_status:
             try:
-                error = response.json()
-                message = error.get('message', '') or error.get('exception', '') or 'Error inesperado'
-            except json.decoder.JSONDecodeError:
-                message = f'Error al decodificar JSON: {response.text}'
-            raise ApiException(message)
+                response.raise_for_status()
+            except requests.exceptions.HTTPError as error:
+                try:
+                    error = response.json()
+                    message = error.get('message', '') or error.get('exception', '') or 'Error desconocido.'
+                except json.decoder.JSONDecodeError:
+                    message = f'Error al decodificar los datos en JSON: {response.text}'
+                raise ApiException(f'Error HTTP: {message}')
         return response
 
 class ApiException(Exception):
@@ -216,13 +225,13 @@ class ApiBase(ABC):
         :raises ApiException: Si falta información de autenticación.
         """
         if 'pass' not in self.auth:
-            raise ApiException('auth.pass missing')
+            raise ApiException('auth.pass missing.')
         if 'rut' not in self.auth['pass']:
-            raise ApiException('auth.pass.rut missing')
+            raise ApiException('auth.pass.rut missing.')
         if self.auth['pass']['rut'] == '' or self.auth['pass']['rut'] is None:
-            raise ApiException('auth.pass.rut empty')
+            raise ApiException('auth.pass.rut empty.')
         if 'clave' not in self.auth['pass']:
-            raise ApiException('auth.pass.clave missing')
+            raise ApiException('auth.pass.clave missing.')
         if self.auth['pass']['clave'] == '' or self.auth['pass']['clave'] is None:
-            raise ApiException('auth.pass.clave empty')
+            raise ApiException('auth.pass.clave empty.')
         return self.auth
