@@ -18,8 +18,7 @@ apigatewaycl.egg-info
 
 # Archivos de tests
 tests/test.env
-*.json
-*.csv
-*.pdf
-*.html
-
+tests/*.json
+tests/*.csv
+tests/*.pdf
+tests/*.html
