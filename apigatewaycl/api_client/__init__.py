@@ -190,6 +190,25 @@ class ApiException(Exception):
         self.message = message
         super().__init__(message, code, params)
 
+    def __str__(self):
+        """
+        Devuelve una representación en cadena del error, proporcionando un contexto claro
+        del problema ocurrido. Esta representación incluye el prefijo "[API Gateway]",
+        seguido del código de error si está presente, y el mensaje de error.
+
+        Si se especifica un código de error, el formato será:
+        "[API Gateway] Error {code}: {message}"
+
+        Si no se especifica un código de error, el formato será:
+        "[API Gateway] {message}"
+
+        :return: Una cadena que representa el error de una manera clara y concisa.
+        """
+        if self.code is not None:
+            return f"[API Gateway] Error {self.code}: {self.message}"
+        else:
+            return f"[API Gateway] {self.message}"
+
 class ApiBase(ABC):
     """
     Clase base para las clases que consumen la API (wrappers).
