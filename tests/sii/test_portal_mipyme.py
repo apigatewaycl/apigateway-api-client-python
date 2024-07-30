@@ -41,7 +41,7 @@ class TestSiiPortalMipymeContribuyentes(unittest.TestCase):
             if self.verbose:
                 print('test_info(): info', info)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
 class TestSiiPortalMipymeEmitidos(unittest.TestCase):
 
@@ -69,7 +69,7 @@ class TestSiiPortalMipymeEmitidos(unittest.TestCase):
             if self.verbose:
                 print('test_documentos(): documentos', documentos)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 3: bajar PDF de un DTE emitido
     def test_pdf(self):
@@ -90,14 +90,16 @@ class TestSiiPortalMipymeEmitidos(unittest.TestCase):
             # usar el folio también funciona, pero es más lento porque se debe
             # buscar en el portal mipyme el código del DTE a partir del folio
             # pdf = self.client.pdf(self.contribuyente_rut, dte, folio)
-            filename = f'mipyme_dte_emitido_test_pdf_{self.contribuyente_rut}_T{dte}F{folio}.pdf'
+            filename = 'mipyme_dte_emitido_test_pdf_%(contribuyente_rut)s_T%(dte)sF%(folio)s.pdf' % {
+                'contribuyente_rut': self.contribuyente_rut, 'dte': dte, 'folio': folio
+            }
             with open(filename, 'wb') as f:
                 f.write(pdf)
             file_remove(filename) # se borra el archivo inmediatamente (sólo se crea como ejemplo)
             if self.verbose:
                 print('test_pdf(): filename', filename)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 4: bajar XML de un DTE emitido (muy similar a caso de PDF)
     def test_xml(self):
@@ -115,14 +117,16 @@ class TestSiiPortalMipymeEmitidos(unittest.TestCase):
             dte = documentos[0]['dte']
             folio = documentos[0]['folio']
             xml = self.client.xml(self.contribuyente_rut, documentos[0]['dte'], documentos[0]['folio'])
-            filename = f'mipyme_dte_emitido_test_xml_{self.contribuyente_rut}_T{dte}F{folio}.xml'
+            filename = 'mipyme_dte_emitido_test_xml_%(contribuyente_rut)s_T%(dte)sF%(folio)s.xml' % {
+                'contribuyente_rut': self.contribuyente_rut, 'dte': dte, 'folio': folio
+            }
             with open(filename, 'w') as f:
                 f.write(xml)
             file_remove(filename) # se borra el archivo inmediatamente (sólo se crea como ejemplo)
             if self.verbose:
                 print('test_xml(): filename', filename)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
 class TestSiiPortalMipymeRecibidos(unittest.TestCase):
 
@@ -134,8 +138,8 @@ class TestSiiPortalMipymeRecibidos(unittest.TestCase):
         cls.client = DteRecibidos(cls.usuario_rut, usuario_clave)
         cls.contribuyente_rut = getenv('TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT', '').strip()
         anio = getenv('TEST_ANIO', datetime.now().strftime("%Y")).strip()
-        cls.fecha_desde = f'{anio}-01-01'
-        cls.fecha_hasta = f'{anio}-01-31'
+        cls.fecha_desde = '%(anio)s-01-01' % {'anio', anio}
+        cls.fecha_hasta = '%(anio)s-01-31' % {'anio', anio}
 
     # CASO 5: documentos recibidos
     def test_documentos(self):
@@ -150,7 +154,7 @@ class TestSiiPortalMipymeRecibidos(unittest.TestCase):
             if self.verbose:
                 print('test_documentos(): documentos', documentos)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 6: bajar PDF de un DTE recibido
     def test_pdf(self):
@@ -172,14 +176,16 @@ class TestSiiPortalMipymeRecibidos(unittest.TestCase):
             # usar el folio también funciona, pero es más lento porque se debe
             # buscar en el portal mipyme el código del DTE a partir del folio
             # pdf = self.client.pdf(self.contribuyente_rut, emisor, dte, folio)
-            filename = f'mipyme_dte_recibido_test_pdf_{self.contribuyente_rut}_{emisor}_T{dte}F{folio}.pdf'
+            filename = 'mipyme_dte_recibido_test_pdf_%(contribuyente_rut)s_%(emisor)s_T%(dte)sF%(folio)s.pdf' % {
+                'contribuyente_rut': self.contribuyente_rut, 'emisor': emisor, 'dte': dte, 'folio': folio
+            }
             with open(filename, 'wb') as f:
                 f.write(pdf)
             file_remove(filename) # se borra el archivo inmediatamente (sólo se crea como ejemplo)
             if self.verbose:
                 print('test_pdf(): filename', filename)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 7: bajar XML de un DTE recibido (muy similar a caso de PDF)
     def test_xml(self):
@@ -198,11 +204,13 @@ class TestSiiPortalMipymeRecibidos(unittest.TestCase):
             dte = documentos[0]['dte']
             folio = documentos[0]['folio']
             xml = self.client.xml(self.contribuyente_rut, emisor, dte, folio)
-            filename = f'mipyme_dte_recibido_test_xml_{self.contribuyente_rut}_{emisor}_T{dte}F{folio}.xml'
+            filename = 'mipyme_dte_recibido_test_xml_(contribuyente_rut)s_%(emisor)s_T%(dte)sF%(folio)s.xml' % {
+                'contribuyente_rut': self.contribuyente_rut, 'emisor': emisor, 'dte': dte, 'folio': folio
+            }
             with open(filename, 'w') as f:
                 f.write(xml)
             file_remove(filename) # se borra el archivo inmediatamente (sólo se crea como ejemplo)
             if self.verbose:
                 print('test_xml(): filename', filename)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})

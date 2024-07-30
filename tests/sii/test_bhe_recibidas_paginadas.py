@@ -41,7 +41,7 @@ class TestSiiBheRecibidasPaginadas(unittest.TestCase):
                 print('test_documentos(): documentos', documentos)
                 print('test_documentos(): len(documentos)', len(documentos))
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # Método privado que obtiene las boletas paginadas del CASO 1
     def _get_documentos(self):

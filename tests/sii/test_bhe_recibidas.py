@@ -40,7 +40,7 @@ class TestSiiBheRecibidas(unittest.TestCase):
             if self.verbose:
                 print('test_documentos(): documentos', documentos)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 2: bajar PDF de una boleta
     def test_pdf(self):
@@ -51,14 +51,16 @@ class TestSiiBheRecibidas(unittest.TestCase):
                 return
             boleta_codigo = documentos[0]['codigo']
             pdf = self.client.pdf(boleta_codigo)
-            filename = f'bhe_recibidas_test_pdf_{self.contribuyente_rut}_{self.periodo}_{boleta_codigo}.pdf'
+            filename = 'bhe_recibidas_test_pdf_%(contribuyente_rut)s_%(periodo)s_%(boleta_codigo)s.pdf' % {
+                'contribuyente_rut': self.contribuyente_rut, 'periodo': self.periodo, 'boleta_codigo': boleta_codigo
+            }
             with open(filename, 'wb') as f:
                 f.write(pdf)
             file_remove(filename) # se borra el archivo inmediatamente (sólo se crea como ejemplo)
             if self.verbose:
                 print('test_pdf(): filename', filename)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 3: observar una boleta
     def test_observar(self):

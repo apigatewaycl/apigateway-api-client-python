@@ -17,16 +17,16 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-"""
+'''
 Módulo para interactuar con el Registro de Compra y Venta del SII.
 
 Para más información sobre la API, consulte la `documentación completa del RCV <https://developers.apigateway.cl/#ef1f7d54-2e86-4732-bb91-d3448b383d66>`_.
-"""
+'''
 
 from .. import ApiBase
 
 class Rcv(ApiBase):
-    """
+    '''
     Cliente específico para interactuar con los endpoints de Registro de Compras y Ventas (RCV) de la API de API Gateway.
 
     Proporciona métodos para obtener resúmenes y detalles de compras y ventas.
@@ -34,13 +34,13 @@ class Rcv(ApiBase):
     :param str usuario_rut: RUT del usuario.
     :param str usuario_clave: Clave del usuario.
     :param kwargs: Argumentos adicionales.
-    """
+    '''
 
     def __init__(self, usuario_rut, usuario_clave, **kwargs):
-        super().__init__(usuario_rut=usuario_rut, usuario_clave=usuario_clave, **kwargs)
+        super().__init__(usuario_rut = usuario_rut, usuario_clave = usuario_clave, **kwargs)
 
-    def compras_resumen(self, receptor, periodo, estado='REGISTRO'):
-        """
+    def compras_resumen(self, receptor, periodo, estado = 'REGISTRO'):
+        '''
         Obtiene un resumen de las compras registradas para un receptor en un periodo específico.
 
         :param str receptor: RUT del receptor de las compras.
@@ -48,15 +48,18 @@ class Rcv(ApiBase):
         :param str estado: Estado de las compras ('REGISTRO', 'PENDIENTE', 'NO_INCLUIR', 'RECLAMADO').
         :return: Respuesta JSON con el resumen de compras.
         :rtype: list[dict]
-        """
+        '''
+        url = '/sii/rcv/compras/resumen/%(receptor)s/%(periodo)s/%(estado)s' % {
+            'receptor': receptor, 'periodo': periodo, 'estado': estado
+        }
         body = {
             'auth': self._get_auth_pass()
         }
-        r = self.client.post(f'/sii/rcv/compras/resumen/{receptor}/{periodo}/{estado}', body)
-        return r.json()
+        response = self.client.retry_request_http('POST', url, data = body)
+        return response.json()
 
-    def compras_detalle(self, receptor, periodo, dte=0, estado='REGISTRO', tipo=None):
-        """
+    def compras_detalle(self, receptor, periodo, dte = 0, estado = 'REGISTRO', tipo = None):
+        '''
         Obtiene detalles de las compras para un receptor en un periodo específico.
 
         :param str receptor: RUT del receptor de las compras.
@@ -66,31 +69,35 @@ class Rcv(ApiBase):
         :param str tipo: Tipo de formato de respuesta ('rcv_csv' o 'rcv').
         :return: Respuesta JSON con detalles de las compras.
         :rtype: list[dict]
-        """
+        '''
+        url = '/sii/rcv/compras/detalle/%(receptor)s/%(periodo)s/%(dte)s/%(estado)s?tipo=%(tipo)s' % {
+            'receptor': receptor, 'periodo': periodo, 'dte': dte, 'estado': estado, 'tipo': tipo
+        }
         tipo = 'rcv_csv' if dte == 0 and estado == 'REGISTRO' else tipo or 'rcv'
         body = {
             'auth': self._get_auth_pass()
         }
-        r = self.client.post(f'/sii/rcv/compras/detalle/{receptor}/{periodo}/{dte}/{estado}?tipo={tipo}', body)
-        return r.json()
+        response = self.client.retry_request_http('POST', url, data = body)
+        return response.json()
 
     def ventas_resumen(self, emisor, periodo):
-        """
+        '''
         Obtiene un resumen de las ventas registradas para un emisor en un periodo específico.
 
         :param str emisor: RUT del emisor de las ventas.
         :param str periodo: Período de tiempo de las ventas.
         :return: Respuesta JSON con el resumen de ventas.
         :rtype: list[dict]
-        """
+        '''
+        url = '/sii/rcv/ventas/resumen/%(emisor)s/%(periodo)s' % {'emisor': emisor, 'periodo': periodo}
         body = {
             'auth': self._get_auth_pass()
         }
-        r = self.client.post(f'/sii/rcv/ventas/resumen/{emisor}/{periodo}', body)
-        return r.json()
+        response = self.client.retry_request_http('POST', url, data = body)
+        return response.json()
 
-    def ventas_detalle(self, emisor, periodo, dte=0, tipo=None):
-        """
+    def ventas_detalle(self, emisor, periodo, dte = 0, tipo = None):
+        '''
         Obtiene detalles de las ventas para un emisor en un periodo específico.
 
         :param str emisor: RUT del emisor de las ventas.
@@ -99,10 +106,13 @@ class Rcv(ApiBase):
         :param str tipo: Tipo de formato de respuesta ('rcv_csv' o 'rcv').
         :return: Respuesta JSON con detalles de las ventas.
         :rtype: list[dict]
-        """
+        '''
         tipo = 'rcv_csv' if dte == 0 else tipo or 'rcv'
+        url = '/sii/rcv/ventas/detalle/%(emisor)s/%(periodo)s/%(dte)s?tipo=%(tipo)s' % {
+            'emisor': emisor, 'periodo': periodo, 'dte': dte, 'tipo': tipo
+        }
         body = {
             'auth': self._get_auth_pass()
         }
-        r = self.client.post(f'/sii/rcv/ventas/detalle/{emisor}/{periodo}/{dte}?tipo={tipo}', body)
-        return r.json()
+        response = self.client.retry_request_http('POST', url, data = body)
+        return response.json()

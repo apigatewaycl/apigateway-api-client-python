@@ -41,7 +41,7 @@ class TestSiiBteEmitidas(unittest.TestCase):
             if self.verbose:
                 print('test_documentos(): documentos', documentos)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 2: bajar HTML de una boleta
     def test_html(self):
@@ -52,14 +52,16 @@ class TestSiiBteEmitidas(unittest.TestCase):
                 return
             boleta_codigo = documentos[0]['codigo']
             html = self.client.html(boleta_codigo)
-            filename = f'bte_emitidas_test_html_{self.contribuyente_rut}_{self.periodo}s_{boleta_codigo}.html'
+            filename = f'bte_emitidas_test_html_%(contribuyente_rut)s_%(periodo)s_%(boleta_codigo)s.html' % {
+                'contribuyente_rut': self.contribuyente_rut, 'periodo': self.periodo, 'boleta_codigo': boleta_codigo
+            }
             with open(filename, 'wb') as f:
                 f.write(html)
             file_remove(filename) # se borra el archivo inmediatamente (sólo se crea como ejemplo)
             if self.verbose:
                 print('test_html(): filename', filename)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 3: emitir boleta
     def test_emitir(self):
@@ -98,7 +100,7 @@ class TestSiiBteEmitidas(unittest.TestCase):
             if self.verbose:
                 print('test_emitir(): emitir', emitir)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 4: anular boleta
     def test_anular(self):
@@ -111,7 +113,7 @@ class TestSiiBteEmitidas(unittest.TestCase):
             if self.verbose:
                 print('test_anular(): anular', anular)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 5: tasa de receptor
     def test_receptor_tasa(self):
@@ -123,4 +125,4 @@ class TestSiiBteEmitidas(unittest.TestCase):
             if self.verbose:
                     print('test_receptor_tasa(): receptor_tasa', receptor_tasa)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})

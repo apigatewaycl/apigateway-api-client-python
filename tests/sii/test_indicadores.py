@@ -38,7 +38,7 @@ class TestSiiIndicadoresUf(unittest.TestCase):
             if self.verbose:
                 print('test_uf_anual(): anual', anual)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 2: obtener valores de la UF de todo un mes (enero del anio)
     def test_uf_mensual(self):
@@ -47,7 +47,7 @@ class TestSiiIndicadoresUf(unittest.TestCase):
             if self.verbose:
                 print('test_uf_mensual(): mensual', mensual)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 3: obtener valores de la UF de un día específico (1ero de enero del ANIO)
     def test_uf_diario(self):
@@ -56,4 +56,4 @@ class TestSiiIndicadoresUf(unittest.TestCase):
             if self.verbose:
                 print('test_uf_diario(): diario', diario)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})

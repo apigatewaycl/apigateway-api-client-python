@@ -40,7 +40,7 @@ class TestSiiContribuyentes(unittest.TestCase):
             if self.verbose:
                 print('test_situacion_tributaria(): situacion_tributaria', situacion_tributaria)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO2: verificación de cédula RUT mediante número de serie
     def test_verificar_rut(self):
@@ -53,4 +53,4 @@ class TestSiiContribuyentes(unittest.TestCase):
             if self.verbose:
                 print('test_verificar_rut(): verificar_rut', verificar_rut)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})

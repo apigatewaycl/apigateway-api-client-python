@@ -60,7 +60,7 @@ class TestSiiRcv(unittest.TestCase):
                         print('test_compras_detalle_rcv(): compras_detalle', compras_detalle)
                     break # sólo se obtiene un detalle para probar la API más rápido
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 2: detalle de compras con tipo "rcv_csv"
     # En este caso se trae el detalle de los documentos en una llamada
@@ -73,7 +73,7 @@ class TestSiiRcv(unittest.TestCase):
             if self.verbose:
                 print('test_compras_detalle_rcv_csv(): compras_detalle', compras_detalle)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 3: resumen de ventas y detalle de ventas con tipo "rcv"
     # En este caso el detalle de los documentos se trae por tipo
@@ -97,7 +97,7 @@ class TestSiiRcv(unittest.TestCase):
                     print('test_ventas_detalle_rcv(): ventas_detalle', ventas_detalle)
                 break # sólo se obtiene un detalle para probar la API más rápido
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 4: detalle de ventas con tipo "rcv_csv"
     # En este caso se trae el detalle de los documentos en una llamada
@@ -110,4 +110,4 @@ class TestSiiRcv(unittest.TestCase):
             if self.verbose:
                 print('test_ventas_detalle_rcv_csv(): ventas_detalle', ventas_detalle)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})

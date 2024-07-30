@@ -35,7 +35,7 @@ class TestSiiActividadesEconomicas(unittest.TestCase):
             if self.verbose:
                 print('test_listado(): listado', listado)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     def test_listado_primera_categoria(self):
         try:
@@ -43,7 +43,7 @@ class TestSiiActividadesEconomicas(unittest.TestCase):
             if self.verbose:
                 print('test_listado_primera_categoria(): listado_primera_categoria', listado_primera_categoria)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     def test_listado_segunda_categoria(self):
         try:
@@ -51,4 +51,4 @@ class TestSiiActividadesEconomicas(unittest.TestCase):
             if self.verbose:
                 print('test_listado_segunda_categoria(): listado_segunda_categoria', listado_segunda_categoria)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})

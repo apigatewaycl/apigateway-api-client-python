@@ -36,7 +36,7 @@ class TestSiiDteContribuyentes(unittest.TestCase):
             if self.verbose:
                 print('test_autorizacion(): autorizacion', autorizacion)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
 class TestSiiDteEmitidos(unittest.TestCase):
 
@@ -70,4 +70,4 @@ class TestSiiDteEmitidos(unittest.TestCase):
             if self.verbose:
                 print('test_verificar(): verificar', verificar)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})

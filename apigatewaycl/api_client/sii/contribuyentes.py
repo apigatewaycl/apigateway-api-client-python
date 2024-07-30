@@ -17,39 +17,41 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-"""
+'''
 Módulo para obtener datos de los contribuyentes a través del SII.
 
 Para más información sobre la API, consulte la `documentación completa de los Contribuyentes <https://developers.apigateway.cl/#c88f90b6-36bb-4dc2-ba93-6e418ff42098>`_.
-"""
+'''
 
 from .. import ApiBase
 
 class Contribuyentes(ApiBase):
-    """
+    '''
     Cliente específico para interactuar con los endpoints de contribuyentes de la API de API Gateway.
 
     Hereda de ApiBase y utiliza su funcionalidad para realizar solicitudes a la API.
-    """
+    '''
 
     def situacion_tributaria(self, rut):
-        """
+        '''
         Obtiene la situación tributaria de un contribuyente.
 
         :param str rut: RUT del contribuyente.
         :return: Respuesta JSON con la situación tributaria del contribuyente.
         :rtype: dict
-        """
-        r = self.client.get(f'/sii/contribuyentes/situacion_tributaria/tercero/{rut}')
-        return r.json()
+        '''
+        url = '/sii/contribuyentes/situacion_tributaria/tercero/%(rut)s' % {'rut': rut}
+        response = self.client.retry_request_http('GET', url)
+        return response.json()
 
     def verificar_rut(self, serie):
-        """
+        '''
         Verifica el RUT de un contribuyente.
 
         :param str serie: Serie del RUT a verificar.
         :return: Respuesta JSON con la verificación del RUT.
         :rtype: dict
-        """
-        r = self.client.get(f'/sii/contribuyentes/rut/verificar/{serie}')
-        return r.json()
+        '''
+        url = '/sii/contribuyentes/rut/verificar/%(serie)s' % {'serie': serie}
+        response = self.client.retry_request_http('GET', url)
+        return response.json()

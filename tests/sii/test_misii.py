@@ -38,4 +38,4 @@ class TestSiiRcv(unittest.TestCase):
             if self.verbose:
                 print('test_misii_contribuyente_datos(): datos', datos)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})

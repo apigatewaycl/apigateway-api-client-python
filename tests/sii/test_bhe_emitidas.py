@@ -42,7 +42,7 @@ class TestSiiBheEmitidas(unittest.TestCase):
             if self.verbose:
                 print('test_documentos(): documentos', documentos)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 2: bajar PDF de una boleta
     def test_pdf(self):
@@ -53,14 +53,16 @@ class TestSiiBheEmitidas(unittest.TestCase):
                 return
             boleta_codigo = documentos[0]['codigo']
             html = self.client.pdf(boleta_codigo)
-            filename = f'bhe_emitidas_test_pdf_{self.contribuyente_rut}_{self.periodo}s_{boleta_codigo}.pdf'
+            filename = 'bhe_emitidas_test_pdf_%(contribuyente_rut)s_%(periodo)ss_%(boleta_codigo)s.pdf' % {
+                'contribuyente_rut': self.contribuyente_rut, 'periodo': self.periodo, 'boleta_codigo': boleta_codigo
+            }
             with open(filename, 'wb') as f:
                 f.write(html)
             file_remove(filename) # se borra el archivo inmediatamente (sólo se crea como ejemplo)
             if self.verbose:
                 print('test_pdf(): filename', filename)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 3: emitir una boleta
     def test_emitir(self):
@@ -100,7 +102,7 @@ class TestSiiBheEmitidas(unittest.TestCase):
             if self.verbose:
                 print('test_emitir(): emitir', emitir)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 4: enviar por email
     def test_email(self):
@@ -114,7 +116,7 @@ class TestSiiBheEmitidas(unittest.TestCase):
             if self.verbose:
                 print('test_email(): email', email)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
 
     # CASO 5: anular
     def test_anular(self):
@@ -131,4 +133,4 @@ class TestSiiBheEmitidas(unittest.TestCase):
             if self.verbose:
                 print('test_anular(): anular', anular)
         except ApiException as e:
-            self.fail(f"ApiException: {e}")
+            self.fail("ApiException: %(e)s" % {'e': e})
