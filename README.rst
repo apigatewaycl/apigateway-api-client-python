@@ -92,15 +92,15 @@ necesarias para ejecutar estas pruebas.
 Estas pruebas utilizan `unittest`, se ejecutan con el archivo `run.py`, y dependiendo de cómo se configure
 `test.env`, se pueden omitir ciertas pruebas. Asegúrate de definir las siguientes variables en `test.env`,
 o no podrás efectuar la mayoría de las pruebas:
- - `APIGATEWAY_API_URL`*
- - `APIGATEWAY_API_TOKEN`*
+
+ - `APIGATEWAY_API_URL`
+ - `APIGATEWAY_API_TOKEN`
  - `TEST_CONTRIBUYENTE_RUT`
  - `TEST_CONTRIBUYENTE_CLAVE`
  - `TEST_USUARIO_RUT`
  - `TEST_USUARIO_CLAVE`
  - `TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT`
 
-(*): Variable de entorno requerida.
 Para ejecutar las pruebas unitarias, debes ejecutar el siguiente código en consola desde la raíz del proyecto:
 
 .. code:: shell
@@ -113,23 +113,23 @@ Si quieres ejecutar una prueba específica, deberás especificar el nombre y rut
 
     python tests/run.py sii.test_actividades_economicas.TestSiiActividadesEconomicas.test_listado
 
-Para ejecutar otros ejemplos, deberás reemplazar desde `test_actividades_economicas` para adelante por el nombre 
+Para ejecutar otros ejemplos, deberás reemplazar desde `test_actividades_economicas` para adelante por el nombre
 y ruta de alguna de las otras pruebas descritas posteriormente.
 
 A continuación se pondrán instrucciones de cómo probar el cliente de API de Python:
 
 * `test_actividades_economicas`:
-    * `test_listado()`: 
+    * `test_listado()`:
         - Prueba que permite obtener un listado de todas las Actividades económicas del SII por omisión.
         - Ruta completa: `sii.test_actividades_economicas.TestSiiActividadesEconomicas.test_listado`
         - Variables necesarias: `Ninguna`
         - Variable de ejecución: `Ninguna`
-    * `test_listado_primera_categoria()`: 
+    * `test_listado_primera_categoria()`:
         - Prueba que permite obtener un listado de todas las Actividades económicas de primera categoría del SII.
         - Ruta completa: `sii.test_actividades_economicas.TestSiiActividadesEconomicas.test_listado_primera_categoria`
         - Variables necesarias: `Ninguna`
         - Variable de ejecución: `Ninguna`
-    * `test_listado_segunda_categoria()`: 
+    * `test_listado_segunda_categoria()`:
         - Prueba que permite obtener un listado de todas las Actividades económicas de segunda categoría del SII.
         - Ruta completa: `sii.test_actividades_economicas.TestSiiActividadesEconomicas.test_listado_segunda_categoria`
         - Variables necesarias: `Ninguna`
