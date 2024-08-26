@@ -19,8 +19,9 @@
 
 from os import getenv
 from requests.exceptions import Timeout, ConnectionError, RequestException, HTTPError
+from urllib.parse import urljoin
+import re
 import requests
-import urllib
 import json
 import time
 from abc import ABC
@@ -143,7 +144,7 @@ class ApiClient:
         :raises ApiException: Si el método HTTP no es soportado o si hay un error de conexión.
         '''
         api_path = '/api/%(version)s%(resource)s' % {'version': self.version, 'resource': resource}
-        full_url = urllib.parse.urljoin(self.url + '/', api_path.lstrip('/'))
+        full_url = urljoin(self.url + '/', api_path.lstrip('/'))
         headers = headers or {}
         headers = {**self.headers, **headers}
         if data and not isinstance(data, str):
@@ -179,6 +180,29 @@ class ApiClient:
                 raise ApiException('Error HTTP: %(message)s' % {'message': message})
         return response
 
+    def rebuild_url(self, url):
+        '''
+        Método que reconstruye una URL usando expresiones regulares (regex), añadiendo o
+        quitando el parámetro 'auth_cache=0'.
+
+        :param str url: URL a modificar.
+        :return: URL modificada con (o sin) 'auth_cache=0'.
+        :rtype: str
+        '''
+        # Define un patrón, que en este caso serán todas las posibilidades con auth_cache=0.
+        patron = r'([?&])auth_cache=0(&|$)'
+
+        if (re.search(patron, url)):
+            # Remueve el patrón definido.
+            nuevo_url = re.sub(patron, lambda m: m.group(1) if m.group(2) == '&' else '', url)
+            # Remueve los ? y & sobrantes.
+            nuevo_url = re.sub(r'[?&]$', '', nuevo_url)
+        else:
+            # Añade al URL auth_cache=0.
+            nuevo_url = '%(url_base)s%(url_param)s' % { 'url_base' : url, 'url_param' : '&auth_cache=0' if '?' in url else '?auth_cache=0' }
+
+        return nuevo_url
+
     def retry_request_http(self, method, url, data = None, headers = None):
         '''
         Método que reintenta un HTTP request en caso de que la conexión falle.
@@ -211,7 +235,7 @@ class ApiClient:
                     log_message = 'No se ha ingresado un método HTTP válido. El método ingresado es %(method)s' % { 'method': method }
                     raise ApiException(log_message)
                 if (response.status_code == 401):
-                    url += "" if url.endswith("?auth_cache=0") else "?auth_cache=0"
+                    url = self.rebuild_url(url)
                     raise ConnectionError('Ocurrió un error de conexión HTTP 401. Reintentando...')
                 break
             except (ConnectionError, Timeout) as e:
@@ -223,7 +247,8 @@ class ApiClient:
                     log_message = 'No fue posible establecer conexión con API Gateway: %(error)s' % {'error', str(e)}
                     raise ApiException(log_message)
         return response
-    
+
+
 
 class ApiException(Exception):
     '''
