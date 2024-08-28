@@ -213,7 +213,7 @@ class ApiClient:
         # Define un patrón, que en este caso serán todas las posibilidades con auth_cache=0.
         patron = r'([?&])auth_cache=0(&|$)'
 
-        if (re.search(patron, url)):
+        if re.search(patron, url):
             # Remueve el patrón definido.
             nuevo_url = re.sub(patron, lambda m: m.group(1) if m.group(2) == '&' else '', url)
         else:
@@ -237,37 +237,36 @@ class ApiClient:
         :raises ApiException: Si el número de reintentos es excedido, o si el método ingresado no es válido.
         '''
         wait_time = 1
-        n_max_attempts = 4
+        n_max_attempts = 5
         n_current_attempts = 1
 
         while True:
             try:
-                if (method == 'POST'):
+                if method == 'POST':
                     response = self.post(url, data = data, headers = headers)
-                elif (method == 'PUT'):
+                elif method == 'PUT':
                     response = self.put(url, data = data, headers = headers)
-                elif (method == 'GET'):
+                elif method == 'GET':
                     response = self.get(url, headers = headers)
-                elif (method == 'DELETE'):
+                elif method == 'DELETE':
                     response = self.delete(url, headers = headers)
                 else:
                     log_message = 'No se ha ingresado un método HTTP válido. El método ingresado es %(method)s' % { 'method': method }
                     raise ApiException(log_message)
-                if (response.status_code == 401):
-                    url = self.rebuild_url(url)
-                    raise ConnectionError('Ocurrió un error de conexión HTTP 401. Reintentando...')
+                if response.status_code == 401:
+                    if 'X-Stats-NavegadorSessionProblem' in response.headers and response.headers['X-Stats-NavegadorSessionProblem'] == '1':
+                        url = self.rebuild_url(url)
+                        raise ConnectionError('Ocurrió un error de conexión HTTP 401.')
                 break
             except (ConnectionError, Timeout) as e:
-                if (n_current_attempts) <= n_max_attempts:
+                if n_current_attempts <= n_max_attempts:
                     time.sleep(wait_time)
                     n_current_attempts += 1
                     wait_time += 2
                 else:
-                    log_message = 'No fue posible establecer conexión con API Gateway: %(error)s' % {'error', str(e)}
+                    log_message = 'No fue posible establecer conexión con API Gateway: %(error)s' % {'error': str(e)}
                     raise ApiException(log_message)
         return response
-
-
 
 class ApiException(Exception):
     '''
