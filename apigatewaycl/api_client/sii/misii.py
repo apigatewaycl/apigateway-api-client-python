@@ -45,5 +45,5 @@ class Contribuyente(ApiBase):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('post', '/sii/misii/contribuyente/datos', data = body)
+        response = self.client.retry_request_http('POST', '/sii/misii/contribuyente/datos', data = body)
         return response.json()
