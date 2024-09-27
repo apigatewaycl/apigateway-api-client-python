@@ -22,7 +22,7 @@ from os import getenv
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.misii import Contribuyente
 
-class TestSiiRcv(unittest.TestCase):
+class TestMiSii(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):

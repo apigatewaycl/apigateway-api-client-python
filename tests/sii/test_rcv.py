@@ -47,18 +47,21 @@ class TestSiiRcv(unittest.TestCase):
                 )
                 if self.verbose:
                     print('test_compras_detalle_rcv(): compras_resumen', compras_resumen)
-                for resumen in compras_resumen['data']:
-                    if resumen['dcvTipoIngresoDoc'] != 'DET_ELE' or resumen['rsmnTotDoc'] == 0:
-                        continue
-                    compras_detalle = self.client.compras_detalle(
-                        self.contribuyente_rut,
-                        self.periodo,
-                        resumen['rsmnTipoDocInteger'],
-                        estado
-                    )
-                    if self.verbose:
-                        print('test_compras_detalle_rcv(): compras_detalle', compras_detalle)
-                    break # sólo se obtiene un detalle para probar la API más rápido
+                if compras_resumen['data'] is not None:
+                    for resumen in compras_resumen['data']:
+                        if resumen['dcvTipoIngresoDoc'] != 'DET_ELE' or resumen['rsmnTotDoc'] == 0:
+                            continue
+                        compras_detalle = self.client.compras_detalle(
+                            self.contribuyente_rut,
+                            self.periodo,
+                            resumen['rsmnTipoDocInteger'],
+                            estado
+                        )
+                        if self.verbose:
+                            print('test_compras_detalle_rcv(): compras_detalle', compras_detalle)
+                        break # sólo se obtiene un detalle para probar la API más rápido
+                else:
+                    print('test_compras_detalle_rcv(): compras_resumen: Libro compras RCV vacío.')
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})
 
@@ -85,17 +88,20 @@ class TestSiiRcv(unittest.TestCase):
             )
             if self.verbose:
                 print('test_ventas_detalle_rcv(): ventas_resumen', ventas_resumen)
-            for resumen in ventas_resumen['data']:
-                if resumen['dcvTipoIngresoDoc'] != 'DET_ELE' or resumen['rsmnTotDoc'] == 0:
-                    continue
-                ventas_detalle = self.client.ventas_detalle(
-                    self.contribuyente_rut,
-                    self.periodo,
-                    resumen['rsmnTipoDocInteger']
-                )
-                if self.verbose:
-                    print('test_ventas_detalle_rcv(): ventas_detalle', ventas_detalle)
-                break # sólo se obtiene un detalle para probar la API más rápido
+            if ventas_resumen['data'] is not None:
+                for resumen in ventas_resumen['data']:
+                    if resumen['dcvTipoIngresoDoc'] != 'DET_ELE' or resumen['rsmnTotDoc'] == 0:
+                        continue
+                    ventas_detalle = self.client.ventas_detalle(
+                        self.contribuyente_rut,
+                        self.periodo,
+                        resumen['rsmnTipoDocInteger']
+                    )
+                    if self.verbose:
+                        print('test_ventas_detalle_rcv(): ventas_detalle', ventas_detalle)
+                    break # sólo se obtiene un detalle para probar la API más rápido
+            else:
+                print('test_ventas_detalle_rcv(): ventas_resumen: Libro ventas RCV vacío.')
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})
 

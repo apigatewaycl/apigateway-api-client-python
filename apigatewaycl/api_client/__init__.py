@@ -328,17 +328,15 @@ class ApiBase(ABC):
         '''
         identificador = kwargs.get('identificador')
         clave = kwargs.get('clave')
-        if self.__is_auth_pass(identificador):
-            if identificador and clave:
+        if identificador and clave:
+            if self.__is_auth_pass(identificador):
                 self.auth = {'pass': {'rut': identificador, 'clave': clave}}
-        elif self.__is_auth_cert_data(identificador):
-            if identificador and clave:
+            elif self.__is_auth_cert_data(identificador):
                 self.auth = {'cert': {'cert-data': identificador, 'pkey-data': clave}}
-        elif self.__is_auth_file_data(identificador):
-            if identificador and clave:
+            elif self.__is_auth_file_data(identificador):
                 self.auth = {'cert': {'file-data': identificador, 'file-pass': clave}}
-        else:
-            raise ApiException('No se han proporcionado las credenciales de autentificación.')
+            else:
+                raise ApiException('No se han proporcionado las credenciales de autentificación.')
 
     def __is_auth_pass(self, rut):
         """
@@ -368,7 +366,7 @@ class ApiBase(ABC):
         if rut is None:
             return False
         # Expresión regular para validar el formato del RUT chileno
-        patron = re.compile(r'^(\d{1,3}\.)?(\d{3}\.)?(\d{3,4})-([\dkK])$')
+        patron = re.compile(r'^(\d{1,3}\.?)(\d{3}\.?)(\d{3,4})-([\dkK])$')
         return bool(patron.match(rut))
 
     def __is_auth_file_data(self, firma_electronica_base64):
