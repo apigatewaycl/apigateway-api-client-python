@@ -28,12 +28,12 @@ class TestSiiBheEmitidas(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.usuario_rut = getenv('TEST_USUARIO_RUT', '').strip()
-        usuario_clave = getenv('TEST_USUARIO_CLAVE', '').strip()
-        cls.client = BheEmitidas(cls.usuario_rut, usuario_clave)
+        cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
+        clave = getenv('TEST_USUARIO_CLAVE', '').strip()
+        cls.client = BheEmitidas(cls.identificador, clave)
         cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
         cls.receptor_rut = getenv('TEST_BHE_EMITIDAS_RECEPTOR_RUT', '').strip()
-        cls.contribuyente_rut = cls.usuario_rut
+        cls.contribuyente_rut = getenv('TEST_USUARIO_RUT', '').strip()
 
     # CASO 1: boletas del periodo
     def test_documentos(self):

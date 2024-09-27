@@ -18,14 +18,15 @@
 #
 
 from os import getenv
-import urllib.parse
 from requests.exceptions import Timeout, ConnectionError, RequestException, HTTPError
+from abc import ABC
+import urllib.parse
 import urllib
-import re
 import requests
+import base64
 import json
 import time
-from abc import ABC
+import re
 
 class ApiClient:
     '''
@@ -325,10 +326,121 @@ class ApiBase(ABC):
 
         :param dict kwargs: Argumentos clave-valor para configurar la autenticación.
         '''
-        usuario_rut = kwargs.get('usuario_rut')
-        usuario_clave = kwargs.get('usuario_clave')
-        if usuario_rut and usuario_clave:
-            self.auth = {'pass': {'rut': usuario_rut, 'clave': usuario_clave}}
+        identificador = kwargs.get('identificador')
+        clave = kwargs.get('clave')
+        if self.__is_auth_pass(identificador):
+            if identificador and clave:
+                self.auth = {'pass': {'rut': identificador, 'clave': clave}}
+        elif self.__is_auth_cert_data(identificador):
+            if identificador and clave:
+                self.auth = {'cert': {'cert-data': identificador, 'pkey-data': clave}}
+        elif self.__is_auth_file_data(identificador):
+            if identificador and clave:
+                self.auth = {'cert': {'file-data': identificador, 'file-pass': clave}}
+        else:
+            raise ApiException('No se han proporcionado las credenciales de autentificación.')
+
+    def __is_auth_pass(self, rut):
+        """
+        Valida la estructura de un RUT chileno utilizando una expresión regular.
+
+        Este método verifica que el RUT cumpla con el formato estándar chileno, que incluye
+        puntos como separadores de miles opcionales y un guion antes del dígito verificador.
+        El dígito verificador puede ser un número o la letra 'K'.
+
+        **Ejemplos de RUT válidos:**
+            - 12.345.678-5
+            - 12345678-5
+            - 9.876.543-K
+            - 9876543-K
+
+        **Ejemplos de RUT inválidos:**
+            - 12.345.678-9 (dígito verificador incorrecto)
+            - 12345678- (falta dígito verificador)
+            - 12345-6 (formato incorrecto)
+            - 12.345.6785 (falta guion)
+            - abcdefgh-i (caracteres no permitidos)
+
+        :param str rut: El RUT a validar.
+        :return: True si el RUT tiene un formato válido, False en caso contrario.
+        :rtype: bool
+        """
+        if rut is None:
+            return False
+        # Expresión regular para validar el formato del RUT chileno
+        patron = re.compile(r'^(\d{1,3}\.)?(\d{3}\.)?(\d{3,4})-([\dkK])$')
+        return bool(patron.match(rut))
+
+    def __is_auth_file_data(self, firma_electronica_base64):
+        """
+        Verifica si una cadena es una cadena codificada en Base64 válida.
+
+        :param str firma_electronica_base64: La cadena a verificar.
+        :return: True si la cadena es válida en Base64, False en caso contrario.
+        :rtype: bool
+        """
+        if firma_electronica_base64 is None:
+            return False
+        try:
+            # Asegúrate de que la longitud de la cadena sea múltiplo de 4
+            if len(firma_electronica_base64) % 4 != 0:
+                return False
+            # Intenta decodificar la cadena con validación estricta
+            base64.b64decode(firma_electronica_base64, validate=True)
+            return True
+        except (base64.binascii.Error, ValueError):
+            return False
+
+    def __is_auth_cert_data(self, pem_str):
+        """
+        Valida si una cadena tiene formato PEM válido.
+
+        El formato PEM debe cumplir con los siguientes criterios:
+            - Comienza con una línea "-----BEGIN [LABEL]-----"
+            - Termina con una línea "-----END [LABEL]-----"
+            - Contiene contenido Base64 válido entre las líneas BEGIN y END
+
+        **Ejemplos de PEM Válidos:**
+            ```
+            -----BEGIN CERTIFICATE-----
+            MIIDdzCCAl+gAwIBAgIEbGzVnzANBgkqhkiG9w0BAQsFADBvMQswCQYDVQQGEwJV
+            ...
+            -----END CERTIFICATE-----
+            ```
+
+        **Ejemplos de PEM Inválidos:**
+            - Falta la línea de inicio o fin.
+            - Contenido no codificado en Base64.
+            - Etiquetas de BEGIN y END que no coinciden.
+
+        :param str pem_str: La cadena a validar.
+        :return: True si la cadena tiene formato PEM válido, False en caso contrario.
+        :rtype: bool
+        """
+        if pem_str is None:
+            return False
+        # Expresión regular para validar el formato PEM
+        patron = re.compile(
+            r'-----BEGIN ([A-Z ]+)-----\s+'
+            r'([A-Za-z0-9+/=\s]+)'
+            r'-----END \1-----$',
+            re.MULTILINE
+        )
+
+        # Intentar hacer match con el patrón
+        match = patron.fullmatch(pem_str.strip())
+        if not match:
+            return False
+
+        # Extraer el contenido Base64
+        base64_content = match.group(2).replace('\n', '').replace('\r', '').strip()
+
+        # Verificar que el contenido Base64 sea válido
+        try:
+            base64.b64decode(base64_content, validate=True)
+            return True
+        except (base64.binascii.Error, ValueError):
+            return False
 
     def _get_auth_pass(self):
         '''
@@ -338,14 +450,25 @@ class ApiBase(ABC):
         :rtype: dict
         :raises ApiException: Si falta información de autenticación.
         '''
-        if 'pass' not in self.auth:
-            raise ApiException('auth.pass missing.')
-        if 'rut' not in self.auth['pass']:
-            raise ApiException('auth.pass.rut missing.')
-        if self.auth['pass']['rut'] == '' or self.auth['pass']['rut'] is None:
-            raise ApiException('auth.pass.rut empty.')
-        if 'clave' not in self.auth['pass']:
-            raise ApiException('auth.pass.clave missing.')
-        if self.auth['pass']['clave'] == '' or self.auth['pass']['clave'] is None:
-            raise ApiException('auth.pass.clave empty.')
+        if 'pass' in self.auth:
+            if 'rut' not in self.auth['pass']:
+                raise ApiException('auth.pass.rut missing.')
+            if self.auth['pass']['rut'] == '' or self.auth['pass']['rut'] is None:
+                raise ApiException('auth.pass.rut empty.')
+            if 'clave' not in self.auth['pass']:
+                raise ApiException('auth.pass.clave missing.')
+            if self.auth['pass']['clave'] == '' or self.auth['pass']['clave'] is None:
+                raise ApiException('auth.pass.clave empty.')
+        elif 'cert' in self.auth:
+            if 'cert-data' in self.auth['cert'] and self.auth['cert']['cert-data'] == '' and self.auth['cert']['cert-data'] is None:
+                raise ApiException('auth.cert.cert-data empty.')
+            if 'pkey-data' in self.auth['cert'] and self.auth['cert']['pkey-data'] == '' and self.auth['cert']['pkey-data'] is None:
+                raise ApiException('auth.cert.pkey-data empty.')
+            if 'file-data' in self.auth['cert'] and self.auth['cert']['file-data'] == '' and self.auth['cert']['file-data'] is None:
+                raise ApiException('auth.cert.file-data empty.')
+            if 'file-pass' in self.auth['cert'] and self.auth['cert']['file-pass'] == '' and self.auth['cert']['file-pass'] is None:
+                raise ApiException('auth.cert.file-pass empty.')
+        else:
+            raise ApiException('auth.pass or auth.cert missing.')
         return self.auth
+

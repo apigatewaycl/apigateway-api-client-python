@@ -30,19 +30,19 @@ class PortalMipyme(ApiBase, ABC):
     '''
     Base para los clientes específicos del Portal Mipyme.
 
-    :param str usuario_rut: RUT del usuario.
-    :param str usuario_clave: Clave del usuario.
+    :param str identificador: Identificador del contribuyente.
+    :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
     '''
-    def __init__(self, usuario_rut, usuario_clave, **kwargs):
-        super().__init__(usuario_rut = usuario_rut, usuario_clave = usuario_clave, **kwargs)
+    def __init__(self, identificador, clave, **kwargs):
+        super().__init__(identificador = identificador, clave = clave, **kwargs)
 
 class Contribuyentes(PortalMipyme):
     '''
     Cliente específico para interactuar con los endpoints de contribuyentes del Portal Mipyme.
 
-    :param str usuario_rut: RUT del usuario.
-    :param str usuario_clave: Clave del usuario.
+    :param str identificador: Identificador del contribuyente.
+    :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
     '''
     def info(self, contribuyente, emisor, dte = 33):
@@ -69,8 +69,8 @@ class Dte(PortalMipyme):
     Base para los clientes específicos de DTE del Portal Mipyme.
     Incluye constantes para diferentes estados de DTE.
 
-    :param str usuario_rut: RUT del usuario.
-    :param str usuario_clave: Clave del usuario.
+    :param str identificador: Identificador del contribuyente.
+    :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
     '''
     ESTADO_EMITIDO = 'EMI' # Documento emitido
@@ -106,8 +106,8 @@ class DteEmitidos(Dte):
     '''
     Cliente específico para gestionar DTE emitidos en el Portal Mipyme.
 
-    :param str usuario_rut: RUT del usuario.
-    :param str usuario_clave: Clave del usuario.
+    :param str identificador: Identificador del contribuyente.
+    :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
     '''
     def documentos(self, emisor, filtros = {}):
@@ -172,8 +172,8 @@ class DteRecibidos(Dte):
     Cliente específico para gestionar DTE recibidos en el Portal Mipyme.
     Proporciona métodos para obtener documentos, PDF y XML de DTE recibidos.
 
-    :param str usuario_rut: RUT del usuario.
-    :param str usuario_clave: Clave del usuario.
+    :param str identificador: Identificador del contribuyente.
+    :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
     '''
 

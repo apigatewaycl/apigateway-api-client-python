@@ -31,8 +31,8 @@ class BheEmitidas(ApiBase):
 
     Provee métodos para emitir, anular, y consultar información relacionada con BHEs.
 
-    :param str usuario_rut: RUT del usuario.
-    :param str usuario_clave: Clave del usuario.
+    :param str identificador: Identificador del contribuyente.
+    :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
     '''
 
@@ -45,8 +45,8 @@ class BheEmitidas(ApiBase):
     ANULACION_CAUSA_SIN_PRESTACION = 2
     ANULACION_CAUSA_ERROR_DIGITACION = 3
 
-    def __init__(self, usuario_rut, usuario_clave, **kwargs):
-        super().__init__(usuario_rut = usuario_rut, usuario_clave = usuario_clave, **kwargs)
+    def __init__(self, identificador, clave, **kwargs):
+        super().__init__(identificador = identificador, clave = clave, **kwargs)
 
     def documentos(self, emisor, periodo):
         '''
@@ -137,13 +137,13 @@ class BheRecibidas(ApiBase):
 
     Provee métodos para obtener documentos, obtener PDF y observar BHE recibidas.
 
-    :param str usuario_rut: RUT del usuario.
-    :param str usuario_clave: Clave del usuario.
+    :param str identificador: Identificador del contribuyente.
+    :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
     '''
 
-    def __init__(self, usuario_rut, usuario_clave, **kwargs):
-        super().__init__(usuario_rut = usuario_rut, usuario_clave = usuario_clave, **kwargs)
+    def __init__(self, identificador, clave, **kwargs):
+        super().__init__(identificador = identificador, clave = clave, **kwargs)
 
     def documentos(self, receptor, periodo, pagina = None, pagina_sig_codigo = None):
         '''
@@ -164,7 +164,7 @@ class BheRecibidas(ApiBase):
         }
         if pagina is not None:
             url += '?pagina=%(pagina)s&pagina_sig_codigo=%(pagina_sig_codigo)s' % {
-                'pagina': pagina, 
+                'pagina': pagina,
                 'pagina_sig_codigo': pagina_sig_codigo or "00000000000000"
             }
         response = self.client.retry_request_http('POST', url, data = body)

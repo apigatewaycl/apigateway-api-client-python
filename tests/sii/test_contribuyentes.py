@@ -31,7 +31,7 @@ class TestSiiContribuyentes(unittest.TestCase):
 
     # CASO 1: situación tributaria
     def test_situacion_tributaria(self):
-        contribuyente_rut = getenv('TEST_CONTRIBUYENTE_RUT', '').strip()
+        contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
         if contribuyente_rut == '':
             print('test_situacion_tributaria(): no probó funcionalidad.')
             return

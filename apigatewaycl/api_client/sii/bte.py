@@ -31,13 +31,13 @@ class BteEmitidas(ApiBase):
 
     Provee métodos para emitir, anular, y consultar información relacionada con BTEs.
 
-    :param str usuario_rut: RUT del usuario.
-    :param str usuario_clave: Clave del usuario.
+    :param str identificador: Identificador del contribuyente.
+    :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
     '''
 
-    def __init__(self, usuario_rut, usuario_clave, **kwargs):
-        super().__init__(usuario_rut = usuario_rut, usuario_clave = usuario_clave, **kwargs)
+    def __init__(self, identificador, clave, **kwargs):
+        super().__init__(identificador = identificador, clave = clave, **kwargs)
 
     def documentos(self, emisor, periodo):
         '''

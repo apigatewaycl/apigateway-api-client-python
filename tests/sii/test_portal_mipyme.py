@@ -28,16 +28,16 @@ class TestSiiPortalMipymeContribuyentes(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.usuario_rut = getenv('TEST_USUARIO_RUT', '').strip()
-        usuario_clave = getenv('TEST_USUARIO_CLAVE', '').strip()
-        cls.client = Contribuyentes(cls.usuario_rut, usuario_clave)
+        cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
+        clave = getenv('TEST_USUARIO_CLAVE', '').strip()
+        cls.client = Contribuyentes(cls.identificador, clave)
         cls.contribuyente_rut = getenv('TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT', '').strip()
 
     # CASO 1: datos de un contribuyente
     def test_info(self):
         dte = getenv('TEST_PORTAL_MIPYME_DTE', '33').strip()
         try:
-            info = self.client.info(self.usuario_rut, self.contribuyente_rut, dte)
+            info = self.client.info(self.identificador, self.contribuyente_rut, dte)
             if self.verbose:
                 print('test_info(): info', info)
         except ApiException as e:
@@ -48,9 +48,9 @@ class TestSiiPortalMipymeEmitidos(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.usuario_rut = getenv('TEST_USUARIO_RUT', '').strip()
-        usuario_clave = getenv('TEST_USUARIO_CLAVE', '').strip()
-        cls.client = DteEmitidos(cls.usuario_rut, usuario_clave)
+        cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
+        clave = getenv('TEST_USUARIO_CLAVE', '').strip()
+        cls.client = DteEmitidos(cls.identificador, clave)
         cls.contribuyente_rut = getenv('TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT', '').strip()
         anio = getenv('TEST_ANIO', datetime.now().strftime("%Y")).strip()
         cls.fecha_desde = f'{anio}-01-01'
@@ -133,9 +133,9 @@ class TestSiiPortalMipymeRecibidos(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.usuario_rut = getenv('TEST_USUARIO_RUT', '').strip()
-        usuario_clave = getenv('TEST_USUARIO_CLAVE', '').strip()
-        cls.client = DteRecibidos(cls.usuario_rut, usuario_clave)
+        cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
+        clave = getenv('TEST_USUARIO_CLAVE', '').strip()
+        cls.client = DteRecibidos(cls.identificador, clave)
         cls.contribuyente_rut = getenv('TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT', '').strip()
         anio = getenv('TEST_ANIO', datetime.now().strftime("%Y")).strip()
         cls.fecha_desde = '%(anio)s-01-01' % {'anio', anio}

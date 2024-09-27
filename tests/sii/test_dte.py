@@ -27,7 +27,7 @@ class TestSiiDteContribuyentes(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_RUT', '').strip()
+        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
         cls.client = Contribuyentes()
 
     def test_autorizacion(self):
@@ -43,7 +43,7 @@ class TestSiiDteEmitidos(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_RUT', '').strip()
+        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
         cls.client = Emitidos(cls.contribuyente_rut, contribuyente_clave)
 

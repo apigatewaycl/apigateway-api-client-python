@@ -32,8 +32,8 @@ class Contribuyente(ApiBase):
     Hereda de ApiBase y utiliza su funcionalidad para realizar solicitudes a la API.
     '''
 
-    def __init__(self, usuario_rut, usuario_clave, **kwargs):
-        super().__init__(usuario_rut = usuario_rut, usuario_clave = usuario_clave, **kwargs)
+    def __init__(self, identificador, clave, **kwargs):
+        super().__init__(identificador = identificador, clave = clave, **kwargs)
 
     def datos(self):
         '''
