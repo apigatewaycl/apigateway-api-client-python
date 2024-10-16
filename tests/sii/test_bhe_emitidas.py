@@ -24,7 +24,6 @@ from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.bhe import BheEmitidas
 
 class TestSiiBheEmitidas(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
@@ -35,7 +34,7 @@ class TestSiiBheEmitidas(unittest.TestCase):
         cls.receptor_rut = getenv('TEST_BHE_EMITIDAS_RECEPTOR_RUT', '').strip()
         cls.contribuyente_rut = getenv('TEST_USUARIO_RUT', '').strip()
 
-    # CASO 1: boletas del periodo
+    # CASO 1: boletas del periodo listado completo
     def test_documentos(self):
         try:
             documentos = self.client.documentos(self.contribuyente_rut, self.periodo)
@@ -44,7 +43,41 @@ class TestSiiBheEmitidas(unittest.TestCase):
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})
 
-    # CASO 2: bajar PDF de una boleta
+    # CASO 2: boletas del periodo por mes
+    def test_documentos_paginacion_periodo_mes(self):
+        try:
+            pagina = 1
+            while True:
+                documentos = self.client.documentos(self.contribuyente_rut, self.periodo, pagina = pagina, pagina_sig_codigo = None)
+                print('test_documentos_paginacion_periodo_mes(): Pagina %(pagina)s documentos %(documentos)s' % {
+                        'pagina': pagina,
+                        'documentos': documentos,
+                })
+                pagina += 1
+                if pagina > documentos['n_paginas']:
+                    break
+        except ApiException as e:
+            self.fail("ApiException: %(e)s" % {'e': e})
+
+    # CASO 3: boletas del periodo por mes
+    def test_documentos_paginacion_periodo_dia(self):
+        try:
+            pagina = 1
+            pagina_sig_codigo = None
+            while True:
+                documentos = self.client.documentos(self.contribuyente_rut, self.periodo, pagina = pagina, pagina_sig_codigo = pagina_sig_codigo)
+                print('test_documentos_paginacion_periodo_mes(): Pagina %(pagina)s documentos %(documentos)s' % {
+                        'pagina': pagina,
+                        'documentos': documentos,
+                })
+                pagina_sig_codigo = documentos['pagina_sig_codigo']
+                pagina += 1
+                if pagina > documentos['n_paginas']:
+                    break
+        except ApiException as e:
+            self.fail("ApiException: %(e)s" % {'e': e})
+
+    # CASO 4: bajar PDF de una boleta
     def test_pdf(self):
         try:
             documentos = self.client.documentos(self.contribuyente_rut, self.periodo)
@@ -64,7 +97,7 @@ class TestSiiBheEmitidas(unittest.TestCase):
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})
 
-    # CASO 3: emitir una boleta
+    # CASO 5: emitir una boleta
     def test_emitir(self):
         if self.receptor_rut == '':
             print('test_emitir(): no probó funcionalidad.')
@@ -104,7 +137,7 @@ class TestSiiBheEmitidas(unittest.TestCase):
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})
 
-    # CASO 4: enviar por email
+    # CASO 6: enviar por email
     def test_email(self):
         boleta_codigo = getenv('TEST_BHE_EMITIDAS_BOLETA_CODIGO', '').strip()
         receptor_email = getenv('TEST_BHE_EMITIDAS_RECEPTOR_EMAIL', '').strip()
@@ -118,7 +151,7 @@ class TestSiiBheEmitidas(unittest.TestCase):
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})
 
-    # CASO 5: anular
+    # CASO 7: anular
     def test_anular(self):
         boleta_numero = getenv('TEST_BHE_EMITIDAS_BOLETA_NUMERO', '').strip()
         if boleta_numero == '':

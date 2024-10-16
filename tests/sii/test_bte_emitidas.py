@@ -43,6 +43,22 @@ class TestSiiBteEmitidas(unittest.TestCase):
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})
 
+    # CASO 2: boletas del periodo por mes
+    def test_documentos_paginacion_periodo(self):
+        try:
+            pagina = 1
+            while True:
+                documentos = self.client.documentos(self.contribuyente_rut, self.periodo, pagina = pagina)
+                print('test_documentos_paginacion_periodo(): Pagina %(pagina)s documentos %(documentos)s' % {
+                        'pagina': pagina,
+                        'documentos': documentos,
+                })
+                pagina += 1
+                if pagina > documentos['n_paginas']:
+                    break
+        except ApiException as e:
+            self.fail("ApiException: %(e)s" % {'e': e})
+
     # CASO 2: bajar HTML de una boleta
     def test_html(self):
         try:

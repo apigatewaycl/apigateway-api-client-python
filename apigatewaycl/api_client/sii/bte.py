@@ -39,7 +39,7 @@ class BteEmitidas(ApiBase):
     def __init__(self, identificador, clave, **kwargs):
         super().__init__(identificador = identificador, clave = clave, **kwargs)
 
-    def documentos(self, emisor, periodo):
+    def documentos(self, emisor, periodo, pagina = None):
         '''
         Obtiene los documentos BTE emitidos por un emisor en un periodo específico.
 
@@ -49,6 +49,10 @@ class BteEmitidas(ApiBase):
         :rtype: list[dict]
         '''
         url = '/sii/bte/emitidas/documentos/%(emisor)s/%(periodo)s' % {'emisor': emisor, 'periodo': periodo}
+        if pagina is not None:
+            url += '?pagina=%(pagina)s' % {
+                'pagina': pagina,
+            }
         body = {
             'auth': self._get_auth_pass()
         }

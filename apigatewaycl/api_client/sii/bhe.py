@@ -48,7 +48,7 @@ class BheEmitidas(ApiBase):
     def __init__(self, identificador, clave, **kwargs):
         super().__init__(identificador = identificador, clave = clave, **kwargs)
 
-    def documentos(self, emisor, periodo):
+    def documentos(self, emisor, periodo, pagina = None, pagina_sig_codigo = None):
         '''
         Obtiene los documentos de BHE emitidos por un emisor en un periodo específico.
 
@@ -58,10 +58,17 @@ class BheEmitidas(ApiBase):
         :rtype: list[dict]
         '''
         url = '/sii/bhe/emitidas/documentos/%(emisor)s/%(periodo)s' % {'emisor': emisor, 'periodo': periodo}
+        if pagina is not None:
+            url += '?pagina=%(pagina)s' % {
+                'pagina': pagina,
+            }
+            if pagina_sig_codigo:
+                url += '&pagina_sig_codigo=%(pagina_sig_codigo)s' % {
+                    'pagina_sig_codigo': pagina_sig_codigo or '0'
+                }
         body = {
             'auth': self._get_auth_pass()
         }
-        #r = self.client.post(url, data = body)
         response = self.client.retry_request_http('POST', url, data = body)
         return response.json()
 
@@ -165,7 +172,7 @@ class BheRecibidas(ApiBase):
         if pagina is not None:
             url += '?pagina=%(pagina)s&pagina_sig_codigo=%(pagina_sig_codigo)s' % {
                 'pagina': pagina,
-                'pagina_sig_codigo': pagina_sig_codigo or "00000000000000"
+                'pagina_sig_codigo': pagina_sig_codigo or '00000000000000'
             }
         response = self.client.retry_request_http('POST', url, data = body)
         return response.json()
