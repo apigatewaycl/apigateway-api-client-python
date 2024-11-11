@@ -56,7 +56,7 @@ class BteEmitidas(ApiBase):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()
 
     def html(self, codigo):
@@ -71,7 +71,7 @@ class BteEmitidas(ApiBase):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.content
 
     def emitir(self, datos):
@@ -86,7 +86,7 @@ class BteEmitidas(ApiBase):
             'auth': self._get_auth_pass(),
             'boleta': datos
         }
-        response = self.client.retry_request_http('POST', '/sii/bte/emitidas/emitir', data = body)
+        response = self.client.post('/sii/bte/emitidas/emitir', data = body)
         return response.json()
 
     def anular(self, emisor, numero, causa = 3, periodo = None):
@@ -108,7 +108,7 @@ class BteEmitidas(ApiBase):
         }
         if periodo:
             url += '&periodo=%(periodo)s' % {'periodo': periodo}
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()
 
     def receptor_tasa(self, emisor, receptor, periodo = None):
@@ -127,5 +127,5 @@ class BteEmitidas(ApiBase):
         url = '/sii/bte/emitidas/receptor_tasa/%(emisor)s/%(receptor)s' % {'emisor': emisor, 'receptor': receptor}
         if periodo:
             url += '?periodo=%(periodo)s' % {'periodo': periodo}
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()

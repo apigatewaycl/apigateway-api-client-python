@@ -69,7 +69,7 @@ class BheEmitidas(ApiBase):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()
 
     def emitir(self, boleta):
@@ -84,7 +84,7 @@ class BheEmitidas(ApiBase):
             'auth': self._get_auth_pass(),
             'boleta': boleta
         }
-        response = self.client.retry_request_http('POST', '/sii/bhe/emitidas/emitir', data = body)
+        response = self.client.post('/sii/bhe/emitidas/emitir', data = body)
         return response.json()
 
     def pdf(self, codigo):
@@ -99,7 +99,7 @@ class BheEmitidas(ApiBase):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.content
 
     def email(self, codigo, email):
@@ -116,7 +116,7 @@ class BheEmitidas(ApiBase):
             'auth': self._get_auth_pass(),
             'destinatario': {'email': email}
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()
 
     def anular(self, emisor, folio, causa = ANULACION_CAUSA_ERROR_DIGITACION):
@@ -135,7 +135,7 @@ class BheEmitidas(ApiBase):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()
 
 class BheRecibidas(ApiBase):
@@ -174,7 +174,7 @@ class BheRecibidas(ApiBase):
                 'pagina': pagina,
                 'pagina_sig_codigo': pagina_sig_codigo or '00000000000000'
             }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()
 
     def pdf(self, codigo):
@@ -189,7 +189,7 @@ class BheRecibidas(ApiBase):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.content
 
     def observar(self, emisor, numero, causa = 1):
@@ -208,5 +208,5 @@ class BheRecibidas(ApiBase):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()

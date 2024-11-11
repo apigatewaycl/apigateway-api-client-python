@@ -87,52 +87,6 @@ class ApiClient:
             'Authorization': 'Bearer %(token)s' % {'token': self.token}
         }
 
-    def get(self, resource, headers = None):
-        '''
-        Realiza una solicitud GET a la API.
-
-        :param str resource: Recurso de la API a solicitar.
-        :param dict headers: Cabeceras adicionales para la solicitud.
-        :return: Respuesta de la solicitud.
-        :rtype: requests.Response
-        '''
-        return self.__request('GET', resource, headers = headers)
-
-    def delete(self, resource, headers = None):
-        '''
-        Realiza una solicitud DELETE a la API.
-
-        :param str resource: Recurso de la API a solicitar.
-        :param dict headers: Cabeceras adicionales para la solicitud.
-        :return: Respuesta de la solicitud.
-        :rtype: requests.Response
-        '''
-        return self.__request('DELETE', resource, headers = headers)
-
-    def post(self, resource, data = None, headers = None):
-        '''
-        Realiza una solicitud POST a la API.
-
-        :param str resource: Recurso de la API a solicitar.
-        :param dict data: Datos a enviar en la solicitud.
-        :param dict headers: Cabeceras adicionales para la solicitud.
-        :return: Respuesta de la solicitud.
-        :rtype: requests.Response
-        '''
-        return self.__request('POST', resource, data, headers)
-
-    def put(self, resource, data = None, headers = None):
-        '''
-        Realiza una solicitud PUT a la API.
-
-        :param str resource: Recurso de la API a solicitar.
-        :param dict data: Datos a enviar en la solicitud.
-        :param dict headers: Cabeceras adicionales para la solicitud.
-        :return: Respuesta de la solicitud.
-        :rtype: requests.Response
-        '''
-        return self.__request('PUT', resource, data, headers)
-
     def __request(self, method, resource, data = None, headers = None):
         '''
         Método privado para realizar solicitudes HTTP.
@@ -182,92 +136,51 @@ class ApiClient:
                 raise ApiException('Error HTTP: %(message)s' % {'message': message})
         return response
 
-    def rebuild_url(self, url):
+    def get(self, resource, headers = None):
         '''
-        Método que reconstruye una URL usando expresiones regulares (regex), añadiendo o
-        quitando el parámetro 'auth_cache=0'.
+        Realiza una solicitud GET a la API.
 
-        Se ha probado con los siguientes URL:
-        - www.exampleurl.com/api/v1/function
-        - www.exampleurl.com/api/v1/function?auth_cache=0
-        - www.exampleurl.com/api/v1/function?auth_cache=0&param1=asdf
-        - www.exampleurl.com/api/v1/function?param1=asdf&auth_cache=0
-        - www.exampleurl.com/api/v1/function?param1=asdf&param2=qwer
-        - www.exampleurl.com/api/v1/function?auth_cache=0&param1=asdf&param2=qwer
-        - www.exampleurl.com/api/v1/function?param1=asdf&auth_cache=0&param2=qwer
-        - www.exampleurl.com/api/v1/function?param1=asdf&param2=qwer&auth_cache=0
-
-        Y se obtuvo como salida:
-        - www.exampleurl.com/api/v1/function?auth_cache=0
-        - www.exampleurl.com/api/v1/function
-        - www.exampleurl.com/api/v1/function?param1=asdf
-        - www.exampleurl.com/api/v1/function?param1=asdf
-        - www.exampleurl.com/api/v1/function?param1=asdf&param2=qwer&auth_cache=0
-        - www.exampleurl.com/api/v1/function?param1=asdf&param2=qwer
-        - www.exampleurl.com/api/v1/function?param1=asdf&param2=qwer
-        - www.exampleurl.com/api/v1/function?param1=asdf&param2=qwer
-
-        :param str url: URL a modificar.
-        :return: URL modificada con (o sin) 'auth_cache=0'.
-        :rtype: str
-        '''
-        # Define un patrón, que en este caso serán todas las posibilidades con auth_cache=0.
-        patron = r'([?&])auth_cache=0(&|$)'
-
-        if re.search(patron, url):
-            # Remueve el patrón definido.
-            nuevo_url = re.sub(patron, lambda m: m.group(1) if m.group(2) == '&' else '', url)
-        else:
-            # Añade al URL auth_cache=0.
-            nuevo_url = '%(url_base)s%(url_param)s' % { 'url_base' : url, 'url_param' : '&auth_cache=0' if '?' in url else '?auth_cache=0' }
-
-        return nuevo_url
-
-    def retry_request_http(self, method, url, data = None, headers = None):
-        '''
-        Método que reintenta un HTTP request en caso de que la conexión falle.
-
-        Además, este método permitirá reintentar en caso de un error 401 a causa de una falla en el programa.
-
-        :param str url: URL del recurso para consumir.
-        :param dict data: Body del request (opcional).
-        :param dict headers: Cabeceras adicionales (opcional).
-        :param str method: Método HTTP a utilizar.
-        :return: Respuesta lograda.
+        :param str resource: Recurso de la API a solicitar.
+        :param dict headers: Cabeceras adicionales para la solicitud.
+        :return: Respuesta de la solicitud.
         :rtype: requests.Response
-        :raises ApiException: Si el número de reintentos es excedido, o si el método ingresado no es válido.
         '''
-        wait_time = 1
-        n_max_attempts = 5
-        n_current_attempts = 1
+        return self.__request('GET', resource, headers = headers)
 
-        while True:
-            try:
-                if method == 'POST':
-                    response = self.post(url, data = data, headers = headers)
-                elif method == 'PUT':
-                    response = self.put(url, data = data, headers = headers)
-                elif method == 'GET':
-                    response = self.get(url, headers = headers)
-                elif method == 'DELETE':
-                    response = self.delete(url, headers = headers)
-                else:
-                    log_message = 'No se ha ingresado un método HTTP válido. El método ingresado es %(method)s' % { 'method': method }
-                    raise ApiException(log_message)
-                if response.status_code == 401:
-                    if 'X-Stats-NavegadorSessionProblem' in response.headers and response.headers['X-Stats-NavegadorSessionProblem'] == '1':
-                        url = self.rebuild_url(url)
-                        raise ConnectionError('Ocurrió un error de conexión HTTP 401.')
-                break
-            except (ConnectionError, Timeout) as e:
-                if n_current_attempts <= n_max_attempts:
-                    time.sleep(wait_time)
-                    n_current_attempts += 1
-                    wait_time += 2
-                else:
-                    log_message = 'No fue posible establecer conexión con API Gateway: %(error)s' % {'error': str(e)}
-                    raise ApiException(log_message)
-        return response
+    def delete(self, resource, headers = None):
+        '''
+        Realiza una solicitud DELETE a la API.
+
+        :param str resource: Recurso de la API a solicitar.
+        :param dict headers: Cabeceras adicionales para la solicitud.
+        :return: Respuesta de la solicitud.
+        :rtype: requests.Response
+        '''
+        return self.__request('DELETE', resource, headers = headers)
+
+    def post(self, resource, data = None, headers = None):
+        '''
+        Realiza una solicitud POST a la API.
+
+        :param str resource: Recurso de la API a solicitar.
+        :param dict data: Datos a enviar en la solicitud.
+        :param dict headers: Cabeceras adicionales para la solicitud.
+        :return: Respuesta de la solicitud.
+        :rtype: requests.Response
+        '''
+        return self.__request('POST', resource, data, headers)
+
+    def put(self, resource, data = None, headers = None):
+        '''
+        Realiza una solicitud PUT a la API.
+
+        :param str resource: Recurso de la API a solicitar.
+        :param dict data: Datos a enviar en la solicitud.
+        :param dict headers: Cabeceras adicionales para la solicitud.
+        :return: Respuesta de la solicitud.
+        :rtype: requests.Response
+        '''
+        return self.__request('PUT', resource, data, headers)
 
 class ApiException(Exception):
     '''

@@ -41,7 +41,7 @@ class Contribuyentes(ApiBase):
         :rtype: dict
         '''
         url = '/sii/contribuyentes/situacion_tributaria/tercero/%(rut)s' % {'rut': rut}
-        response = self.client.retry_request_http('GET', url)
+        response = self.client.get(url)
         return response.json()
 
     def verificar_rut(self, serie):
@@ -53,5 +53,5 @@ class Contribuyentes(ApiBase):
         :rtype: dict
         '''
         url = '/sii/contribuyentes/rut/verificar/%(serie)s' % {'serie': serie}
-        response = self.client.retry_request_http('GET', url)
+        response = self.client.get(url)
         return response.json()

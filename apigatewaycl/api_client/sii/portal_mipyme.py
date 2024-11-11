@@ -61,7 +61,7 @@ class Contribuyentes(PortalMipyme):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()
 
 class Dte(PortalMipyme):
@@ -124,7 +124,7 @@ class DteEmitidos(Dte):
             'auth': self._get_auth_pass(),
             'filtros': filtros
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()
 
     def pdf(self, emisor, dte, folio = None):
@@ -145,7 +145,7 @@ class DteEmitidos(Dte):
         } if folio else '/sii/mipyme/emitidos/pdf/%(emisor)s/%(dte)s' % {
             'emisor': emisor, 'dte': dte
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.content
 
     def xml(self, emisor, dte, folio):
@@ -164,7 +164,7 @@ class DteEmitidos(Dte):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.text
 
 class DteRecibidos(Dte):
@@ -191,7 +191,7 @@ class DteRecibidos(Dte):
             'auth': self._get_auth_pass(),
             'filtros': filtros
         }
-        response = self.client.post('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()
 
     def pdf(self, receptor, emisor, dte, folio = None):
@@ -213,7 +213,7 @@ class DteRecibidos(Dte):
         } if folio else '/sii/mipyme/recibidos/pdf/%(receptor)s/%(emisor)s/%(dte)s' % {
             'receptor': receptor, 'emisor': emisor, 'dte': dte
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.content
 
     def xml(self, receptor, emisor, dte, folio):
@@ -233,5 +233,5 @@ class DteRecibidos(Dte):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.text

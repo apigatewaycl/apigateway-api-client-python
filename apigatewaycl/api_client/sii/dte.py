@@ -45,7 +45,7 @@ class Contribuyentes(ApiBase):
         url = '/sii/dte/contribuyentes/autorizado/%(rut)s?certificacion=%(certificacion_flag)s' % {
             'rut': rut, 'certificacion_flag': certificacion_flag
         }
-        response = self.client.retry_request_http('GET', url)
+        response = self.client.get(url)
         return response.json()
 
 class Emitidos(ApiBase):
@@ -91,5 +91,5 @@ class Emitidos(ApiBase):
                 'firma': firma
             }
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()

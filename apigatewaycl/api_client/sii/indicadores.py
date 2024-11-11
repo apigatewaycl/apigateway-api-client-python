@@ -42,7 +42,7 @@ class Uf(ApiBase):
         '''
         anio = str(anio)
         url = '/sii/indicadores/uf/anual/%(anio)s' % {'anio': anio}
-        response = self.client.retry_request_http('GET', url)
+        response = self.client.get(url)
         datos = response.json()
         return datos[anio] if anio in datos else {}
 
@@ -56,7 +56,7 @@ class Uf(ApiBase):
         '''
         anio, mes = periodo[:4], periodo[4:6]
         url = '/sii/indicadores/uf/anual/%(anio)s/%(mes)s' % {'anio': anio, 'mes': mes}
-        response = self.client.retry_request_http('GET', url)
+        response = self.client.get(url)
         datos = response.json()
         return datos[periodo] if periodo in datos else {}
 
@@ -70,7 +70,7 @@ class Uf(ApiBase):
         '''
         anio, mes, dia = dia.split('-')
         url = '/sii/indicadores/uf/anual/%(anio)s/%(mes)s/%(dia)s' % {'anio': anio, 'mes': mes, 'dia': dia}
-        response = self.client.retry_request_http('GET', url)
+        response = self.client.get(url)
         datos = response.json()
         key = '%(anio)s%(mes)s%(dia)s' % {'anio': anio, 'mes': mes, 'dia': dia}
         return float(datos[key]) if key in datos else 0

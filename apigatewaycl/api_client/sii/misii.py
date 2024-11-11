@@ -35,15 +35,18 @@ class Contribuyente(ApiBase):
     def __init__(self, identificador, clave, **kwargs):
         super().__init__(identificador = identificador, clave = clave, **kwargs)
 
-    def datos(self):
+    def datos(self, auth_cache = None):
         '''
         Obtiene los datos de MiSii del contribuyente autenticado en el SII.
 
         :return: Respuesta JSON con los datos del contribuyente.
         :rtype: dict
         '''
+        url = '/sii/misii/contribuyente/datos'
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', '/sii/misii/contribuyente/datos', data = body)
+        if auth_cache is not None:
+            url += '&auth_cache=0'
+        response = self.client.post(url, data = body)
         return response.json()

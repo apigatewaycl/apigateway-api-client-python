@@ -43,7 +43,7 @@ class ActividadesEconomicas(ApiBase):
         url = '/sii/contribuyentes/actividades_economicas'
         if categoria is not None:
             url += '/%(categoria)s' % {'categoria': categoria}
-        response = self.client.retry_request_http('GET', url)
+        response = self.client.get(url)
         return response.json()
 
     def listado_primera_categoria(self):

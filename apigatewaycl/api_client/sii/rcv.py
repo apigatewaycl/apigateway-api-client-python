@@ -55,7 +55,7 @@ class Rcv(ApiBase):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post( url, data = body)
         return response.json()
 
     def compras_detalle(self, receptor, periodo, dte = 0, estado = 'REGISTRO', tipo = None):
@@ -77,7 +77,7 @@ class Rcv(ApiBase):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()
 
     def ventas_resumen(self, emisor, periodo):
@@ -93,7 +93,7 @@ class Rcv(ApiBase):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()
 
     def ventas_detalle(self, emisor, periodo, dte = 0, tipo = None):
@@ -114,5 +114,5 @@ class Rcv(ApiBase):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()
