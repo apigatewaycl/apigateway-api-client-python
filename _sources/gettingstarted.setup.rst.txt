@@ -48,7 +48,7 @@ deberá indicar el token del usuario. Ejemplo con el cliente genérico:
 
 El siguiente es un ejemplo con el cliente específico de Rcv. Primero se pasan
 los datos obligatorios de RUT y clave del usuario. Luego además se pasa el token
-delusuario de la API.
+del usuario de la API.
 
 .. code:: python
 
