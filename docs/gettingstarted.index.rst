@@ -7,3 +7,4 @@ Empezando
     gettingstarted.legal
     gettingstarted.install
     gettingstarted.setup
+    gettingstarted.example
