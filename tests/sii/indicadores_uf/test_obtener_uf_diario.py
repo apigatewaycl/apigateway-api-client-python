@@ -19,38 +19,26 @@
 
 import unittest
 from os import getenv
+from datetime import datetime
 from apigatewaycl.api_client import ApiException
-from apigatewaycl.api_client.sii.contribuyentes import Contribuyentes
+from apigatewaycl.api_client.sii.indicadores import Uf
 
-class TestSiiContribuyentes(unittest.TestCase):
+class TestObtenerUfDiario(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.client = Contribuyentes()
+        cls.client = Uf()
+        cls.fecha = datetime.now().strftime("%Y-%m-%d")
 
-    # CASO 1: situación tributaria
-    def test_situacion_tributaria(self):
-        contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
-        if contribuyente_rut == '':
-            print('test_situacion_tributaria(): no probó funcionalidad.')
-            return
+    # CASO 3: obtener valores de la UF de un día específico (1ero de enero del ANIO)
+    def test_obtener_uf_diario(self):
         try:
-            situacion_tributaria = self.client.situacion_tributaria(contribuyente_rut)
-            if self.verbose:
-                print('test_situacion_tributaria(): situacion_tributaria', situacion_tributaria)
-        except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            diario = self.client.diario(self.fecha)
 
-    # CASO2: verificación de cédula RUT mediante número de serie
-    def test_verificar_rut(self):
-        erut_serie = getenv('TEST_ERUT_SERIE', '').strip()
-        if erut_serie == '':
-            print('test_verificar_rut(): no probó funcionalidad.')
-            return
-        try:
-            verificar_rut = self.client.verificar_rut(erut_serie)
+            self.assertIsNotNone(diario)
+
             if self.verbose:
-                print('test_verificar_rut(): verificar_rut', verificar_rut)
+                print('test_uf_diario(): diario', diario)
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})

@@ -20,14 +20,16 @@
 '''
 Módulo para obtener datos de los contribuyentes a través del SII.
 
-Para más información sobre la API, consulte la `documentación completa de los Contribuyentes <https://developers.apigateway.cl/#c88f90b6-36bb-4dc2-ba93-6e418ff42098>`_.
+Para más información sobre la API, consulte la `documentación completa de los
+Contribuyentes <https://developers.apigateway.cl/#c88f90b6-36bb-4dc2-ba93-6e418ff42098>`_.
 '''
 
 from .. import ApiBase
 
 class Contribuyentes(ApiBase):
     '''
-    Cliente específico para interactuar con los endpoints de contribuyentes de la API de API Gateway.
+    Cliente específico para interactuar con los endpoints de contribuyentes
+    de la API de API Gateway.
 
     Hereda de ApiBase y utiliza su funcionalidad para realizar solicitudes a la API.
     '''
@@ -40,7 +42,9 @@ class Contribuyentes(ApiBase):
         :return: Respuesta JSON con la situación tributaria del contribuyente.
         :rtype: dict
         '''
-        url = '/sii/contribuyentes/situacion_tributaria/tercero/%(rut)s' % {'rut': rut}
+        url = '/sii/contribuyentes/situacion_tributaria/tercero/%(rut)s' % {
+            'rut': rut
+        }
         response = self.client.get(url)
         return response.json()
 
@@ -52,6 +56,8 @@ class Contribuyentes(ApiBase):
         :return: Respuesta JSON con la verificación del RUT.
         :rtype: dict
         '''
-        url = '/sii/contribuyentes/rut/verificar/%(serie)s' % {'serie': serie}
+        url = '/sii/contribuyentes/rut/verificar/%(serie)s' % {
+            'serie': serie
+        }
         response = self.client.get(url)
         return response.json()

@@ -20,7 +20,8 @@
 '''
 Módulo para la emisión de Boletas de Terceros Electrónicas del SII.
 
-Para más información sobre la API, consulte la `documentación completa de las BTE <https://developers.apigateway.cl/#e08f50ab-5509-48ab-81ab-63fc8e5985e1>`_.
+Para más información sobre la API, consulte la `documentación completa de las
+BTE <https://developers.apigateway.cl/#e08f50ab-5509-48ab-81ab-63fc8e5985e1>`_.
 '''
 
 from .. import ApiBase
@@ -48,7 +49,9 @@ class BteEmitidas(ApiBase):
         :return: Respuesta JSON con los documentos BTE.
         :rtype: list[dict]
         '''
-        url = '/sii/bte/emitidas/documentos/%(emisor)s/%(periodo)s' % {'emisor': emisor, 'periodo': periodo}
+        url = '/sii/bte/emitidas/documentos/%(emisor)s/%(periodo)s' % {
+            'emisor': emisor, 'periodo': periodo
+        }
         if pagina is not None:
             url += '?pagina=%(pagina)s' % {
                 'pagina': pagina,
@@ -124,7 +127,9 @@ class BteEmitidas(ApiBase):
         body = {
             'auth': self._get_auth_pass()
         }
-        url = '/sii/bte/emitidas/receptor_tasa/%(emisor)s/%(receptor)s' % {'emisor': emisor, 'receptor': receptor}
+        url = '/sii/bte/emitidas/receptor_tasa/%(emisor)s/%(receptor)s' % {
+            'emisor': emisor, 'receptor': receptor
+        }
         if periodo:
             url += '?periodo=%(periodo)s' % {'periodo': periodo}
         response = self.client.post(url, data = body)

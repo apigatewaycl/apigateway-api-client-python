@@ -21,43 +21,32 @@ import unittest
 from os import getenv
 from datetime import datetime
 from apigatewaycl.api_client import ApiException
-from apigatewaycl.api_client.sii.bhe import BheRecibidas
+from apigatewaycl.api_client.sii.rcv import Rcv
 
-class TestSiiBheRecibidasPaginadas(unittest.TestCase):
+class TestObtenerComprasDetalleRcvCsv(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
         cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
-        cls.client = BheRecibidas(cls.contribuyente_rut, contribuyente_clave)
+        cls.client = Rcv(cls.contribuyente_rut, contribuyente_clave)
         cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
 
-    # CASO 1: boletas del periodo paginadas
-    def test_documentos(self):
+    # CASO 2: detalle de compras con tipo "rcv_csv"
+    # En este caso se trae el detalle de los documentos en una llamada
+    def test_obtener_compras_detalle_rcv_csv(self):
         try:
-            documentos = self._get_documentos()
+            compras_detalle = self.client.compras_detalle(
+                self.contribuyente_rut,
+                self.periodo
+            )
+
+            self.assertIsNotNone(compras_detalle)
+
             if self.verbose:
-                print('test_documentos(): documentos', documentos)
-                print('test_documentos(): len(documentos)', len(documentos))
+                print('test_compras_detalle_rcv_csv(): compras_detalle',
+                    compras_detalle
+                )
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})
-
-    # Método privado que obtiene las boletas paginadas del CASO 1
-    def _get_documentos(self):
-        documentos = []
-        pagina = 1
-        pagina_sig_codigo = None
-        while True:
-            documentos_pagina = self.client.documentos(
-                self.contribuyente_rut,
-                self.periodo,
-                pagina,
-                pagina_sig_codigo
-            )
-            if documentos_pagina['pagina_sig_codigo'] == '00000000000000':
-                break
-            pagina_sig_codigo = documentos_pagina['pagina_sig_codigo']
-            documentos = documentos + documentos_pagina['boletas']
-            pagina += 1
-        return documentos

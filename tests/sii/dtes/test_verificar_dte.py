@@ -22,23 +22,7 @@ from os import getenv
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.dte import Contribuyentes, Emitidos
 
-class TestSiiDteContribuyentes(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
-        cls.client = Contribuyentes()
-
-    def test_autorizacion(self):
-        try:
-            autorizacion = self.client.autorizacion(self.contribuyente_rut)
-            if self.verbose:
-                print('test_autorizacion(): autorizacion', autorizacion)
-        except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
-
-class TestSiiDteEmitidos(unittest.TestCase):
+class TestVerificarDte(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -47,7 +31,7 @@ class TestSiiDteEmitidos(unittest.TestCase):
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
         cls.client = Emitidos(cls.contribuyente_rut, contribuyente_clave)
 
-    def test_verificar(self):
+    def test_verificar_dte(self):
         receptor = getenv('TEST_DTE_EMITIDOS_VERIFICAR_RECEPTOR_RUT', '').strip()
         dte = getenv('TEST_DTE_EMITIDOS_VERIFICAR_DTE', '').strip()
         folio = getenv('TEST_DTE_EMITIDOS_VERIFICAR_FOLIO', '').strip()
@@ -67,6 +51,9 @@ class TestSiiDteEmitidos(unittest.TestCase):
                 total,
                 firma if firma != '' else None
             )
+
+            self.assertIsNotNone(verificar)
+
             if self.verbose:
                 print('test_verificar(): verificar', verificar)
         except ApiException as e:

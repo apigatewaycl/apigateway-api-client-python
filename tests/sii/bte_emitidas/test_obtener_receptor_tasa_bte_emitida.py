@@ -18,24 +18,35 @@
 #
 
 import unittest
-from os import getenv
+from os import getenv, remove as file_remove
+from datetime import datetime
 from apigatewaycl.api_client import ApiException
-from apigatewaycl.api_client.sii.misii import Contribuyente
+from apigatewaycl.api_client.sii.bte import BteEmitidas
 
-class TestMiSii(unittest.TestCase):
+class TestObtenerReceptorTasaBteEmitida(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
         cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
-        cls.client = Contribuyente(cls.contribuyente_rut, contribuyente_clave)
+        cls.client = BteEmitidas(cls.contribuyente_rut, contribuyente_clave)
+        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.receptor_rut = getenv('TEST_BTE_EMITIDAS_RECEPTOR_RUT', '').strip()
 
-    # CASO 1: datos del contribuyente en su página de MiSii
-    def test_misii_contribuyente_datos(self):
+    # CASO 5: tasa de receptor
+    def test_obtener_receptor_tasa_bte_emitida(self):
+        if self.receptor_rut == '':
+            print('test_receptor_tasa(): no probó funcionalidad.')
+            return
         try:
-            datos = self.client.datos()
+            receptor_tasa = self.client.receptor_tasa(
+                self.contribuyente_rut, self.receptor_rut
+            )
+
+            self.assertIsNotNone(receptor_tasa)
+
             if self.verbose:
-                print('test_misii_contribuyente_datos(): datos', datos)
+                    print('test_receptor_tasa(): receptor_tasa', receptor_tasa)
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})

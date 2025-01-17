@@ -20,16 +20,19 @@
 '''
 Módulo para obtener las actividades económicas del SII.
 
-Para más información sobre la API, consulte la `documentación completa de Actividades Económicas <https://developers.apigateway.cl/#e64eb128-173a-48c7-ab0b-b6152e59c327>`_.
+Para más información sobre la API, consulte la `documentación completa de
+Actividades Económicas <https://developers.apigateway.cl/#e64eb128-173a-48c7-ab0b-b6152e59c327>`_.
 '''
 
 from .. import ApiBase
 
 class ActividadesEconomicas(ApiBase):
     '''
-    Cliente específico para interactuar con los endpoints de actividades económicas de la API de API Gateway.
+    Cliente específico para interactuar con los endpoints de actividades
+    económicas de la API de API Gateway.
 
-    Provee métodos para obtener listados de actividades económicas, tanto de primera como de segunda categoría.
+    Provee métodos para obtener listados de actividades económicas, tanto
+    de primera como de segunda categoría.
     '''
 
     def listado(self, categoria = None):

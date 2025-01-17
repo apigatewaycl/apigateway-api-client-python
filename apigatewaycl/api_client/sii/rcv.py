@@ -20,14 +20,16 @@
 '''
 Módulo para interactuar con el Registro de Compra y Venta del SII.
 
-Para más información sobre la API, consulte la `documentación completa del RCV <https://developers.apigateway.cl/#ef1f7d54-2e86-4732-bb91-d3448b383d66>`_.
+Para más información sobre la API, consulte la `documentación completa del
+RCV <https://developers.apigateway.cl/#ef1f7d54-2e86-4732-bb91-d3448b383d66>`_.
 '''
 
 from .. import ApiBase
 
 class Rcv(ApiBase):
     '''
-    Cliente específico para interactuar con los endpoints de Registro de Compras y Ventas (RCV) de la API de API Gateway.
+    Cliente específico para interactuar con los endpoints de Registro de Compras
+    y Ventas (RCV) de la API de API Gateway.
 
     Proporciona métodos para obtener resúmenes y detalles de compras y ventas.
 
@@ -71,7 +73,11 @@ class Rcv(ApiBase):
         :rtype: list[dict]
         '''
         url = '/sii/rcv/compras/detalle/%(receptor)s/%(periodo)s/%(dte)s/%(estado)s?tipo=%(tipo)s' % {
-            'receptor': receptor, 'periodo': periodo, 'dte': dte, 'estado': estado, 'tipo': tipo
+            'receptor': receptor,
+            'periodo': periodo,
+            'dte': dte,
+            'estado': estado,
+            'tipo': tipo
         }
         tipo = 'rcv_csv' if dte == 0 and estado == 'REGISTRO' else tipo or 'rcv'
         body = {
@@ -89,7 +95,9 @@ class Rcv(ApiBase):
         :return: Respuesta JSON con el resumen de ventas.
         :rtype: list[dict]
         '''
-        url = '/sii/rcv/ventas/resumen/%(emisor)s/%(periodo)s' % {'emisor': emisor, 'periodo': periodo}
+        url = '/sii/rcv/ventas/resumen/%(emisor)s/%(periodo)s' % {
+            'emisor': emisor, 'periodo': periodo
+        }
         body = {
             'auth': self._get_auth_pass()
         }

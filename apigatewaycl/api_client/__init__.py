@@ -17,25 +17,29 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-from os import getenv
 from requests.exceptions import Timeout, ConnectionError, RequestException, HTTPError
+from os import getenv
 from abc import ABC
+
 import urllib.parse
 import urllib
 import requests
 import base64
 import json
-import time
 import re
 
 class ApiClient:
     '''
     Cliente para interactuar con la API de API Gateway.
 
-    :param str token: Token de autenticación del usuario. Si no se proporciona, se intentará obtener de una variable de entorno.
-    :param str url: URL base de la API. Si no se proporciona, se usará una URL por defecto.
-    :param str version: Versión de la API. Si no se proporciona, se usará una versión por defecto.
-    :param bool raise_for_status: Si se debe lanzar una excepción automáticamente para respuestas de error HTTP. Por defecto es True.
+    :param str token: Token de autenticación del usuario. Si no se proporciona,
+    se intentará obtener de una variable de entorno.
+    :param str url: URL base de la API. Si no se proporciona, se usará una
+    URL por defecto.
+    :param str version: Versión de la API. Si no se proporciona, se usará
+    una versión por defecto.
+    :param bool raise_for_status: Si se debe lanzar una excepción automáticamente
+    para respuestas de error HTTP. Por defecto es True.
     '''
 
     __DEFAULT_URL = 'https://apigateway.cl'
@@ -71,7 +75,9 @@ class ApiClient:
         :rtype: str
         :raises ApiException: Si la URL no es válida o está ausente.
         '''
-        return str(url).strip() if url else getenv('APIGATEWAY_API_URL', self.__DEFAULT_URL).strip()
+        return str(url).strip() if url else getenv(
+            'APIGATEWAY_API_URL',
+            self.__DEFAULT_URL).strip()
 
     def __generate_headers(self):
         '''
@@ -97,9 +103,12 @@ class ApiClient:
         :param dict headers: Cabeceras adicionales para la solicitud (opcional).
         :return: Respuesta de la solicitud.
         :rtype: requests.Response
-        :raises ApiException: Si el método HTTP no es soportado o si hay un error de conexión.
+        :raises ApiException: Si el método HTTP no es soportado o si hay
+        un error de conexión.
         '''
-        api_path = '/api/%(version)s%(resource)s' % {'version': self.version, 'resource': resource}
+        api_path = '/api/%(version)s%(resource)s' % {
+            'version': self.version, 'resource': resource
+        }
         full_url = urllib.parse.urljoin(self.url + '/', api_path.lstrip('/'))
         headers = headers or {}
         headers = {**self.headers, **headers}
@@ -109,11 +118,17 @@ class ApiClient:
             response = requests.request(method, full_url, data = data, headers = headers)
             return self.__check_and_return_response(response)
         except ConnectionError as error:
-            raise ApiException('Error de conexión: %(error)s' % {'error': error})
+            raise ApiException('Error de conexión: %(error)s' % {
+                'error': error
+            })
         except Timeout as error:
-            raise ApiException('Error de timeout: %(error)s' % {'error': error})
+            raise ApiException('Error de timeout: %(error)s' % {
+                'error': error
+            })
         except RequestException as error:
-            raise ApiException('Error en la solicitud: %(error)s' % {'error': error})
+            raise ApiException('Error en la solicitud: %(error)s' % {
+                'error': error
+            })
 
     def __check_and_return_response(self, response):
         '''
@@ -130,10 +145,18 @@ class ApiClient:
             except HTTPError as error:
                 try:
                     error = response.json()
-                    message = error.get('message', '') or error.get('exception', '') or 'Error desconocido.'
+                    message = error.get(
+                        'message', ''
+                    ) or error.get(
+                        'exception', ''
+                    ) or 'Error desconocido.'
                 except json.decoder.JSONDecodeError:
-                    message = 'Error al decodificar los datos en JSON: %(response)s' % {'response': response.text}
-                raise ApiException('Error HTTP: %(message)s' % {'message': message})
+                    message = 'Error al decodificar los datos en JSON: %(response)s' % {
+                        'response': response.text
+                    }
+                raise ApiException('Error HTTP: %(message)s' % {
+                    'message': message
+                })
         return response
 
     def get(self, resource, headers = None):
@@ -212,9 +235,14 @@ class ApiException(Exception):
         :return: Una cadena que representa el error de una manera clara y concisa.
         '''
         if self.code is not None:
-            return "[API Gateway] Error %(code)s: %(message)s" % {'code': self.code, 'message': self.message}
+            return "[API Gateway] Error %(code)s: %(message)s" % {
+                'code': self.code,
+                'message': self.message
+            }
         else:
-            return "[API Gateway] %(message)s" % {'message': self.message}
+            return "[API Gateway] %(message)s" % {
+                'message': self.message
+            }
 
 class ApiBase(ABC):
     '''
@@ -229,8 +257,20 @@ class ApiBase(ABC):
 
     auth = {}
 
-    def __init__(self, api_token = None, api_url = None, api_version = None, api_raise_for_status = True, **kwargs):
-        self.client = ApiClient(api_token, api_url, api_version, api_raise_for_status)
+    def __init__(
+            self,
+            api_token = None,
+            api_url = None,
+            api_version = None,
+            api_raise_for_status = True,
+            **kwargs
+        ):
+        self.client = ApiClient(
+            api_token,
+            api_url,
+            api_version,
+            api_raise_for_status
+        )
         self.__setup_auth(kwargs)
 
     def __setup_auth(self, kwargs):
@@ -243,11 +283,26 @@ class ApiBase(ABC):
         clave = kwargs.get('clave')
         if identificador and clave:
             if self.__is_auth_pass(identificador):
-                self.auth = {'pass': {'rut': identificador, 'clave': clave}}
+                self.auth = {
+                    'pass': {
+                        'rut': identificador,
+                        'clave': clave
+                    }
+                }
             elif self.__is_auth_cert_data(identificador):
-                self.auth = {'cert': {'cert-data': identificador, 'pkey-data': clave}}
+                self.auth = {
+                    'cert': {
+                        'cert-data': identificador,
+                        'pkey-data': clave
+                    }
+                }
             elif self.__is_auth_file_data(identificador):
-                self.auth = {'cert': {'file-data': identificador, 'file-pass': clave}}
+                self.auth = {
+                    'cert': {
+                        'file-data': identificador,
+                        'file-pass': clave
+                    }
+                }
             else:
                 raise ApiException('No se han proporcionado las credenciales de autentificación.')
 
@@ -382,4 +437,3 @@ class ApiBase(ABC):
         else:
             raise ApiException('auth.pass or auth.cert missing.')
         return self.auth
-

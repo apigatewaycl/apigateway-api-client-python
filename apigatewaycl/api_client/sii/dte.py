@@ -18,9 +18,11 @@
 #
 
 '''
-Módulo para interactuar con las opciones de Documentos Tributarios Electrónicos (DTE) del SII.
+Módulo para interactuar con las opciones de Documentos Tributarios
+Electrónicos (DTE) del SII.
 
-Para más información sobre la API, consulte la `documentación completa de los DTE <https://developers.apigateway.cl/#8c113b9a-ea05-4981-9273-73e3f20ef991>`_.
+Para más información sobre la API, consulte la `documentación completa de los
+DTE <https://developers.apigateway.cl/#8c113b9a-ea05-4981-9273-73e3f20ef991>`_.
 '''
 
 from .. import ApiBase
@@ -62,7 +64,17 @@ class Emitidos(ApiBase):
     def __init__(self, identificador, clave, **kwargs):
         super().__init__(identificador = identificador, clave = clave, **kwargs)
 
-    def verificar(self, emisor, receptor, dte, folio, fecha, total, firma = None, certificacion = None):
+    def verificar(
+            self,
+            emisor,
+            receptor,
+            dte,
+            folio,
+            fecha,
+            total,
+            firma = None,
+            certificacion = None
+        ):
         '''
         Verifica la validez de un DTE emitido.
 
@@ -73,12 +85,15 @@ class Emitidos(ApiBase):
         :param str fecha: Fecha de emisión del DTE.
         :param int total: Monto total del DTE.
         :param str firma: Firma electrónica del DTE (opcional).
-        :param bool certificacion: Indica si la verificación es en ambiente de certificación (opcional).
+        :param bool certificacion: Indica si la verificación es en
+        ambiente de certificación (opcional).
         :return: Respuesta JSON con el resultado de la verificación del DTE.
         :rtype: dict
         '''
         certificacion_flag = 1 if certificacion else 0
-        url = '/sii/dte/emitidos/verificar?certificacion=%(certificacion_flag)s' % {'certificacion_flag': certificacion_flag}
+        url = '/sii/dte/emitidos/verificar?certificacion=%(certificacion_flag)s' % {
+            'certificacion_flag': certificacion_flag
+        }
         body = {
             'auth': self._get_auth_pass(),
             'dte': {

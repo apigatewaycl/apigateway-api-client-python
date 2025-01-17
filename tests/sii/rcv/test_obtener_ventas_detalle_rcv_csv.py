@@ -21,39 +21,29 @@ import unittest
 from os import getenv
 from datetime import datetime
 from apigatewaycl.api_client import ApiException
-from apigatewaycl.api_client.sii.indicadores import Uf
+from apigatewaycl.api_client.sii.rcv import Rcv
 
-class TestSiiIndicadoresUf(unittest.TestCase):
+class TestObtemerVentasDetalleRcvCsv(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.client = Uf()
-        cls.anio = getenv('TEST_ANIO', datetime.now().strftime("%Y")).strip()
+        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
+        cls.client = Rcv(cls.contribuyente_rut, contribuyente_clave)
+        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
 
-    # CASO 1: obtener valores de la UF de todo un año
-    def test_uf_anual(self):
+    # CASO 4: detalle de ventas con tipo "rcv_csv"
+    # En este caso se trae el detalle de los documentos en una llamada
+    def test_obtener_ventas_detalle_rcv_csv(self):
         try:
-            anual = self.client.anual(self.anio)
+            ventas_detalle = self.client.ventas_detalle(
+                self.contribuyente_rut,
+                self.periodo
+            )
             if self.verbose:
-                print('test_uf_anual(): anual', anual)
-        except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+                print('test_ventas_detalle_rcv_csv(): ventas_detalle', ventas_detalle)
 
-    # CASO 2: obtener valores de la UF de todo un mes (enero del anio)
-    def test_uf_mensual(self):
-        try:
-            mensual = self.client.mensual(self.anio + '01')
-            if self.verbose:
-                print('test_uf_mensual(): mensual', mensual)
-        except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
-
-    # CASO 3: obtener valores de la UF de un día específico (1ero de enero del ANIO)
-    def test_uf_diario(self):
-        try:
-            diario = self.client.diario(self.anio + '-01-01')
-            if self.verbose:
-                print('test_uf_diario(): diario', diario)
+            self.assertIsNotNone(ventas_detalle)
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})

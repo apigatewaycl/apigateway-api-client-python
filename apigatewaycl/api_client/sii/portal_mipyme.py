@@ -20,7 +20,8 @@
 '''
 Módulo para consultas al Portal MIPYME del SII.
 
-Para más información sobre la API, consulte la `documentación completa del Portal MIPYME <https://developers.apigateway.cl/#d545a096-09be-4c9e-8d12-7b86b6bf1be6>`_.
+Para más información sobre la API, consulte la `documentación completa del
+Portal MIPYME <https://developers.apigateway.cl/#d545a096-09be-4c9e-8d12-7b86b6bf1be6>`_.
 '''
 
 from abc import ABC
@@ -119,7 +120,9 @@ class DteEmitidos(Dte):
         :return: Documentos de DTE emitidos.
         :rtype: list[dict]
         '''
-        url = '/sii/mipyme/emitidos/documentos/%(emisor)s' % {'emisor': emisor}
+        url = '/sii/mipyme/emitidos/documentos/%(emisor)s' % {
+            'emisor': emisor
+        }
         body = {
             'auth': self._get_auth_pass(),
             'filtros': filtros
@@ -186,7 +189,9 @@ class DteRecibidos(Dte):
         :return: Documentos de DTE recibidos.
         :rtype: list[dict]
         '''
-        url = '/sii/mipyme/recibidos/documentos/%(receptor)s' % {'receptor': receptor}
+        url = '/sii/mipyme/recibidos/documentos/%(receptor)s' % {
+            'receptor': receptor
+        }
         body = {
             'auth': self._get_auth_pass(),
             'filtros': filtros
