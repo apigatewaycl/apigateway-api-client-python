@@ -1,10 +1,10 @@
 Ejemplo
 =======
 
-Ejemplo de listar BHEs
+Ejemplo de emitir BHEs
 ----------------------
 
-El siguiente es un ejemplo básico de cómo obtener un listado de documentos BHE utilizando el cliente de API.
+El siguiente es un ejemplo básico de cómo emitir un documento BHE utilizando el cliente de API.
 
 Para utilizar el cliente de API de API Gateway, deberás tener definido el token de API como variable de entorno.
 
@@ -66,8 +66,8 @@ Opcionalmente, puedes definir como variables de entorno el identificador y la cl
     emitir = client.emitir(datos_bhe)
 
     # Se despliega el resultado en consola, para confirmar.
-    print('\nBHE RECIBIDAS: \n')
-    print('\nBHE Emitidas(): emitir', emitir, '\n')
+    print('\nEMISION BOLETA: \n')
+    print('\nEmitir BHE ejemplo: ', emitir, '\n')
 
 .. seealso::
     Para saber más sobre los parámetros posibles y el cómo consumir los servicios de la API, referirse a la `documentación de API Gateway. <https://developers.apigateway.cl/>`_

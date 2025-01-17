@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>apigatewaycl.api_client package &mdash; documentación de API Gateway: Cliente de API en Python - 3</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
@@ -256,14 +256,16 @@
 <p>Cliente para interactuar con la API de API Gateway.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parámetros<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>token</strong> (<em>str</em>) – Token de autenticación del usuario. Si no se proporciona, se intentará obtener de una variable de entorno.</p></li>
-<li><p><strong>url</strong> (<em>str</em>) – URL base de la API. Si no se proporciona, se usará una URL por defecto.</p></li>
-<li><p><strong>version</strong> (<em>str</em>) – Versión de la API. Si no se proporciona, se usará una versión por defecto.</p></li>
-<li><p><strong>raise_for_status</strong> (<em>bool</em>) – Si se debe lanzar una excepción automáticamente para respuestas de error HTTP. Por defecto es True.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>token</strong> (<em>str</em>) – Token de autenticación del usuario. Si no se proporciona,</p>
 </dd>
 </dl>
+<p>se intentará obtener de una variable de entorno.
+:param str url: URL base de la API. Si no se proporciona, se usará una
+URL por defecto.
+:param str version: Versión de la API. Si no se proporciona, se usará
+una versión por defecto.
+:param bool raise_for_status: Si se debe lanzar una excepción automáticamente
+para respuestas de error HTTP. Por defecto es True.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="apigatewaycl.api_client.ApiClient.delete">
 <span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apigatewaycl.api_client.ApiClient.delete" title="Link to this definition"></a></dt>

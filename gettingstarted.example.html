@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ejemplo &mdash; documentación de API Gateway: Cliente de API en Python - 3</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
@@ -85,9 +85,9 @@
              
   <section id="ejemplo">
 <h1>Ejemplo<a class="headerlink" href="#ejemplo" title="Link to this heading"></a></h1>
-<section id="ejemplo-de-listar-bhes">
-<h2>Ejemplo de listar BHEs<a class="headerlink" href="#ejemplo-de-listar-bhes" title="Link to this heading"></a></h2>
-<p>El siguiente es un ejemplo básico de cómo obtener un listado de documentos BHE utilizando el cliente de API.</p>
+<section id="ejemplo-de-emitir-bhes">
+<h2>Ejemplo de emitir BHEs<a class="headerlink" href="#ejemplo-de-emitir-bhes" title="Link to this heading"></a></h2>
+<p>El siguiente es un ejemplo básico de cómo emitir un documento BHE utilizando el cliente de API.</p>
 <p>Para utilizar el cliente de API de API Gateway, deberás tener definido el token de API como variable de entorno.</p>
 <div class="admonition seealso">
 <p class="admonition-title">Ver también</p>
@@ -95,9 +95,9 @@
 </div>
 <p>Opcionalmente, puedes definir como variables de entorno el identificador y la clave del SII, o definirlos directamente en el programa.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Importaciones del cliente de API de API Gateway</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">getenv</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">apigatewaycl.api_client.sii.bhe</span> <span class="kn">import</span> <span class="n">BheEmitidas</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">getenv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apigatewaycl.api_client.sii.bhe</span><span class="w"> </span><span class="kn">import</span> <span class="n">BheEmitidas</span>
 
 <span class="c1"># RUT de contribuyente SII sin puntos y con Dígito Verificador. (Reemplazar segundo valor si)</span>
 <span class="n">identificador</span> <span class="o">=</span> <span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;TEST_USUARIO_IDENTIFICADOR&#39;</span><span class="p">,</span> <span class="s1">&#39;12345678-9&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -145,8 +145,8 @@
 <span class="n">emitir</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">emitir</span><span class="p">(</span><span class="n">datos_bhe</span><span class="p">)</span>
 
 <span class="c1"># Se despliega el resultado en consola, para confirmar.</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">BHE RECIBIDAS: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">BHE Emitidas(): emitir&#39;</span><span class="p">,</span> <span class="n">emitir</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">EMISION BOLETA: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Emitir BHE ejemplo: &#39;</span><span class="p">,</span> <span class="n">emitir</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition seealso">

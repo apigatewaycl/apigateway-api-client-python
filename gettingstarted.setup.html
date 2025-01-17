@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Configuración &mdash; documentación de API Gateway: Cliente de API en Python - 3</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
@@ -119,7 +119,7 @@ reconocida automáticamente por el cliente:</p>
 </div>
 <p>Si no se desea usar una variable de entorno, al instanciar los objetos se
 deberá indicar el token del usuario. Ejemplo con el cliente genérico:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">apigatewaycl</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">apigatewaycl</span>
 <span class="n">APIGATEWAY_API_TOKEN</span> <span class="o">=</span> <span class="s2">&quot;aquí-tu-token-de-usuario&quot;</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">apigatewaycl</span><span class="o">.</span><span class="n">api_client</span><span class="o">.</span><span class="n">ApiClient</span><span class="p">(</span><span class="n">APIGATEWAY_API_TOKEN</span><span class="p">)</span>
 </pre></div>
@@ -127,7 +127,7 @@ deberá indicar el token del usuario. Ejemplo con el cliente genérico:</p>
 <p>El siguiente es un ejemplo con el cliente específico de Rcv. Primero se pasan
 los datos obligatorios de RUT y clave del usuario. Luego además se pasa el token
 del usuario de la API.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">apigatewaycl</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">apigatewaycl</span>
 <span class="n">APIGATEWAY_API_TOKEN</span> <span class="o">=</span> <span class="s2">&quot;aquí-tu-token-de-usuario&quot;</span>
 <span class="n">SII_USUARIO_RUT</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 <span class="n">SII_USUARIO_CLAVE</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>

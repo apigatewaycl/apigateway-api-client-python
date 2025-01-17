@@ -26,7 +26,8 @@ Si quieres ejecutar una prueba específica, deberás especificar el nombre y rut
 
 .. code:: shell
 
-    python tests/run.py sii.test_actividades_economicas.TestSiiActividadesEconomicas.test_listado
+    python tests/run.py sii.actividades.test_listar_actividades_economicas
+    python tests/run.py sii.bhe_emitidas.test_listar_bhes_emitidas
 
 Para ejecutar otros ejemplos, deberás reemplazar desde `test_actividades_economicas` para adelante por el nombre
 y ruta de alguna de las otras pruebas descritas posteriormente.
