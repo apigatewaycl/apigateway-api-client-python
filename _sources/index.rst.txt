@@ -16,10 +16,6 @@ API Gateway: Cliente de API en Python - Documentación
     :target: https://scrutinizer-ci.com/g/apigatewaycl/apigateway-api-client-python/
 .. image:: https://scrutinizer-ci.com/g/apigatewaycl/apigateway-api-client-python/badges/coverage.png?b=master
     :target: https://scrutinizer-ci.com/g/apigatewaycl/apigateway-api-client-python/
-.. image:: https://app.fossa.com/api/projects/git%2Bgithub.com%2Fapigatewaycl%2Fapigateway-api-client-python.svg?type=shield&issueType=license
-    :target: https://app.fossa.com/projects/git%2Bgithub.com%2Fapigatewaycl%2Fapigateway-api-client-python?ref=badge_shield&issueType=license
-.. image:: https://app.fossa.com/api/projects/git%2Bgithub.com%2Fapigatewaycl%2Fapigateway-api-client-python.svg?type=shield&issueType=security
-    :target: https://app.fossa.com/projects/git%2Bgithub.com%2Fapigatewaycl%2Fapigateway-api-client-python?ref=badge_shield&issueType=security
 .. image:: https://img.shields.io/pypi/l/apigatewaycl.svg
     :target: https://raw.githubusercontent.com/apigatewaycl/apigateway-api-client-python/master/COPYING
 
