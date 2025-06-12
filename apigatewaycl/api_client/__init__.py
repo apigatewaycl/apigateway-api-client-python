@@ -42,7 +42,7 @@ class ApiClient:
     para respuestas de error HTTP. Por defecto es True.
     '''
 
-    __DEFAULT_URL = 'https://apigateway.cl'
+    __DEFAULT_URL = 'https://legacy.apigateway.cl'
     __DEFAULT_VERSION = 'v1'
 
     def __init__(self, token = None, url = None, version = None, raise_for_status = True):
