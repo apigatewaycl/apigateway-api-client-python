@@ -30,7 +30,7 @@ Autenticación en API Gateway
 ----------------------------
 
 Lo más simple, y recomendado, es usar una variable de entorno con el
-`token del usuario <https://apigateway.cl/dashboard#api-auth>`_, la cual será
+`token del usuario <https://legacy.apigateway.cl/dashboard#api-auth>`_, la cual será
 reconocida automáticamente por el cliente:
 
 .. code:: shell
