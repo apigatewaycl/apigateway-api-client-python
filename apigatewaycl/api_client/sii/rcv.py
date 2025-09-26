@@ -124,3 +124,256 @@ class Rcv(ApiBase):
         }
         response = self.client.post(url, data = body)
         return response.json()
+
+    def compras_async_solicitar(
+        self,
+        receptor: str,
+        periodo: str,
+        dte: int = 0,
+        estado: str = 'REGISTRO'
+    ):
+        '''
+        Solicita el envío de los detalles de las compras de un
+        receptor en un periodo específico.
+
+        :param receptor: RUT del receptor de las compras formato 12345678-9.
+        :type receptor: str
+
+        :param periodo: Período de tiempo de las compras formato YYYYMM.
+        :type periodo: str
+
+        :param dte: Tipo de DTE formato 0 para todos los tipos de DTE
+        o el tipo de DTE.
+        :type dte: int
+
+        :param estado: Estado de las compras
+        ('REGISTRO', 'PENDIENTE', 'NO_INCLUIR', 'RECLAMADO').
+        :type estado: str
+
+        :return: Respuesta JSON con la solicitud de envío de los detalles de las compras.
+        :rtype: dict
+        '''
+        url = '/sii/rcv/compras/async/solicitar'
+        url += '/%(receptor)s/%(periodo)s/%(dte)s/%(estado)s' % {
+            'receptor': receptor,
+            'periodo': periodo,
+            'dte': dte,
+            'estado': estado
+        }
+        body = {
+            'auth': self._get_auth_pass()
+        }
+        response = self.client.post(url, data = body)
+        return response.json()
+
+    def compras_async_estado(
+        self,
+        receptor: str,
+        periodo: str,
+        id_solicitud: str,
+        dte: int = 0,
+        estado: str = 'REGISTRO'):
+        '''
+        Obtiene el estado de la solicitud  los detalles de las compras.
+
+        :param receptor: RUT del receptor de las compras formato 12345678-9.
+        :type receptor: str
+
+        :param periodo: Período de tiempo de las compras formato YYYYMM.
+        :type periodo: str
+
+        :param id_solicitud: ID de la solicitud de envío de los detalles
+        de las compras.
+        :type id_solicitud: str
+
+        :param dte: Tipo de DTE formato 0 para todos los tipos de DTE
+        o el tipo de DTE.
+        :type dte: int
+
+        :param estado: Estado de las compras
+        ('REGISTRO', 'PENDIENTE', 'NO_INCLUIR', 'RECLAMADO').
+        :type estado: str
+
+        :return: Respuesta JSON con el estado de la solicitud de
+        envío de los detalles de las compras.
+        :rtype: dict
+        '''
+        url = '/sii/rcv/compras/async/estado/%(receptor)s'
+        url += '/%(periodo)s/%(id_solicitud)s/%(dte)s/%(estado)s'
+        url = url% {
+            'receptor': receptor,
+            'periodo': periodo,
+            'id_solicitud': id_solicitud,
+            'dte': dte,
+            'estado': estado
+        }
+        body = {
+            'auth': self._get_auth_pass()
+        }
+        response = self.client.post(url, data = body)
+        return response.json()
+
+    def compras_async_detalle(
+        self,
+        receptor: str,
+        periodo: str,
+        id_solicitud: str,
+        dte: int = 0,
+        estado: str = 'REGISTRO'):
+        '''
+        Obtiene los detalles de las compras de un receptor
+        en un periodo específico.
+
+        :param receptor: RUT del receptor de las compras formato 12345678-9.
+        :type receptor: str
+
+        :param periodo: Período de tiempo de las compras formato YYYYMM.
+        :type periodo: str
+
+        :param id_solicitud: ID de la solicitud de envío
+        de los detalles de las compras.
+        :type id_solicitud: str
+
+        :param dte: Tipo de DTE formato 0 para todos los tipos de DTE
+        o el tipo de DTE.
+        :type dte: int
+
+        :param estado: Estado de las compras
+        ('REGISTRO', 'PENDIENTE', 'NO_INCLUIR', 'RECLAMADO').
+        :type estado: str
+
+        :return: Respuesta JSON con los detalles de las compras.
+        :rtype: dict
+        '''
+        url = '/sii/rcv/compras/async/detalle/%(receptor)s'
+        url += '/%(periodo)s/%(id_solicitud)s/%(dte)s/%(estado)s'
+        url = url % {
+            'receptor': receptor,
+            'periodo': periodo,
+            'id_solicitud': id_solicitud,
+            'dte': dte,
+            'estado': estado
+        }
+        body = {
+            'auth': self._get_auth_pass()
+        }
+        response = self.client.post(url, data = body)
+        return response.json()
+
+    def ventas_async_solicitar(
+        self,
+        emisor: str,
+        periodo: str,
+        dte: int = 0,
+    ):
+        '''
+        Solicita el envío de los detalles de las ventas de un emisor.
+
+        :param emisor: RUT del emisor de las ventas formato 12345678-9.
+        :type emisor: str
+
+        :param periodo: Período de tiempo de las ventas formato YYYYMM.
+        :type periodo: str
+
+        :param dte: Tipo de DTE formato 0 para todos los tipos de DTE
+        o el tipo de DTE.
+        :type dte: int
+
+        :return: Respuesta JSON con la solicitud de envío de
+        los detalles de las ventas.
+        :rtype: dict
+        '''
+        url = '/sii/rcv/ventas/async/solicitar'
+        url += '/%(emisor)s/%(periodo)s/%(dte)s' % {
+            'emisor': emisor,
+            'periodo': periodo,
+            'dte': dte,
+        }
+        body = {
+            'auth': self._get_auth_pass()
+        }
+        response = self.client.post(url, data = body)
+        return response.json()
+
+    def ventas_async_estado(
+        self,
+        emisor: str,
+        periodo: str,
+        id_solicitud: str,
+        dte: int = 0,
+    ):
+        '''
+        Obtiene el estado de la solicitud  los detalles de las ventas.
+
+        :param emisor: RUT del emisor de las ventas formato 12345678-9.
+        :type emisor: str
+
+        :param periodo: Período de tiempo de las ventas formato YYYYMM.
+        :type periodo: str
+
+        :param id_solicitud: ID de la solicitud de envío de los detalles
+        de las ventas de un emisor.
+        :type id_solicitud: str
+
+        :param dte: Tipo de DTE formato 0 para todos los tipos de DTE
+        o el tipo de DTE.
+        :type dte: int
+
+        :return: Respuesta JSON con el estado de la solicitud de
+        envío de los detalles de las ventas.
+        :rtype: dict
+        '''
+        url = '/sii/rcv/ventas/async/estado/%(emisor)s'
+        url += '/%(periodo)s/%(id_solicitud)s/%(dte)s'
+        url = url% {
+            'emisor': emisor,
+            'periodo': periodo,
+            'id_solicitud': id_solicitud,
+            'dte': dte,
+        }
+        body = {
+            'auth': self._get_auth_pass()
+        }
+        response = self.client.post(url, data = body)
+        return response.json()
+
+    def ventas_async_detalle(
+        self,
+        emisor: str,
+        periodo: str,
+        id_solicitud: str,
+        dte: int = 0,
+    ):
+        '''
+        Obtiene los detalles de las ventas de un emisor.
+
+        :param emisor: RUT del emisor de las ventas formato 12345678-9.
+        :type emisor: str
+
+        :param periodo: Período de tiempo de las ventas formato YYYYMM.
+        :type periodo: str
+
+        :param id_solicitud: ID de la solicitud de envío
+        de los detalles de las ventas de un emisor.
+        :type id_solicitud: str
+
+        :param dte: Tipo de DTE formato 0 para todos los tipos de DTE
+        o el tipo de DTE.
+        :type dte: int
+
+        :return: Respuesta JSON con los detalles de las ventas.
+        :rtype: dict
+        '''
+        url = '/sii/rcv/ventas/async/detalle/%(emisor)s'
+        url += '/%(periodo)s/%(id_solicitud)s/%(dte)s'
+        url = url % {
+            'emisor': emisor,
+            'periodo': periodo,
+            'id_solicitud': id_solicitud,
+            'dte': dte,
+        }
+        body = {
+            'auth': self._get_auth_pass()
+        }
+        response = self.client.post(url, data = body)
+        return response.json()
