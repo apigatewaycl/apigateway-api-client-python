@@ -1049,6 +1049,117 @@ y Ventas (RCV) de la API de API Gateway.</p>
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="apigatewaycl.api_client.sii.rcv.Rcv.compras_async_detalle">
+<span class="sig-name descname"><span class="pre">compras_async_detalle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">receptor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periodo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_solicitud</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dte</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">estado</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'REGISTRO'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apigatewaycl.api_client.sii.rcv.Rcv.compras_async_detalle" title="Link to this definition"></a></dt>
+<dd><p>Obtiene los detalles de las compras de un receptor
+en un periodo específico.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>receptor</strong> (<em>str</em>) – RUT del receptor de las compras formato 12345678-9.</p></li>
+<li><p><strong>periodo</strong> (<em>str</em>) – Período de tiempo de las compras formato YYYYMM.</p></li>
+<li><p><strong>id_solicitud</strong> – ID de la solicitud de envío</p></li>
+</ul>
+</dd>
+</dl>
+<p>de los detalles de las compras.
+:type id_solicitud: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dte</strong> – Tipo de DTE formato 0 para todos los tipos de DTE</p>
+</dd>
+</dl>
+<p>o el tipo de DTE.
+:type dte: int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>estado</strong> – Estado de las compras</p>
+</dd>
+</dl>
+<p>(“REGISTRO”, “PENDIENTE”, “NO_INCLUIR”, “RECLAMADO”).
+:type estado: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Respuesta JSON con los detalles de las compras.</p>
+</dd>
+<dt class="field-even">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apigatewaycl.api_client.sii.rcv.Rcv.compras_async_estado">
+<span class="sig-name descname"><span class="pre">compras_async_estado</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">receptor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periodo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_solicitud</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dte</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">estado</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'REGISTRO'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apigatewaycl.api_client.sii.rcv.Rcv.compras_async_estado" title="Link to this definition"></a></dt>
+<dd><p>Obtiene el estado de la solicitud  los detalles de las compras.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>receptor</strong> (<em>str</em>) – RUT del receptor de las compras formato 12345678-9.</p></li>
+<li><p><strong>periodo</strong> (<em>str</em>) – Período de tiempo de las compras formato YYYYMM.</p></li>
+<li><p><strong>id_solicitud</strong> – ID de la solicitud de envío de los detalles</p></li>
+</ul>
+</dd>
+</dl>
+<p>de las compras.
+:type id_solicitud: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dte</strong> – Tipo de DTE formato 0 para todos los tipos de DTE</p>
+</dd>
+</dl>
+<p>o el tipo de DTE.
+:type dte: int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>estado</strong> – Estado de las compras</p>
+</dd>
+</dl>
+<p>(“REGISTRO”, “PENDIENTE”, “NO_INCLUIR”, “RECLAMADO”).
+:type estado: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Respuesta JSON con el estado de la solicitud de</p>
+</dd>
+</dl>
+<p>envío de los detalles de las compras.
+:rtype: dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apigatewaycl.api_client.sii.rcv.Rcv.compras_async_solicitar">
+<span class="sig-name descname"><span class="pre">compras_async_solicitar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">receptor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periodo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dte</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">estado</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'REGISTRO'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apigatewaycl.api_client.sii.rcv.Rcv.compras_async_solicitar" title="Link to this definition"></a></dt>
+<dd><p>Solicita el envío de los detalles de las compras de un
+receptor en un periodo específico.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>receptor</strong> (<em>str</em>) – RUT del receptor de las compras formato 12345678-9.</p></li>
+<li><p><strong>periodo</strong> (<em>str</em>) – Período de tiempo de las compras formato YYYYMM.</p></li>
+<li><p><strong>dte</strong> – Tipo de DTE formato 0 para todos los tipos de DTE</p></li>
+</ul>
+</dd>
+</dl>
+<p>o el tipo de DTE.
+:type dte: int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>estado</strong> – Estado de las compras</p>
+</dd>
+</dl>
+<p>(“REGISTRO”, “PENDIENTE”, “NO_INCLUIR”, “RECLAMADO”).
+:type estado: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Respuesta JSON con la solicitud de envío de los detalles de las compras.</p>
+</dd>
+<dt class="field-even">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="apigatewaycl.api_client.sii.rcv.Rcv.compras_detalle">
 <span class="sig-name descname"><span class="pre">compras_detalle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">receptor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periodo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dte</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">estado</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'REGISTRO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tipo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apigatewaycl.api_client.sii.rcv.Rcv.compras_detalle" title="Link to this definition"></a></dt>
 <dd><p>Obtiene detalles de las compras para un receptor en un periodo específico.</p>
@@ -1090,6 +1201,93 @@ y Ventas (RCV) de la API de API Gateway.</p>
 <dd class="field-odd"><p>list[dict]</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apigatewaycl.api_client.sii.rcv.Rcv.ventas_async_detalle">
+<span class="sig-name descname"><span class="pre">ventas_async_detalle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emisor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periodo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_solicitud</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dte</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apigatewaycl.api_client.sii.rcv.Rcv.ventas_async_detalle" title="Link to this definition"></a></dt>
+<dd><p>Obtiene los detalles de las ventas de un emisor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>emisor</strong> (<em>str</em>) – RUT del emisor de las ventas formato 12345678-9.</p></li>
+<li><p><strong>periodo</strong> (<em>str</em>) – Período de tiempo de las ventas formato YYYYMM.</p></li>
+<li><p><strong>id_solicitud</strong> – ID de la solicitud de envío</p></li>
+</ul>
+</dd>
+</dl>
+<p>de los detalles de las ventas de un emisor.
+:type id_solicitud: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dte</strong> – Tipo de DTE formato 0 para todos los tipos de DTE</p>
+</dd>
+</dl>
+<p>o el tipo de DTE.
+:type dte: int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Respuesta JSON con los detalles de las ventas.</p>
+</dd>
+<dt class="field-even">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apigatewaycl.api_client.sii.rcv.Rcv.ventas_async_estado">
+<span class="sig-name descname"><span class="pre">ventas_async_estado</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emisor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periodo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_solicitud</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dte</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apigatewaycl.api_client.sii.rcv.Rcv.ventas_async_estado" title="Link to this definition"></a></dt>
+<dd><p>Obtiene el estado de la solicitud  los detalles de las ventas.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>emisor</strong> (<em>str</em>) – RUT del emisor de las ventas formato 12345678-9.</p></li>
+<li><p><strong>periodo</strong> (<em>str</em>) – Período de tiempo de las ventas formato YYYYMM.</p></li>
+<li><p><strong>id_solicitud</strong> – ID de la solicitud de envío de los detalles</p></li>
+</ul>
+</dd>
+</dl>
+<p>de las ventas de un emisor.
+:type id_solicitud: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dte</strong> – Tipo de DTE formato 0 para todos los tipos de DTE</p>
+</dd>
+</dl>
+<p>o el tipo de DTE.
+:type dte: int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Respuesta JSON con el estado de la solicitud de</p>
+</dd>
+</dl>
+<p>envío de los detalles de las ventas.
+:rtype: dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apigatewaycl.api_client.sii.rcv.Rcv.ventas_async_solicitar">
+<span class="sig-name descname"><span class="pre">ventas_async_solicitar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emisor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periodo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dte</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apigatewaycl.api_client.sii.rcv.Rcv.ventas_async_solicitar" title="Link to this definition"></a></dt>
+<dd><p>Solicita el envío de los detalles de las ventas de un emisor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>emisor</strong> (<em>str</em>) – RUT del emisor de las ventas formato 12345678-9.</p></li>
+<li><p><strong>periodo</strong> (<em>str</em>) – Período de tiempo de las ventas formato YYYYMM.</p></li>
+<li><p><strong>dte</strong> – Tipo de DTE formato 0 para todos los tipos de DTE</p></li>
+</ul>
+</dd>
+</dl>
+<p>o el tipo de DTE.
+:type dte: int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Respuesta JSON con la solicitud de envío de</p>
+</dd>
+</dl>
+<p>los detalles de las ventas.
+:rtype: dict</p>
 </dd></dl>
 
 <dl class="py method">
