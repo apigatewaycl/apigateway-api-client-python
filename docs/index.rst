@@ -12,10 +12,6 @@ API Gateway: Cliente de API en Python - Documentación
     :target: https://pypi.org/project/apigatewaycl
 .. image:: https://img.shields.io/pypi/pyversions/apigatewaycl.svg
     :target: https://pypi.org/project/apigatewaycl
-.. image:: https://scrutinizer-ci.com/g/apigatewaycl/apigateway-api-client-python/badges/quality-score.png?b=master
-    :target: https://scrutinizer-ci.com/g/apigatewaycl/apigateway-api-client-python/
-.. image:: https://scrutinizer-ci.com/g/apigatewaycl/apigateway-api-client-python/badges/coverage.png?b=master
-    :target: https://scrutinizer-ci.com/g/apigatewaycl/apigateway-api-client-python/
 .. image:: https://img.shields.io/pypi/l/apigatewaycl.svg
     :target: https://raw.githubusercontent.com/apigatewaycl/apigateway-api-client-python/master/COPYING
 
