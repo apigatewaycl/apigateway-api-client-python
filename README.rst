@@ -37,4 +37,4 @@ Enlaces
 - `Sitio web API Gateway <https://www.apigateway.cl>`_.
 - `Código fuente en GitHub <https://github.com/apigatewaycl/apigateway-api-client-python>`_.
 - `Paquete en PyPI <https://pypi.org/project/apigatewaycl>`_.
-- `Documentación en Read the Docs <https://apigatewaycl.readthedocs.io/es/latest>`_.
+- `Documentación <https://api-client-python.docs.apigateway.cl/>`_.
