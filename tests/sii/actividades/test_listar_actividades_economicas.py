@@ -27,7 +27,7 @@ class TestListarActividadesEconomicas(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.client = ActividadesEconomicas()
+        cls.client = ActividadesEconomicas(version='v1')
 
     def test_listar_actividades_economicas(self):
         try:

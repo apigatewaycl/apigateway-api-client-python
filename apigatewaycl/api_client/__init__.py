@@ -167,7 +167,7 @@ class ApiClient:
                 })
         if self.version == 'v2':
             _original_json = response.json
-            response.json = lambda: _original_json()['data']
+            response.json = lambda: _original_json().get('data', _original_json())
         return response
 
     def get(self, resource, headers = None):
