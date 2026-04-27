@@ -157,7 +157,7 @@ class ApiClient:
                         'message', ''
                     ) or error.get(
                         'exception', ''
-                    ) or 'Error desconocido.'
+                    ) or json.dumps(error) or 'Error desconocido.'
                 except json.decoder.JSONDecodeError:
                     message = 'Error al decodificar los datos en JSON: %(response)s' % {
                         'response': response.text
