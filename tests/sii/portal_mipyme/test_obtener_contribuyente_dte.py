@@ -18,10 +18,9 @@
 #
 
 import unittest
-from os import getenv, remove as file_remove
-from datetime import datetime
+from os import getenv
 from apigatewaycl.api_client import ApiException
-from apigatewaycl.api_client.sii.portal_mipyme import Contribuyentes, DteEmitidos, DteRecibidos
+from apigatewaycl.api_client.sii.portal_mipyme import Contribuyentes
 
 class TestObtenerContribuyenteDte(unittest.TestCase):
 
@@ -37,7 +36,11 @@ class TestObtenerContribuyenteDte(unittest.TestCase):
     def test_obtener_contribuyente_dte(self):
         dte = getenv('TEST_PORTAL_MIPYME_DTE', '33').strip()
         try:
-            info = self.client.info(self.identificador, self.contribuyente_rut, dte)
+            info = self.client.info(
+                self.identificador,
+                self.contribuyente_rut,
+                int(dte)
+            )
 
             self.assertIsNotNone(info)
 

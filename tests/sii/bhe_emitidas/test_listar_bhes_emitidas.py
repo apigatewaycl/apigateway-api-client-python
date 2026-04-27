@@ -37,7 +37,8 @@ class TestListarBhesEmitidas(unittest.TestCase):
     def test_listar_bhes_emitidas(self):
         try:
             documentos = self.client.documentos(
-                self.contribuyente_rut, self.periodo
+                self.contribuyente_rut, self.periodo,
+                pagina = 1,
             )
 
             self.assertTrue(True)

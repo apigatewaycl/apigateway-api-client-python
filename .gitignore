@@ -3,6 +3,7 @@ venv
 __pycache__
 *.pyc
 ejemplo-prueba.py
+CLAUDE.md
 
 # Archivos de documentación
 docs/_build/

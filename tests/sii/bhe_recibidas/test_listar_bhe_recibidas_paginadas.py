@@ -58,11 +58,12 @@ class TestListarBheRecibidasPaginadas(unittest.TestCase):
                 self.contribuyente_rut,
                 self.periodo,
                 pagina,
-                pagina_sig_codigo
+                pagina_sig_codigo if self.client.client.version == 'v1' else None
             )
             if documentos_pagina['pagina_sig_codigo'] == '00000000000000':
                 break
-            pagina_sig_codigo = documentos_pagina['pagina_sig_codigo']
+            if self.client.client.version == 'v1':
+                pagina_sig_codigo = documentos_pagina['pagina_sig_codigo']
             documentos = documentos + documentos_pagina['boletas']
             pagina += 1
         return documentos

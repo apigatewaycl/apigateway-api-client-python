@@ -43,13 +43,14 @@ class TestListarBheEmitidasPaginadasDia(unittest.TestCase):
                     self.contribuyente_rut,
                     self.periodo,
                     pagina = pagina,
-                    pagina_sig_codigo = pagina_sig_codigo
+                    pagina_sig_codigo = pagina_sig_codigo if self.client.client.version == 'v1' else None
                 )
                 print('test_documentos_paginacion_periodo_mes(): Pagina %(pagina)s documentos %(documentos)s' % {
                     'pagina': pagina,
                     'documentos': documentos,
                 })
-                pagina_sig_codigo = documentos['pagina_sig_codigo']
+                if self.client.client.version == 'v1':
+                    pagina_sig_codigo = documentos['pagina_sig_codigo']
                 pagina += 1
                 if pagina > documentos['n_paginas']:
                     break

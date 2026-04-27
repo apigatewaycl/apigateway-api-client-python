@@ -93,6 +93,16 @@ class Dte(PortalMipyme):
     ESTADO_RECHAZADO_RECEPTOR = 'RRH' # DTE rechazado por receptor
     ESTADO_SIN_REPAROS = 'RSR' # Recibido sin reparos
 
+    DTE_TIPOS = {
+        '33': '33',
+        '34': '34',
+        '35': '35',
+        '36': '36',
+        '37': '37',
+        '38': '38',
+        '39': '39',
+    }
+
     def get_codigo_dte(self, tipo):
         '''
         Obtiene el código correspondiente al tipo de DTE.

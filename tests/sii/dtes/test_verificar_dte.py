@@ -20,7 +20,7 @@
 import unittest
 from os import getenv
 from apigatewaycl.api_client import ApiException
-from apigatewaycl.api_client.sii.dte import Contribuyentes, Emitidos
+from apigatewaycl.api_client.sii.dte import Emitidos
 
 class TestVerificarDte(unittest.TestCase):
 

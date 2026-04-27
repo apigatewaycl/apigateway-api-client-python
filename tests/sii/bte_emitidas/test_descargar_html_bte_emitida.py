@@ -19,7 +19,7 @@
 
 import unittest
 import os
-from os import getenv, remove as file_remove
+from os import getenv
 from datetime import datetime
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.bte import BteEmitidas

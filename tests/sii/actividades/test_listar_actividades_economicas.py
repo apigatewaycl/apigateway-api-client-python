@@ -32,9 +32,7 @@ class TestListarActividadesEconomicas(unittest.TestCase):
     def test_listar_actividades_economicas(self):
         try:
             listado = self.client.listado()
-
             self.assertIsNotNone(listado)
-
             if self.verbose:
                 print('test_listado(): listado', listado)
         except ApiException as e:

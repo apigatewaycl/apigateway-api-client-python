@@ -18,10 +18,10 @@
 #
 
 import unittest
-from os import getenv, remove as file_remove
+from os import getenv
 from datetime import datetime
 from apigatewaycl.api_client import ApiException
-from apigatewaycl.api_client.sii.portal_mipyme import Contribuyentes, DteEmitidos, DteRecibidos
+from apigatewaycl.api_client.sii.portal_mipyme import Contribuyentes, DteRecibidos
 
 class TestSiiPortalMipymeContribuyentes(unittest.TestCase):
 
@@ -43,8 +43,8 @@ class TestObtenerDtesRecibidos(unittest.TestCase):
         cls.client = DteRecibidos(cls.identificador, clave)
         cls.contribuyente_rut = getenv('TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT', '').strip()
         anio = getenv('TEST_ANIO', datetime.now().strftime("%Y")).strip()
-        cls.fecha_desde = '%(anio)s-01-01' % {'anio', anio}
-        cls.fecha_hasta = '%(anio)s-01-31' % {'anio', anio}
+        cls.fecha_desde = '%(anio)s-01-01' % {'anio': anio}
+        cls.fecha_hasta = '%(anio)s-01-31' % {'anio': anio}
 
     # CASO 5: documentos recibidos
     def test_obtener_dtes_recibidos(self):

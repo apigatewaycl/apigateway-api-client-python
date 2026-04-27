@@ -35,21 +35,27 @@ class ApiClient:
     :param str token: Token de autenticación del usuario. Si no se proporciona,
     se intentará obtener de una variable de entorno.
     :param str url: URL base de la API. Si no se proporciona, se usará una
-    URL por defecto.
-    :param str version: Versión de la API. Si no se proporciona, se usará
-    una versión por defecto.
+    URL por defecto según la versión.
+    :param str version: Versión de la API. Si no se proporciona, se usará v2.
+    También puede configurarse con la variable de entorno APIGATEWAY_API_VERSION.
     :param bool raise_for_status: Si se debe lanzar una excepción automáticamente
     para respuestas de error HTTP. Por defecto es True.
     '''
 
-    __DEFAULT_URL = 'https://legacy.apigateway.cl'
-    __DEFAULT_VERSION = 'v1'
+    _url_v1 = 'https://legacy.apigateway.cl'
+    _url_v2 = 'https://app.apigateway.cl'
 
     def __init__(self, token = None, url = None, version = None, raise_for_status = True):
+        self.version = version or getenv('APIGATEWAY_API_VERSION', 'v2')
+        if self.version == 'v1':
+            self.token_prefix = 'Bearer'
+            self._default_url = self._url_v1
+        else:
+            self.token_prefix = 'Token'
+            self._default_url = self._url_v2
         self.token = self.__validate_token(token)
         self.url = self.__validate_url(url)
         self.headers = self.__generate_headers()
-        self.version = version or self.__DEFAULT_VERSION
         self.raise_for_status = raise_for_status
 
     def __validate_token(self, token):
@@ -77,7 +83,7 @@ class ApiClient:
         '''
         return str(url).strip() if url else getenv(
             'APIGATEWAY_API_URL',
-            self.__DEFAULT_URL).strip()
+            self._default_url).strip()
 
     def __generate_headers(self):
         '''
@@ -90,7 +96,7 @@ class ApiClient:
             'User-Agent': 'API Gateway: Cliente de API en Python.',
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': 'Bearer %(token)s' % {'token': self.token}
+            'Authorization': '%(prefix)s %(token)s' % {'prefix': self.token_prefix, 'token': self.token}
         }
 
     def __request(self, method, resource, data = None, headers = None):
@@ -142,10 +148,12 @@ class ApiClient:
         if response.status_code != 200 and self.raise_for_status:
             try:
                 response.raise_for_status()
-            except HTTPError as error:
+            except HTTPError:
                 try:
                     error = response.json()
                     message = error.get(
+                        'detail', ''
+                    ) or error.get(
                         'message', ''
                     ) or error.get(
                         'exception', ''
@@ -157,6 +165,9 @@ class ApiClient:
                 raise ApiException('Error HTTP: %(message)s' % {
                     'message': message
                 })
+        if self.version == 'v2':
+            _original_json = response.json
+            response.json = lambda: _original_json()['data']
         return response
 
     def get(self, resource, headers = None):
@@ -255,8 +266,6 @@ class ApiBase(ABC):
     :param dict kwargs: Argumentos adicionales para la autenticación.
     '''
 
-    auth = {}
-
     def __init__(
             self,
             api_token = None,
@@ -265,6 +274,7 @@ class ApiBase(ABC):
             api_raise_for_status = True,
             **kwargs
         ):
+        self.auth = {}
         self.client = ApiClient(
             api_token,
             api_url,
@@ -354,7 +364,7 @@ class ApiBase(ABC):
             # Intenta decodificar la cadena con validación estricta
             base64.b64decode(firma_electronica_base64, validate=True)
             return True
-        except (base64.binascii.Error, ValueError):
+        except (base64.binascii.Error, ValueError): # type: ignore
             return False
 
     def __is_auth_cert_data(self, pem_str):
@@ -405,7 +415,7 @@ class ApiBase(ABC):
         try:
             base64.b64decode(base64_content, validate=True)
             return True
-        except (base64.binascii.Error, ValueError):
+        except (base64.binascii.Error, ValueError): # type: ignore
             return False
 
     def _get_auth_pass(self):

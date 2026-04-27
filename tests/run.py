@@ -61,7 +61,9 @@ loader = unittest.TestLoader()
 suite = loader.loadTestsFromName(args.test_case) if args.test_case else loader.discover(tests_dir)
 
 # Ejecutar los tests
-runner = unittest.TextTestRunner(failfast=True, resultclass=CustomTestResult)
+runner = unittest.TextTestRunner(
+    failfast=True, resultclass=CustomTestResult # type: ignore
+)
 try:
     runner.run(suite)
 except KeyboardInterrupt:
