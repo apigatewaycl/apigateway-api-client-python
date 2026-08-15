@@ -18,12 +18,13 @@
 #
 
 import unittest
-from os import getenv, remove as file_remove
+import os
+from os import getenv
 from datetime import datetime
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.bhe import BheRecibidas
 
-class TestSiiBheRecibidas(unittest.TestCase):
+class TestDescargarPdfBheRecibida(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -33,42 +34,42 @@ class TestSiiBheRecibidas(unittest.TestCase):
         cls.client = BheRecibidas(cls.contribuyente_rut, contribuyente_clave)
         cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
 
-    # CASO 1: boletas del periodo
-    def test_documentos(self):
-        try:
-            documentos = self.client.documentos(self.contribuyente_rut, self.periodo)
-            if self.verbose:
-                print('test_documentos(): documentos', documentos)
-        except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
-
     # CASO 2: bajar PDF de una boleta
-    def test_pdf(self):
+    def test_descargar_pdf_bhe_recibida(self):
         try:
-            documentos = self.client.documentos(self.contribuyente_rut, self.periodo)
+            documentos = self.client.documentos(
+                self.contribuyente_rut, self.periodo
+            )
             if len(documentos) == 0:
                 print('test_pdf(): no probó funcionalidad.')
                 return
             boleta_codigo = documentos[0]['codigo']
             pdf = self.client.pdf(boleta_codigo)
-            filename = 'bhe_recibidas_test_pdf_%(contribuyente_rut)s_%(periodo)s_%(boleta_codigo)s.pdf' % {
-                'contribuyente_rut': self.contribuyente_rut, 'periodo': self.periodo, 'boleta_codigo': boleta_codigo
-            }
+
+            # Retrocede dos niveles para salir de 'dte_facturacion' y entrar en 'tests'
+            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+
+            # Define la carpeta de destino correcta
+            output_dir = os.path.join(base_dir, 'archivos', 'sii', 'bhe_recibidas_pdf')
+
+            # Crear la carpeta si no existe
+            os.makedirs(output_dir, exist_ok=True)
+
+            filename = os.path.join(
+                output_dir,
+                'APIGATEWAY_BHE_RECIBIDA_%(contribuyente_rut)s_%(periodo)s_%(boleta_codigo)s.pdf' % {
+                    'contribuyente_rut': self.contribuyente_rut,
+                    'periodo': self.periodo,
+                    'boleta_codigo': boleta_codigo
+                }
+            )
+
             with open(filename, 'wb') as f:
                 f.write(pdf)
-            file_remove(filename) # se borra el archivo inmediatamente (sólo se crea como ejemplo)
+
+            self.assertIsNotNone(boleta_codigo)
+
             if self.verbose:
                 print('test_pdf(): filename', filename)
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})
-
-    # CASO 3: observar una boleta
-    def test_observar(self):
-        observar_emisor_rut = getenv('TEST_BHE_RECIBIDAS_OBSERVAR_EMISOR_RUT', '').strip()
-        observar_numero = getenv('TEST_BHE_RECIBIDAS_OBSERVAR_NUMERO', '').strip()
-        if observar_emisor_rut == '' or observar_numero == '':
-            print('test_observar(): no probó funcionalidad.')
-            return
-        observar = self.client.observar(observar_emisor_rut, observar_numero)
-        if self.verbose:
-            print('test_observar(): observar', observar)

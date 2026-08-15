@@ -17,35 +17,45 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-from os import getenv
 from requests.exceptions import Timeout, ConnectionError, RequestException, HTTPError
+from os import getenv
 from abc import ABC
+
 import urllib.parse
 import urllib
 import requests
 import base64
 import json
-import time
 import re
 
 class ApiClient:
     '''
     Cliente para interactuar con la API de API Gateway.
 
-    :param str token: Token de autenticación del usuario. Si no se proporciona, se intentará obtener de una variable de entorno.
-    :param str url: URL base de la API. Si no se proporciona, se usará una URL por defecto.
-    :param str version: Versión de la API. Si no se proporciona, se usará una versión por defecto.
-    :param bool raise_for_status: Si se debe lanzar una excepción automáticamente para respuestas de error HTTP. Por defecto es True.
+    :param str token: Token de autenticación del usuario. Si no se proporciona,
+    se intentará obtener de una variable de entorno.
+    :param str url: URL base de la API. Si no se proporciona, se usará una
+    URL por defecto según la versión.
+    :param str version: Versión de la API. Si no se proporciona, se usará v2.
+    También puede configurarse con la variable de entorno APIGATEWAY_API_VERSION.
+    :param bool raise_for_status: Si se debe lanzar una excepción automáticamente
+    para respuestas de error HTTP. Por defecto es True.
     '''
 
-    __DEFAULT_URL = 'https://apigateway.cl'
-    __DEFAULT_VERSION = 'v1'
+    _url_v1 = 'https://legacy.apigateway.cl'
+    _url_v2 = 'https://app.apigateway.cl'
 
     def __init__(self, token = None, url = None, version = None, raise_for_status = True):
+        self.version = version or getenv('APIGATEWAY_API_VERSION', 'v2')
+        if self.version == 'v1':
+            self.token_prefix = 'Bearer'
+            self._default_url = self._url_v1
+        else:
+            self.token_prefix = 'Token'
+            self._default_url = self._url_v2
         self.token = self.__validate_token(token)
         self.url = self.__validate_url(url)
         self.headers = self.__generate_headers()
-        self.version = version or self.__DEFAULT_VERSION
         self.raise_for_status = raise_for_status
 
     def __validate_token(self, token):
@@ -71,7 +81,9 @@ class ApiClient:
         :rtype: str
         :raises ApiException: Si la URL no es válida o está ausente.
         '''
-        return str(url).strip() if url else getenv('APIGATEWAY_API_URL', self.__DEFAULT_URL).strip()
+        return str(url).strip() if url else getenv(
+            'APIGATEWAY_API_URL',
+            self._default_url).strip()
 
     def __generate_headers(self):
         '''
@@ -84,8 +96,79 @@ class ApiClient:
             'User-Agent': 'API Gateway: Cliente de API en Python.',
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': 'Bearer %(token)s' % {'token': self.token}
+            'Authorization': '%(prefix)s %(token)s' % {'prefix': self.token_prefix, 'token': self.token}
         }
+
+    def __request(self, method, resource, data = None, headers = None):
+        '''
+        Método privado para realizar solicitudes HTTP.
+
+        :param str method: Método HTTP a utilizar.
+        :param str resource: Recurso de la API a solicitar.
+        :param dict data: Datos a enviar en la solicitud (opcional).
+        :param dict headers: Cabeceras adicionales para la solicitud (opcional).
+        :return: Respuesta de la solicitud.
+        :rtype: requests.Response
+        :raises ApiException: Si el método HTTP no es soportado o si hay
+        un error de conexión.
+        '''
+        api_path = '/api/%(version)s%(resource)s' % {
+            'version': self.version, 'resource': resource
+        }
+        full_url = urllib.parse.urljoin(self.url + '/', api_path.lstrip('/'))
+        headers = headers or {}
+        headers = {**self.headers, **headers}
+        if data and not isinstance(data, str):
+            data = json.dumps(data)
+        try:
+            response = requests.request(method, full_url, data = data, headers = headers)
+            return self.__check_and_return_response(response)
+        except ConnectionError as error:
+            raise ApiException('Error de conexión: %(error)s' % {
+                'error': error
+            })
+        except Timeout as error:
+            raise ApiException('Error de timeout: %(error)s' % {
+                'error': error
+            })
+        except RequestException as error:
+            raise ApiException('Error en la solicitud: %(error)s' % {
+                'error': error
+            })
+
+    def __check_and_return_response(self, response):
+        '''
+        Verifica la respuesta de la solicitud HTTP y maneja los errores.
+
+        :param requests.Response response: Objeto de respuesta de requests.
+        :return: Respuesta validada.
+        :rtype: requests.Response
+        :raises ApiException: Si la respuesta contiene un error HTTP.
+        '''
+        if response.status_code != 200 and self.raise_for_status:
+            try:
+                response.raise_for_status()
+            except HTTPError:
+                try:
+                    error = response.json()
+                    message = error.get(
+                        'detail', ''
+                    ) or error.get(
+                        'message', ''
+                    ) or error.get(
+                        'exception', ''
+                    ) or json.dumps(error) or 'Error desconocido.'
+                except json.decoder.JSONDecodeError:
+                    message = 'Error al decodificar los datos en JSON: %(response)s' % {
+                        'response': response.text
+                    }
+                raise ApiException('Error HTTP: %(message)s' % {
+                    'message': message
+                })
+        if self.version == 'v2':
+            _original_json = response.json
+            response.json = lambda: _original_json().get('data', _original_json())
+        return response
 
     def get(self, resource, headers = None):
         '''
@@ -133,142 +216,6 @@ class ApiClient:
         '''
         return self.__request('PUT', resource, data, headers)
 
-    def __request(self, method, resource, data = None, headers = None):
-        '''
-        Método privado para realizar solicitudes HTTP.
-
-        :param str method: Método HTTP a utilizar.
-        :param str resource: Recurso de la API a solicitar.
-        :param dict data: Datos a enviar en la solicitud (opcional).
-        :param dict headers: Cabeceras adicionales para la solicitud (opcional).
-        :return: Respuesta de la solicitud.
-        :rtype: requests.Response
-        :raises ApiException: Si el método HTTP no es soportado o si hay un error de conexión.
-        '''
-        api_path = '/api/%(version)s%(resource)s' % {'version': self.version, 'resource': resource}
-        full_url = urllib.parse.urljoin(self.url + '/', api_path.lstrip('/'))
-        headers = headers or {}
-        headers = {**self.headers, **headers}
-        if data and not isinstance(data, str):
-            data = json.dumps(data)
-        try:
-            response = requests.request(method, full_url, data = data, headers = headers)
-            return self.__check_and_return_response(response)
-        except ConnectionError as error:
-            raise ApiException('Error de conexión: %(error)s' % {'error': error})
-        except Timeout as error:
-            raise ApiException('Error de timeout: %(error)s' % {'error': error})
-        except RequestException as error:
-            raise ApiException('Error en la solicitud: %(error)s' % {'error': error})
-
-    def __check_and_return_response(self, response):
-        '''
-        Verifica la respuesta de la solicitud HTTP y maneja los errores.
-
-        :param requests.Response response: Objeto de respuesta de requests.
-        :return: Respuesta validada.
-        :rtype: requests.Response
-        :raises ApiException: Si la respuesta contiene un error HTTP.
-        '''
-        if response.status_code != 200 and self.raise_for_status:
-            try:
-                response.raise_for_status()
-            except HTTPError as error:
-                try:
-                    error = response.json()
-                    message = error.get('message', '') or error.get('exception', '') or 'Error desconocido.'
-                except json.decoder.JSONDecodeError:
-                    message = 'Error al decodificar los datos en JSON: %(response)s' % {'response': response.text}
-                raise ApiException('Error HTTP: %(message)s' % {'message': message})
-        return response
-
-    def rebuild_url(self, url):
-        '''
-        Método que reconstruye una URL usando expresiones regulares (regex), añadiendo o
-        quitando el parámetro 'auth_cache=0'.
-
-        Se ha probado con los siguientes URL:
-        - www.exampleurl.com/api/v1/function
-        - www.exampleurl.com/api/v1/function?auth_cache=0
-        - www.exampleurl.com/api/v1/function?auth_cache=0&param1=asdf
-        - www.exampleurl.com/api/v1/function?param1=asdf&auth_cache=0
-        - www.exampleurl.com/api/v1/function?param1=asdf&param2=qwer
-        - www.exampleurl.com/api/v1/function?auth_cache=0&param1=asdf&param2=qwer
-        - www.exampleurl.com/api/v1/function?param1=asdf&auth_cache=0&param2=qwer
-        - www.exampleurl.com/api/v1/function?param1=asdf&param2=qwer&auth_cache=0
-
-        Y se obtuvo como salida:
-        - www.exampleurl.com/api/v1/function?auth_cache=0
-        - www.exampleurl.com/api/v1/function
-        - www.exampleurl.com/api/v1/function?param1=asdf
-        - www.exampleurl.com/api/v1/function?param1=asdf
-        - www.exampleurl.com/api/v1/function?param1=asdf&param2=qwer&auth_cache=0
-        - www.exampleurl.com/api/v1/function?param1=asdf&param2=qwer
-        - www.exampleurl.com/api/v1/function?param1=asdf&param2=qwer
-        - www.exampleurl.com/api/v1/function?param1=asdf&param2=qwer
-
-        :param str url: URL a modificar.
-        :return: URL modificada con (o sin) 'auth_cache=0'.
-        :rtype: str
-        '''
-        # Define un patrón, que en este caso serán todas las posibilidades con auth_cache=0.
-        patron = r'([?&])auth_cache=0(&|$)'
-
-        if re.search(patron, url):
-            # Remueve el patrón definido.
-            nuevo_url = re.sub(patron, lambda m: m.group(1) if m.group(2) == '&' else '', url)
-        else:
-            # Añade al URL auth_cache=0.
-            nuevo_url = '%(url_base)s%(url_param)s' % { 'url_base' : url, 'url_param' : '&auth_cache=0' if '?' in url else '?auth_cache=0' }
-
-        return nuevo_url
-
-    def retry_request_http(self, method, url, data = None, headers = None):
-        '''
-        Método que reintenta un HTTP request en caso de que la conexión falle.
-
-        Además, este método permitirá reintentar en caso de un error 401 a causa de una falla en el programa.
-
-        :param str url: URL del recurso para consumir.
-        :param dict data: Body del request (opcional).
-        :param dict headers: Cabeceras adicionales (opcional).
-        :param str method: Método HTTP a utilizar.
-        :return: Respuesta lograda.
-        :rtype: requests.Response
-        :raises ApiException: Si el número de reintentos es excedido, o si el método ingresado no es válido.
-        '''
-        wait_time = 1
-        n_max_attempts = 5
-        n_current_attempts = 1
-
-        while True:
-            try:
-                if method == 'POST':
-                    response = self.post(url, data = data, headers = headers)
-                elif method == 'PUT':
-                    response = self.put(url, data = data, headers = headers)
-                elif method == 'GET':
-                    response = self.get(url, headers = headers)
-                elif method == 'DELETE':
-                    response = self.delete(url, headers = headers)
-                else:
-                    log_message = 'No se ha ingresado un método HTTP válido. El método ingresado es %(method)s' % { 'method': method }
-                    raise ApiException(log_message)
-                if response.status_code == 401:
-                    if 'X-Stats-NavegadorSessionProblem' in response.headers and response.headers['X-Stats-NavegadorSessionProblem'] == '1':
-                        url = self.rebuild_url(url)
-                        raise ConnectionError('Ocurrió un error de conexión HTTP 401.')
-                break
-            except (ConnectionError, Timeout) as e:
-                if n_current_attempts <= n_max_attempts:
-                    time.sleep(wait_time)
-                    n_current_attempts += 1
-                    wait_time += 2
-                else:
-                    log_message = 'No fue posible establecer conexión con API Gateway: %(error)s' % {'error': str(e)}
-                    raise ApiException(log_message)
-        return response
-
 class ApiException(Exception):
     '''
     Excepción personalizada para errores en el cliente de la API.
@@ -299,9 +246,14 @@ class ApiException(Exception):
         :return: Una cadena que representa el error de una manera clara y concisa.
         '''
         if self.code is not None:
-            return "[API Gateway] Error %(code)s: %(message)s" % {'code': self.code, 'message': self.message}
+            return "[API Gateway] Error %(code)s: %(message)s" % {
+                'code': self.code,
+                'message': self.message
+            }
         else:
-            return "[API Gateway] %(message)s" % {'message': self.message}
+            return "[API Gateway] %(message)s" % {
+                'message': self.message
+            }
 
 class ApiBase(ABC):
     '''
@@ -314,10 +266,21 @@ class ApiBase(ABC):
     :param dict kwargs: Argumentos adicionales para la autenticación.
     '''
 
-    auth = {}
-
-    def __init__(self, api_token = None, api_url = None, api_version = None, api_raise_for_status = True, **kwargs):
-        self.client = ApiClient(api_token, api_url, api_version, api_raise_for_status)
+    def __init__(
+            self,
+            api_token = None,
+            api_url = None,
+            api_version = None,
+            api_raise_for_status = True,
+            **kwargs
+        ):
+        self.auth = {}
+        self.client = ApiClient(
+            api_token,
+            api_url,
+            api_version,
+            api_raise_for_status
+        )
         self.__setup_auth(kwargs)
 
     def __setup_auth(self, kwargs):
@@ -330,11 +293,26 @@ class ApiBase(ABC):
         clave = kwargs.get('clave')
         if identificador and clave:
             if self.__is_auth_pass(identificador):
-                self.auth = {'pass': {'rut': identificador, 'clave': clave}}
+                self.auth = {
+                    'pass': {
+                        'rut': identificador,
+                        'clave': clave
+                    }
+                }
             elif self.__is_auth_cert_data(identificador):
-                self.auth = {'cert': {'cert-data': identificador, 'pkey-data': clave}}
+                self.auth = {
+                    'cert': {
+                        'cert-data': identificador,
+                        'pkey-data': clave
+                    }
+                }
             elif self.__is_auth_file_data(identificador):
-                self.auth = {'cert': {'file-data': identificador, 'file-pass': clave}}
+                self.auth = {
+                    'cert': {
+                        'file-data': identificador,
+                        'file-pass': clave
+                    }
+                }
             else:
                 raise ApiException('No se han proporcionado las credenciales de autentificación.')
 
@@ -386,7 +364,7 @@ class ApiBase(ABC):
             # Intenta decodificar la cadena con validación estricta
             base64.b64decode(firma_electronica_base64, validate=True)
             return True
-        except (base64.binascii.Error, ValueError):
+        except (base64.binascii.Error, ValueError): # type: ignore
             return False
 
     def __is_auth_cert_data(self, pem_str):
@@ -437,7 +415,7 @@ class ApiBase(ABC):
         try:
             base64.b64decode(base64_content, validate=True)
             return True
-        except (base64.binascii.Error, ValueError):
+        except (base64.binascii.Error, ValueError): # type: ignore
             return False
 
     def _get_auth_pass(self):
@@ -469,4 +447,3 @@ class ApiBase(ABC):
         else:
             raise ApiException('auth.pass or auth.cert missing.')
         return self.auth
-

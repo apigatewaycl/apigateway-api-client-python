@@ -19,23 +19,26 @@
 
 import unittest
 from os import getenv
+from datetime import datetime
 from apigatewaycl.api_client import ApiException
-from apigatewaycl.api_client.sii.misii import Contribuyente
+from apigatewaycl.api_client.sii.indicadores import Uf
 
-class TestMiSii(unittest.TestCase):
+class TestObtenerUfDiario(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
-        contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
-        cls.client = Contribuyente(cls.contribuyente_rut, contribuyente_clave)
+        cls.client = Uf()
+        cls.fecha = datetime.now().strftime("%Y-%m-%d")
 
-    # CASO 1: datos del contribuyente en su página de MiSii
-    def test_misii_contribuyente_datos(self):
+    # CASO 3: obtener valores de la UF de un día específico (1ero de enero del ANIO)
+    def test_obtener_uf_diario(self):
         try:
-            datos = self.client.datos()
+            diario = self.client.diario(self.fecha)
+
+            self.assertIsNotNone(diario)
+
             if self.verbose:
-                print('test_misii_contribuyente_datos(): datos', datos)
+                print('test_uf_diario(): diario', diario)
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})

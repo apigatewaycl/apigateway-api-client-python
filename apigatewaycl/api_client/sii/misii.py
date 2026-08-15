@@ -20,14 +20,16 @@
 '''
 Módulo para interactuar con la sección MiSii de un contribuyente en el sitio web del SII.
 
-Para más información sobre la API, consulte la `documentación completa de MiSii <https://developers.apigateway.cl/#b585f374-f106-46a9-9f47-666d478b8ac8>`_.
+Para más información sobre la API, consulte la `documentación completa de
+MiSii <https://developers.apigateway.cl/#b585f374-f106-46a9-9f47-666d478b8ac8>`_.
 '''
 
 from .. import ApiBase
 
 class Contribuyente(ApiBase):
     '''
-    Cliente específico para interactuar con los endpoints de un Contribuyente de MiSii de la API de API Gateway.
+    Cliente específico para interactuar con los endpoints de un Contribuyente
+    de MiSii de la API de API Gateway.
 
     Hereda de ApiBase y utiliza su funcionalidad para realizar solicitudes a la API.
     '''
@@ -35,15 +37,18 @@ class Contribuyente(ApiBase):
     def __init__(self, identificador, clave, **kwargs):
         super().__init__(identificador = identificador, clave = clave, **kwargs)
 
-    def datos(self):
+    def datos(self, auth_cache = None):
         '''
         Obtiene los datos de MiSii del contribuyente autenticado en el SII.
 
         :return: Respuesta JSON con los datos del contribuyente.
         :rtype: dict
         '''
+        url = '/sii/misii/contribuyente/datos'
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', '/sii/misii/contribuyente/datos', data = body)
+        if auth_cache is not None:
+            url += '&auth_cache=0'
+        response = self.client.post(url, data = body)
         return response.json()

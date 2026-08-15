@@ -20,35 +20,25 @@
 import unittest
 from os import getenv
 from apigatewaycl.api_client import ApiException
-from apigatewaycl.api_client.sii.actividades_economicas import ActividadesEconomicas
+from apigatewaycl.api_client.sii.misii import Contribuyente
 
-class TestSiiActividadesEconomicas(unittest.TestCase):
+class TestMiSiiObtenerDatosContribuyentes(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.client = ActividadesEconomicas()
+        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
+        cls.client = Contribuyente(cls.contribuyente_rut, contribuyente_clave)
 
-    def test_listado(self):
+    # CASO 1: datos del contribuyente en su página de MiSii
+    def test_misii_obtener_datos_contribuyente(self):
         try:
-            listado = self.client.listado()
-            if self.verbose:
-                print('test_listado(): listado', listado)
-        except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            datos = self.client.datos()
 
-    def test_listado_primera_categoria(self):
-        try:
-            listado_primera_categoria = self.client.listado_primera_categoria()
-            if self.verbose:
-                print('test_listado_primera_categoria(): listado_primera_categoria', listado_primera_categoria)
-        except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.assertIsNotNone(datos)
 
-    def test_listado_segunda_categoria(self):
-        try:
-            listado_segunda_categoria = self.client.listado_segunda_categoria()
             if self.verbose:
-                print('test_listado_segunda_categoria(): listado_segunda_categoria', listado_segunda_categoria)
+                print('test_misii_contribuyente_datos(): datos', datos)
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})

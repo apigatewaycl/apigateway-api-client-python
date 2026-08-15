@@ -19,38 +19,31 @@
 
 import unittest
 from os import getenv
+from datetime import datetime
 from apigatewaycl.api_client import ApiException
-from apigatewaycl.api_client.sii.contribuyentes import Contribuyentes
+from apigatewaycl.api_client.sii.rcv import Rcv
 
-class TestSiiContribuyentes(unittest.TestCase):
+class TestObtemerVentasDetalleRcvCsv(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.client = Contribuyentes()
+        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
+        cls.client = Rcv(cls.contribuyente_rut, contribuyente_clave)
+        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
 
-    # CASO 1: situación tributaria
-    def test_situacion_tributaria(self):
-        contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
-        if contribuyente_rut == '':
-            print('test_situacion_tributaria(): no probó funcionalidad.')
-            return
+    # CASO 4: detalle de ventas con tipo "rcv_csv"
+    # En este caso se trae el detalle de los documentos en una llamada
+    def test_obtener_ventas_detalle_rcv_csv(self):
         try:
-            situacion_tributaria = self.client.situacion_tributaria(contribuyente_rut)
+            ventas_detalle = self.client.ventas_detalle(
+                self.contribuyente_rut,
+                self.periodo
+            )
             if self.verbose:
-                print('test_situacion_tributaria(): situacion_tributaria', situacion_tributaria)
-        except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+                print('test_ventas_detalle_rcv_csv(): ventas_detalle', ventas_detalle)
 
-    # CASO2: verificación de cédula RUT mediante número de serie
-    def test_verificar_rut(self):
-        erut_serie = getenv('TEST_ERUT_SERIE', '').strip()
-        if erut_serie == '':
-            print('test_verificar_rut(): no probó funcionalidad.')
-            return
-        try:
-            verificar_rut = self.client.verificar_rut(erut_serie)
-            if self.verbose:
-                print('test_verificar_rut(): verificar_rut', verificar_rut)
+            self.assertIsNotNone(ventas_detalle)
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})

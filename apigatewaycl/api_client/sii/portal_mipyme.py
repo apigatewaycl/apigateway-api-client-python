@@ -20,7 +20,8 @@
 '''
 Módulo para consultas al Portal MIPYME del SII.
 
-Para más información sobre la API, consulte la `documentación completa del Portal MIPYME <https://developers.apigateway.cl/#d545a096-09be-4c9e-8d12-7b86b6bf1be6>`_.
+Para más información sobre la API, consulte la `documentación completa del
+Portal MIPYME <https://developers.apigateway.cl/#d545a096-09be-4c9e-8d12-7b86b6bf1be6>`_.
 '''
 
 from abc import ABC
@@ -61,7 +62,7 @@ class Contribuyentes(PortalMipyme):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()
 
 class Dte(PortalMipyme):
@@ -92,6 +93,16 @@ class Dte(PortalMipyme):
     ESTADO_RECHAZADO_RECEPTOR = 'RRH' # DTE rechazado por receptor
     ESTADO_SIN_REPAROS = 'RSR' # Recibido sin reparos
 
+    DTE_TIPOS = {
+        '33': '33',
+        '34': '34',
+        '35': '35',
+        '36': '36',
+        '37': '37',
+        '38': '38',
+        '39': '39',
+    }
+
     def get_codigo_dte(self, tipo):
         '''
         Obtiene el código correspondiente al tipo de DTE.
@@ -119,12 +130,14 @@ class DteEmitidos(Dte):
         :return: Documentos de DTE emitidos.
         :rtype: list[dict]
         '''
-        url = '/sii/mipyme/emitidos/documentos/%(emisor)s' % {'emisor': emisor}
+        url = '/sii/mipyme/emitidos/documentos/%(emisor)s' % {
+            'emisor': emisor
+        }
         body = {
             'auth': self._get_auth_pass(),
             'filtros': filtros
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()
 
     def pdf(self, emisor, dte, folio = None):
@@ -145,7 +158,7 @@ class DteEmitidos(Dte):
         } if folio else '/sii/mipyme/emitidos/pdf/%(emisor)s/%(dte)s' % {
             'emisor': emisor, 'dte': dte
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.content
 
     def xml(self, emisor, dte, folio):
@@ -164,7 +177,7 @@ class DteEmitidos(Dte):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.text
 
 class DteRecibidos(Dte):
@@ -186,12 +199,14 @@ class DteRecibidos(Dte):
         :return: Documentos de DTE recibidos.
         :rtype: list[dict]
         '''
-        url = '/sii/mipyme/recibidos/documentos/%(receptor)s' % {'receptor': receptor}
+        url = '/sii/mipyme/recibidos/documentos/%(receptor)s' % {
+            'receptor': receptor
+        }
         body = {
             'auth': self._get_auth_pass(),
             'filtros': filtros
         }
-        response = self.client.post('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.json()
 
     def pdf(self, receptor, emisor, dte, folio = None):
@@ -213,7 +228,7 @@ class DteRecibidos(Dte):
         } if folio else '/sii/mipyme/recibidos/pdf/%(receptor)s/%(emisor)s/%(dte)s' % {
             'receptor': receptor, 'emisor': emisor, 'dte': dte
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.content
 
     def xml(self, receptor, emisor, dte, folio):
@@ -233,5 +248,5 @@ class DteRecibidos(Dte):
         body = {
             'auth': self._get_auth_pass()
         }
-        response = self.client.retry_request_http('POST', url, data = body)
+        response = self.client.post(url, data = body)
         return response.text

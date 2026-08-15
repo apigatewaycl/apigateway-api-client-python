@@ -12,6 +12,13 @@ install-dev:
 tests: install-dev
 	python tests/run.py
 
+tests_readonly:
+	python3 tests/run.py sii.actividades.test_listar_actividades_economicas
+	python3 tests/run.py sii.contribuyentes.test_obtener_situacion_tributaria
+	python3 tests/run.py sii.indicadores_uf.test_obtener_uf_anual
+	python3 tests/run.py sii.indicadores_uf.test_obtener_uf_mensual
+	python3 tests/run.py sii.indicadores_uf.test_obtener_uf_diario
+
 docs:
 	sphinx-apidoc -o docs apigatewaycl && sphinx-build -b html docs docs/_build/html
 

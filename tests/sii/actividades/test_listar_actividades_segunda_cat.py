@@ -19,41 +19,25 @@
 
 import unittest
 from os import getenv
-from datetime import datetime
 from apigatewaycl.api_client import ApiException
-from apigatewaycl.api_client.sii.indicadores import Uf
+from apigatewaycl.api_client.sii.actividades_economicas import ActividadesEconomicas
 
-class TestSiiIndicadoresUf(unittest.TestCase):
+class TestListarActividadesSegundaCat(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.client = Uf()
-        cls.anio = getenv('TEST_ANIO', datetime.now().strftime("%Y")).strip()
+        cls.client = ActividadesEconomicas()
 
-    # CASO 1: obtener valores de la UF de todo un año
-    def test_uf_anual(self):
+    def test_listar_actividades_segunda_cat(self):
         try:
-            anual = self.client.anual(self.anio)
-            if self.verbose:
-                print('test_uf_anual(): anual', anual)
-        except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            listado_segunda_categoria = self.client.listado_segunda_categoria()
 
-    # CASO 2: obtener valores de la UF de todo un mes (enero del anio)
-    def test_uf_mensual(self):
-        try:
-            mensual = self.client.mensual(self.anio + '01')
-            if self.verbose:
-                print('test_uf_mensual(): mensual', mensual)
-        except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.assertIsNotNone(listado_segunda_categoria)
 
-    # CASO 3: obtener valores de la UF de un día específico (1ero de enero del ANIO)
-    def test_uf_diario(self):
-        try:
-            diario = self.client.diario(self.anio + '-01-01')
             if self.verbose:
-                print('test_uf_diario(): diario', diario)
+                print('test_listado_segunda_categoria(): listado_segunda_categoria',
+                    listado_segunda_categoria
+                )
         except ApiException as e:
             self.fail("ApiException: %(e)s" % {'e': e})
