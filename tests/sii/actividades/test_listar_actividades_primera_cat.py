@@ -19,8 +19,15 @@
 
 import unittest
 from os import getenv
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
-from apigatewaycl.api_client.sii.actividades_economicas import ActividadesEconomicas
+from apigatewaycl.api_client.sii.actividades_economicas import (
+    ActividadesEconomicas,
+)
+
+pytestmark = pytest.mark.readonly
 
 class TestListarActividadesPrimeraCat(unittest.TestCase):
 

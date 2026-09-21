@@ -18,9 +18,14 @@
 #
 
 import unittest
-from os import getenv
 from datetime import datetime
+from os import getenv
+
+import pytest
+
 from apigatewaycl.api_client.sii.bhe import BheRecibidas
+
+pytestmark = pytest.mark.risky
 
 class TestObservarBheRecibida(unittest.TestCase):
 

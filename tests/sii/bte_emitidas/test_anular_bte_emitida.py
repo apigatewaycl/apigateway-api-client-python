@@ -18,10 +18,15 @@
 #
 
 import unittest
-from os import getenv
 from datetime import datetime
+from os import getenv
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.bte import BteEmitidas
+
+pytestmark = pytest.mark.risky
 
 class TestAnularBteEmitida(unittest.TestCase):
 

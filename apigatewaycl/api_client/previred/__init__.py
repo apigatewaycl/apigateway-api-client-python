@@ -17,4 +17,4 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-"""Clientes específicos por servicio del SII (BHE, BTE, DTE, RCV, etc.)."""
+"""Clientes específicos por servicio de Previred (indicadores)."""

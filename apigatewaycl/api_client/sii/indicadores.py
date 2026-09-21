@@ -17,68 +17,75 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-'''
+"""
 Módulo para obtener indicadores desde el SII.
 
-Para más información sobre la API, consulte la `documentación completa de los
-Indicadores <https://developers.apigateway.cl/#65aa568c-4c5a-448b-9f3b-95c3d9153e4d>`_.
-'''
+Para más información sobre la API, consulte la `documentación completa
+de Indicadores
+<https://developers.apigateway.cl/#65aa568c-4c5a-448b-9f3b-95c3d9153e4d>`_.
+"""
+
+from __future__ import annotations
+
+from typing import Any
 
 from .. import ApiBase
 
+
 class Uf(ApiBase):
-    '''
-    Cliente específico para interactuar con los endpoints de valores de UF
-    (Unidad de Fomento) de la API de API Gateway.
+    """
+    Cliente para los valores de UF (Unidad de Fomento) de la API.
 
-    Provee métodos para obtener valores de UF anuales, mensuales y diarios.
-    '''
+    Provee métodos para obtener valores de UF anuales, mensuales y
+    diarios.
+    """
 
-    def anual(self, anio):
-        '''
+    def anual(self, anio: int) -> Any:
+        """
         Obtiene los valores de la UF para un año específico.
 
-        :param int anio: Año para el cual se quieren obtener los valores de la UF.
-        :return: Respuesta JSON con los valores de la UF del año especificado.
+        :param int anio: Año para el cual se quieren los valores de UF.
+        :return: Respuesta JSON con los valores de la UF del año.
         :rtype: dict
-        '''
-        anio = str(anio)
-        url = '/sii/indicadores/uf/anual/%(anio)s' % {'anio': anio}
+        """
+        anio_str = str(anio)
+        url = '/sii/indicadores/uf/anual/%(anio)s' % {'anio': anio_str}
         response = self.client.get(url)
         datos = response.json()
-        return datos[anio] if anio in datos else {}
+        return datos[anio_str] if anio_str in datos else {}
 
-    def mensual(self, periodo):
-        '''
+    def mensual(self, periodo: str) -> Any:
+        """
         Obtiene los valores de la UF para un mes específico.
 
+        Endpoint propio (`/uf/mensual/{periodo}`), no anidado bajo
+        `/uf/anual/` — son recursos separados en la API real.
+
         :param str periodo: Período en formato AAAAMM (año y mes).
-        :return: Respuesta JSON con los valores de la UF del mes especificado.
+        :return: Respuesta JSON con los valores de la UF del mes.
         :rtype: dict
-        '''
-        anio, mes = periodo[:4], periodo[4:6]
-        url = '/sii/indicadores/uf/anual/%(anio)s/%(mes)s' % {
-            'anio': anio, 'mes': mes
-        }
+        """
+        url = '/sii/indicadores/uf/mensual/%(periodo)s' % {'periodo': periodo}
         response = self.client.get(url)
         datos = response.json()
         return datos[periodo] if periodo in datos else {}
 
-    def diario(self, dia):
-        '''
+    def diario(self, dia: str) -> float:
+        """
         Obtiene el valor de la UF para un día específico.
 
-        :param str dia: Fecha en formato AAAA-MM-DD.
+        Endpoint propio (`/uf/diario/{dia}`), no anidado bajo
+        `/uf/anual/` — son recursos separados en la API real, y la
+        respuesta es plana (el valor directo, sin anidar por mes/día).
+
+        :param str dia: Fecha en formato AAAA-MM-DD o AAAAMMDD.
         :return: Valor de la UF para el día especificado.
         :rtype: float
-        '''
-        anio, mes, dia = dia.split('-')
-        url = '/sii/indicadores/uf/anual/%(anio)s/%(mes)s/%(dia)s' % {
-            'anio': anio, 'mes': mes, 'dia': dia
-        }
+        """
+        url = '/sii/indicadores/uf/diario/%(dia)s' % {'dia': dia}
         response = self.client.get(url)
         datos = response.json()
-        key = '%(anio)s%(mes)s%(dia)s' % {
-            'anio': anio, 'mes': mes, 'dia': dia
-        }
-        return float(datos[key]) if key in datos else 0
+        # La respuesta siempre normaliza la clave a AAAAMMDD (sin guiones),
+        # sin importar el formato con el que se haya pedido `dia`.
+        key = dia.replace('-', '')
+        return float(datos[key]) if key in datos else 0.0

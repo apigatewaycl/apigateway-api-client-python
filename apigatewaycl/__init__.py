@@ -16,3 +16,5 @@
 # (LGPL) junto a este programa. En caso contrario, consulte
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
+
+"""Cliente para la API de www.apigateway.cl (integración con el SII)."""

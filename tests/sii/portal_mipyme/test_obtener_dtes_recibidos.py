@@ -18,10 +18,18 @@
 #
 
 import unittest
-from os import getenv
 from datetime import datetime
+from os import getenv
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
-from apigatewaycl.api_client.sii.portal_mipyme import Contribuyentes, DteRecibidos
+from apigatewaycl.api_client.sii.portal_mipyme import (
+    Contribuyentes,
+    DteRecibidos,
+)
+
+pytestmark = pytest.mark.readonly
 
 class TestSiiPortalMipymeContribuyentes(unittest.TestCase):
 

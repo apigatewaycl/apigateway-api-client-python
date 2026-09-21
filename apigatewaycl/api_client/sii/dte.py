@@ -17,41 +17,112 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-'''
-Módulo para interactuar con las opciones de Documentos Tributarios
-Electrónicos (DTE) del SII.
+"""
+Módulo para Documentos Tributarios Electrónicos (DTE) del SII.
 
-Para más información sobre la API, consulte la `documentación completa de los
-DTE <https://developers.apigateway.cl/#8c113b9a-ea05-4981-9273-73e3f20ef991>`_.
-'''
+Para más información sobre la API, consulte la `documentación completa
+de los DTE
+<https://developers.apigateway.cl/#8c113b9a-ea05-4981-9273-73e3f20ef991>`_.
+"""
+
+from __future__ import annotations
+
+from typing import Any
 
 from .. import ApiBase
 
+
 class Contribuyentes(ApiBase):
-    '''
-    Cliente específico para interactuar con los endpoints de contribuyentes de la API de API Gateway.
+    """
+    Cliente para los endpoints de contribuyentes de la API de API Gateway.
 
-    Proporciona métodos para consultar la autorización de emisión de DTE de un contribuyente.
-    '''
+    Proporciona métodos para consultar la autorización de emisión de
+    DTE de un contribuyente.
+    """
 
-    def autorizacion(self, rut, certificacion = None):
-        '''
+    def autorizacion(self, rut: str, certificacion: bool | None = None) -> Any:
+        """
         Verifica si un contribuyente está autorizado para emitir DTE.
 
         :param str rut: RUT del contribuyente a verificar.
-        :param bool certificacion: Indica si se consulta en ambiente de certificación (opcional).
-        :return: Respuesta JSON con el estado de autorización del contribuyente.
+        :param bool certificacion: Indica si se consulta en ambiente
+            de certificación (opcional).
+        :return: Respuesta JSON con el estado de autorización.
         :rtype: dict
-        '''
+        """
         certificacion_flag = 1 if certificacion else 0
-        url = '/sii/dte/contribuyentes/autorizado/%(rut)s?certificacion=%(certificacion_flag)s' % {
-            'rut': rut, 'certificacion_flag': certificacion_flag
-        }
+        url = (
+            '/sii/dte/contribuyentes/autorizado/%(rut)s'
+            '?certificacion=%(certificacion_flag)s'
+            % {'rut': rut, 'certificacion_flag': certificacion_flag}
+        )
         response = self.client.get(url)
         return response.json()
 
+    def datos(
+        self, contribuyente: str, certificacion: str | None = None
+    ) -> Any:
+        """
+        Datos privados del contribuyente autenticado.
+
+        Incluye resolución de autorización, correos y software de
+        facturación declarado.
+
+        :param str contribuyente: RUT del contribuyente.
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+        :return: Datos privados del contribuyente.
+        :rtype: dict
+        """
+        # TODO: Implementar.
+
+    def set_datos(
+        self,
+        contribuyente: str,
+        datos: dict[str, Any],
+        certificacion: str | None = None,
+    ) -> Any:
+        """
+        Actualiza los datos privados del contribuyente (emails, software).
+
+        :param str contribuyente: RUT del contribuyente a actualizar.
+        :param dict datos: Datos a actualizar (`emails`, `software`).
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+        :return: Datos privados del contribuyente, ya actualizados.
+        :rtype: dict
+        """
+        # TODO: Implementar.
+
+    def usuarios(self, rut: str, certificacion: str | None = None) -> Any:
+        """
+        Listado de usuarios autorizados de un contribuyente.
+
+        :param str rut: RUT del contribuyente a consultar.
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+        :return: Listado de usuarios, con nombre, RUN y permisos.
+        :rtype: list[dict]
+        """
+        # TODO: Implementar.
+
+    def set_usuario(
+        self,
+        contribuyente: str,
+        usuario: dict[str, Any],
+        certificacion: str | None = None,
+    ) -> Any:
+        """
+        Asigna un usuario autorizado a un contribuyente.
+
+        :param str contribuyente: RUT del contribuyente a actualizar.
+        :param dict usuario: Usuario a asignar (`run` y `permisos`).
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+        :return: Usuario asignado, con sus permisos.
+        :rtype: dict
+        """
+        # TODO: Implementar.
+
+
 class Emitidos(ApiBase):
-    '''
+    """
     Cliente específico para gestionar DTE emitidos.
 
     Permite verificar la validez y autenticidad de un DTE emitido.
@@ -59,23 +130,28 @@ class Emitidos(ApiBase):
     :param str identificador: Identificador del contribuyente.
     :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
-    '''
+    """
 
-    def __init__(self, identificador, clave, **kwargs):
-        super().__init__(identificador = identificador, clave = clave, **kwargs)
+    def __init__(self, identificador: str, clave: str, **kwargs: str) -> None:
+        """Autentica con `identificador`/`clave` del contribuyente."""
+        super().__init__(
+            identificador=identificador,
+            clave=clave,
+            **kwargs,  # type: ignore[arg-type]
+        )
 
     def verificar(
-            self,
-            emisor,
-            receptor,
-            dte,
-            folio,
-            fecha,
-            total,
-            firma = None,
-            certificacion = None
-        ):
-        '''
+        self,
+        emisor: str,
+        receptor: str,
+        dte: int,
+        folio: int,
+        fecha: str,
+        total: int,
+        firma: str | None = None,
+        certificacion: bool | None = None,
+    ) -> Any:
+        """
         Verifica la validez de un DTE emitido.
 
         :param str emisor: RUT del emisor del DTE.
@@ -89,11 +165,12 @@ class Emitidos(ApiBase):
         ambiente de certificación (opcional).
         :return: Respuesta JSON con el resultado de la verificación del DTE.
         :rtype: dict
-        '''
+        """
         certificacion_flag = 1 if certificacion else 0
-        url = '/sii/dte/emitidos/verificar?certificacion=%(certificacion_flag)s' % {
-            'certificacion_flag': certificacion_flag
-        }
+        url = (
+            '/sii/dte/emitidos/verificar?certificacion=%(certificacion_flag)s'
+            % {'certificacion_flag': certificacion_flag}
+        )
         body = {
             'auth': self._get_auth_pass(),
             'dte': {
@@ -103,8 +180,74 @@ class Emitidos(ApiBase):
                 'folio': folio,
                 'fecha': fecha,
                 'total': total,
-                'firma': firma
-            }
+                'firma': firma,
+            },
         }
-        response = self.client.post(url, data = body)
+        response = self.client.post(url, data=body)
         return response.json()
+
+    def estado_envio(
+        self,
+        emisor: str,
+        track_id: int,
+        certificacion: str | None = None,
+        formato: str | None = None,
+    ) -> Any:
+        """
+        Estado del envío de un XML de DTE al SII.
+
+        Solo consulta envíos de empresas a las que el usuario
+        autenticado con certificado digital tenga acceso.
+
+        :param str emisor: RUT del emisor de los documentos.
+        :param int track_id: Identificador del envío.
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+        :param str formato: `'json'` o `'html'`.
+        :return: Estado del envío y resumen de documentos por tipo de DTE.
+        :rtype: dict
+        """
+        # TODO: Implementar.
+
+
+class Iecv(ApiBase):
+    """
+    Cliente para la Información Electrónica de Compras y Ventas (IECV).
+
+    :param str identificador: Identificador del contribuyente.
+    :param str clave: Clave del identificador.
+    :param kwargs: Argumentos adicionales.
+    """
+
+    def __init__(self, identificador: str, clave: str, **kwargs: str) -> None:
+        """Autentica con `identificador`/`clave` del contribuyente."""
+        super().__init__(
+            identificador=identificador,
+            clave=clave,
+            **kwargs,  # type: ignore[arg-type]
+        )
+
+    def codigo_reemplazo(
+        self,
+        emisor: str,
+        periodo: str,
+        operacion: str,
+        tipo: str,
+        track_id: int,
+        certificacion: str | None = None,
+    ) -> Any:
+        """
+        Código de reemplazo de un libro IECV, para poder rectificarlo.
+
+        Solo para períodos de 201707 hacia atrás.
+
+        :param str emisor: RUT del emisor de los documentos.
+        :param str periodo: Período del registro (AAAAMM).
+        :param str operacion: `'VENTA'` o `'COMPRA'`.
+        :param str tipo: `'MENSUAL'` o `'RECTIFICA'`.
+        :param int track_id: Identificador del envío del libro a
+            reemplazar.
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+        :return: Código de reemplazo del libro.
+        :rtype: dict
+        """
+        # TODO: Implementar.

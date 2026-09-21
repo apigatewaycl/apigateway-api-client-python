@@ -17,12 +17,17 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-import unittest
 import os
-from os import getenv
+import unittest
 from datetime import datetime
+from os import getenv
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.portal_mipyme import DteEmitidos
+
+pytestmark = pytest.mark.readonly
 
 class TestDescargarPdfDteEmitido(unittest.TestCase):
 

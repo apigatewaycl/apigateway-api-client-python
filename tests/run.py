@@ -18,10 +18,11 @@
 #
 
 import argparse
-from dotenv import load_dotenv
 import os
 import sys
 import unittest
+
+from dotenv import load_dotenv
 
 # Modificar directorio para incluir el repositorio al PATH de Python y se
 # encuentre el módulo de apigatewaycl sin tener que instalarlo

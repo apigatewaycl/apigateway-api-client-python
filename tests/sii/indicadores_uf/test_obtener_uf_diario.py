@@ -18,10 +18,15 @@
 #
 
 import unittest
-from os import getenv
 from datetime import datetime
+from os import getenv
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.indicadores import Uf
+
+pytestmark = [pytest.mark.readonly, pytest.mark.dummy]
 
 class TestObtenerUfDiario(unittest.TestCase):
 

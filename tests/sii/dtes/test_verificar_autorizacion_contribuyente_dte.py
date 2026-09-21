@@ -19,8 +19,13 @@
 
 import unittest
 from os import getenv
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.dte import Contribuyentes
+
+pytestmark = pytest.mark.readonly
 
 class TestVerificarAutorizacionContribuyenteDte(unittest.TestCase):
 

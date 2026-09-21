@@ -19,8 +19,13 @@
 
 import unittest
 from os import getenv
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.contribuyentes import Contribuyentes
+
+pytestmark = pytest.mark.readonly
 
 class TestVerificarRut(unittest.TestCase):
 
@@ -29,14 +34,15 @@ class TestVerificarRut(unittest.TestCase):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
         cls.client = Contribuyentes()
 
-    # CASO2: verificación de cédula RUT mediante número de serie
+    # CASO2: verificación de cédula RUT mediante RUT y número de serie
     def test_verificar_rut(self):
+        erut_rut = getenv('TEST_ERUT_RUT', '').strip()
         erut_serie = getenv('TEST_ERUT_SERIE', '').strip()
-        if erut_serie == '':
+        if erut_rut == '' or erut_serie == '':
             print('test_verificar_rut(): no probó funcionalidad.')
             return
         try:
-            verificar_rut = self.client.verificar_rut(erut_serie)
+            verificar_rut = self.client.verificar_rut(erut_rut, erut_serie)
 
             self.assertIsNotNone(verificar_rut)
 

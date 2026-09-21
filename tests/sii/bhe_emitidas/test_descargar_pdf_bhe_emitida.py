@@ -19,10 +19,15 @@
 
 import os
 import unittest
-from os import getenv
 from datetime import datetime
+from os import getenv
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.bhe import BheEmitidas
+
+pytestmark = pytest.mark.readonly
 
 class TestDescargarPdfBheEmitida(unittest.TestCase):
     @classmethod

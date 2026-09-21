@@ -28,14 +28,30 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -e '.[dev]'
 
+      - name: Run Ruff (lint)
+        run: ruff check .
+
+      - name: Run Ruff (format)
+        run: ruff format --check .
+
+      - name: Run mypy
+        run: mypy
+
+      # Solo los tests `dummy` (deterministas, seguros contra la API real
+      # — no necesitan datos de una cuenta específica). `readonly`/`risky`
+      # quedan fuera de CI a propósito, ver README/Makefile.
       - name: Run Python tests
         env:
           APIGATEWAY_API_TOKEN: ${{ secrets.APIGATEWAY_API_TOKEN }}
           TEST_CONTRIBUYENTE_RUT: ${{ vars.TEST_CONTRIBUYENTE_IDENTIFICADOR }} # Variable necesaria para test_contribuyentes.
         run: |
-          make tests_readonly
+          mkdir -p var
+          pytest -v \
+            --junitxml=var/tests-results.xml \
+            --cov=apigatewaycl \
+            --cov-report=xml:var/tests-coverage.xml
 
       - name: Upload pytest result report
         if: failure()

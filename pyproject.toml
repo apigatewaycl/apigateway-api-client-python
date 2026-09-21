@@ -1,0 +1,126 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "apigatewaycl"
+version = "6.0.0"
+description = "Cliente para realizar la integración con los servicios web de API Gateway desde Python."
+readme = "README.rst"
+license = { file = "COPYING" }
+authors = [
+  { name = "API Gateway", email = "dev@apigateway.cl" },
+]
+requires-python = ">=3.10"
+keywords = ["sii", "chile"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
+  "Programming Language :: Python :: 3",
+]
+dependencies = [
+  "requests",
+]
+
+[project.optional-dependencies]
+dev = [
+  "ruff",
+  "mypy",
+  "pytest",
+  "pytest-cov",
+  "types-requests",
+  "python-dotenv",
+]
+docs = ["sphinx", "sphinx-rtd-theme"]
+
+[project.urls]
+Homepage = "https://www.apigateway.cl"
+Source = "https://github.com/apigatewaycl/apigateway-api-client-python"
+
+[tool.hatch.build.targets.wheel]
+packages = ["apigatewaycl"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -m dummy"
+markers = [
+  "dummy: deterministic real-API tests safe to run always — run by default and in CI.",
+  "readonly: read-only real-API tests that need specific test-account data — not run by default.",
+  "risky: real-API tests that emit/anular/enviar something real (SII/email) — never run automatically.",
+]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+files = ["apigatewaycl"]
+
+[tool.ruff]
+
+include = ["**/*.py", "**/*.pyi"]
+
+exclude = [
+  ".git",
+  "__pycache__",
+  ".venv",
+  "venv",
+]
+
+line-length = 79
+target-version = "py310"
+respect-gitignore = true
+fix = true
+
+[tool.ruff.lint]
+
+select = [
+  "D",
+  "F",
+  "E",
+  "W",
+  "I",
+  "UP",
+  "N",
+  "B",
+  "A",
+  "C90",
+  "ARG",
+  "DTZ",
+  "TRY",
+  "SLF",
+  "ERA",
+  "PL",
+  "RUF",
+]
+
+ignore = [
+  "D102",
+  "D203",
+  "D212",
+  "D401",
+  "TRY400",
+  "N818",
+  "UP031",
+  "TRY003",
+  "ARG001",
+  "Q001",
+  "ERA001",
+  "PLC0415",
+  "N802",
+  "N806",
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 25
+
+[tool.ruff.lint.pylint]
+max-args = 10
+max-branches = 25
+max-statements = 60
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D", "SLF", "PLR2004"]
+"docs/conf.py" = ["D100", "A001"]
+
+[tool.ruff.format]
+quote-style = "single"

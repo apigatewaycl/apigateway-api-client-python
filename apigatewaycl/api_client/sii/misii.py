@@ -17,38 +17,121 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-'''
-Módulo para interactuar con la sección MiSii de un contribuyente en el sitio web del SII.
+"""
+Módulo para interactuar con la sección MiSii de un contribuyente.
 
-Para más información sobre la API, consulte la `documentación completa de
-MiSii <https://developers.apigateway.cl/#b585f374-f106-46a9-9f47-666d478b8ac8>`_.
-'''
+Para más información sobre la API, consulte la `documentación completa
+de MiSii
+<https://developers.apigateway.cl/#b585f374-f106-46a9-9f47-666d478b8ac8>`_.
+"""
+
+from __future__ import annotations
+
+from typing import Any
 
 from .. import ApiBase
 
+
 class Contribuyente(ApiBase):
-    '''
-    Cliente específico para interactuar con los endpoints de un Contribuyente
-    de MiSii de la API de API Gateway.
+    """
+    Cliente para los endpoints de un Contribuyente de MiSii de la API.
 
-    Hereda de ApiBase y utiliza su funcionalidad para realizar solicitudes a la API.
-    '''
+    Hereda de ApiBase y utiliza su funcionalidad para realizar
+    solicitudes a la API.
+    """
 
-    def __init__(self, identificador, clave, **kwargs):
-        super().__init__(identificador = identificador, clave = clave, **kwargs)
+    def __init__(self, identificador: str, clave: str, **kwargs: str) -> None:
+        """Autentica con `identificador`/`clave` (usuario del SII)."""
+        super().__init__(
+            identificador=identificador,
+            clave=clave,
+            **kwargs,  # type: ignore[arg-type]
+        )
 
-    def datos(self, auth_cache = None):
-        '''
+    def datos(self, auth_cache: bool | None = None) -> Any:
+        """
         Obtiene los datos de MiSii del contribuyente autenticado en el SII.
 
         :return: Respuesta JSON con los datos del contribuyente.
         :rtype: dict
-        '''
+        """
         url = '/sii/misii/contribuyente/datos'
-        body = {
-            'auth': self._get_auth_pass()
-        }
+        body = {'auth': self._get_auth_pass()}
         if auth_cache is not None:
             url += '&auth_cache=0'
-        response = self.client.post(url, data = body)
+        response = self.client.post(url, data=body)
         return response.json()
+
+
+class Representantes(ApiBase):
+    """
+    Cliente para los representantes de un contribuyente en MiSii.
+
+    "Representantes" es quién puede actuar por el contribuyente
+    autenticado (lo contrario de `Representados`).
+
+    :param str identificador: Identificador del contribuyente.
+    :param str clave: Clave del identificador.
+    :param kwargs: Argumentos adicionales.
+    """
+
+    def __init__(self, identificador: str, clave: str, **kwargs: str) -> None:
+        """Autentica con `identificador`/`clave` (usuario del SII)."""
+        super().__init__(
+            identificador=identificador,
+            clave=clave,
+            **kwargs,  # type: ignore[arg-type]
+        )
+
+    def listado(self) -> Any:
+        """
+        Listado de representantes del contribuyente autenticado.
+
+        Incluye también el listado de permisos que se pueden asignar.
+
+        :return: Datos del representado, sus representantes y permisos.
+        :rtype: dict
+        """
+        # TODO: Implementar.
+
+
+class Representados(ApiBase):
+    """
+    Cliente para los representados de un contribuyente en MiSii.
+
+    "Representados" es a quiénes puede representar el contribuyente
+    autenticado (lo contrario de `Representantes`).
+
+    :param str identificador: Identificador del contribuyente.
+    :param str clave: Clave del identificador.
+    :param kwargs: Argumentos adicionales.
+    """
+
+    def __init__(self, identificador: str, clave: str, **kwargs: str) -> None:
+        """Autentica con `identificador`/`clave` (usuario del SII)."""
+        super().__init__(
+            identificador=identificador,
+            clave=clave,
+            **kwargs,  # type: ignore[arg-type]
+        )
+
+    def listado(self) -> Any:
+        """
+        Listado de contribuyentes que representa el usuario autenticado.
+
+        :return: Datos del representante, sus representados y permisos.
+        :rtype: dict
+        """
+        # TODO: Implementar.
+
+    def representar(self, rut: str, permisos: str) -> Any:
+        """
+        Asigna qué contribuyente representar en las siguientes llamadas.
+
+        :param str rut: RUT del contribuyente a representar.
+        :param str permisos: Códigos APPL de MiSII separados por coma
+            (ej. `'RPETC,MISII'` — ver tabla de códigos en la spec).
+        :return: Datos del contribuyente representado.
+        :rtype: dict
+        """
+        # TODO: Implementar.
