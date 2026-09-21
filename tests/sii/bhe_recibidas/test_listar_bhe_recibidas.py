@@ -20,6 +20,7 @@
 import unittest
 from datetime import datetime
 from os import getenv
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -28,21 +29,28 @@ from apigatewaycl.api_client.sii.bhe import BheRecibidas
 
 pytestmark = pytest.mark.readonly
 
-class TestListarBheRecibidas(unittest.TestCase):
 
+class TestListarBheRecibidas(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
+        cls.contribuyente_rut = getenv(
+            'TEST_CONTRIBUYENTE_IDENTIFICADOR',
+            '',
+        ).strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
         cls.client = BheRecibidas(cls.contribuyente_rut, contribuyente_clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
 
     # CASO 1: boletas del periodo
     def test_listar_bhe_recibidas(self):
         try:
             documentos = self.client.documentos(
-                self.contribuyente_rut, self.periodo
+                self.contribuyente_rut,
+                self.periodo,
             )
 
             self.assertTrue(True)
@@ -50,4 +58,4 @@ class TestListarBheRecibidas(unittest.TestCase):
             if self.verbose:
                 print('test_documentos(): documentos', documentos)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

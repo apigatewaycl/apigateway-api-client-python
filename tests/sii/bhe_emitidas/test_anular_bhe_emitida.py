@@ -20,6 +20,7 @@
 import unittest
 from datetime import datetime
 from os import getenv
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -28,21 +29,26 @@ from apigatewaycl.api_client.sii.bhe import BheEmitidas
 
 pytestmark = pytest.mark.risky
 
+
 class TestAnularBheEmitida(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
         clave = getenv('TEST_USUARIO_CLAVE', '').strip()
         cls.client = BheEmitidas(cls.identificador, clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
         cls.contribuyente_rut = getenv('TEST_USUARIO_RUT', '').strip()
 
     # CASO 7: anular
     def test_anular_bhe_emitida(self):
         try:
             documentos = self.client.documentos(
-                self.contribuyente_rut, self.periodo
+                self.contribuyente_rut,
+                self.periodo,
             )
             if len(documentos) == 0:
                 print('test_anular(): no probó funcionalidad.')
@@ -51,7 +57,7 @@ class TestAnularBheEmitida(unittest.TestCase):
             anular = self.client.anular(
                 self.contribuyente_rut,
                 boleta_numero,
-                BheEmitidas.ANULACION_CAUSA_ERROR_DIGITACION
+                BheEmitidas.ANULACION_CAUSA_ERROR_DIGITACION,
             )
 
             self.assertIsNotNone(anular)
@@ -59,4 +65,4 @@ class TestAnularBheEmitida(unittest.TestCase):
             if self.verbose:
                 print('test_anular(): anular', anular)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

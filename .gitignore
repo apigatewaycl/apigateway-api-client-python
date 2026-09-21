@@ -1,9 +1,11 @@
 # Archivos de desarrollo
 venv
+.venv/
 __pycache__
 *.pyc
 ejemplo-prueba.py
 CLAUDE.md
+.vscode/
 
 # Archivos de documentación
 docs/_build/

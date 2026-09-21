@@ -20,6 +20,7 @@
 import unittest
 from datetime import datetime
 from os import getenv
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -28,16 +29,22 @@ from apigatewaycl.api_client.sii.portal_mipyme import DteEmitidos
 
 pytestmark = pytest.mark.readonly
 
-class TestObtenerDtesEmitidos(unittest.TestCase):
 
+class TestObtenerDtesEmitidos(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
         clave = getenv('TEST_USUARIO_CLAVE', '').strip()
         cls.client = DteEmitidos(cls.identificador, clave)
-        cls.contribuyente_rut = getenv('TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT', '').strip()
-        anio = getenv('TEST_ANIO', datetime.now().strftime("%Y")).strip()
+        cls.contribuyente_rut = getenv(
+            'TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT',
+            '',
+        ).strip()
+        anio = getenv(
+            'TEST_ANIO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y'),
+        ).strip()
         cls.fecha_desde = f'{anio}-01-01'
         cls.fecha_hasta = f'{anio}-01-31'
 
@@ -49,7 +56,7 @@ class TestObtenerDtesEmitidos(unittest.TestCase):
                 {
                     'FEC_DESDE': self.fecha_desde,
                     'FEC_HASTA': self.fecha_hasta,
-                }
+                },
             )
 
             self.assertTrue(True)
@@ -57,4 +64,4 @@ class TestObtenerDtesEmitidos(unittest.TestCase):
             if self.verbose:
                 print('test_documentos(): documentos', documentos)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

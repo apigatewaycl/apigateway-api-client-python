@@ -29,11 +29,11 @@ from apigatewaycl.api_client.sii.actividades_economicas import (
 
 pytestmark = pytest.mark.readonly
 
-class TestListarActividadesPrimeraCat(unittest.TestCase):
 
+class TestListarActividadesPrimeraCat(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.client = ActividadesEconomicas()
 
     def test_listar_actividades_primera_cat(self):
@@ -43,8 +43,10 @@ class TestListarActividadesPrimeraCat(unittest.TestCase):
             self.assertIsNotNone(listado_primera_categoria)
 
             if self.verbose:
-                print('test_listado_primera_categoria(): listado_primera_categoria',
-                    listado_primera_categoria
+                print(
+                    'test_listado_primera_categoria(): '
+                    'listado_primera_categoria',
+                    listado_primera_categoria,
                 )
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

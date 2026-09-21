@@ -27,28 +27,33 @@ from apigatewaycl.api_client.sii.contribuyentes import Contribuyentes
 
 pytestmark = [pytest.mark.readonly, pytest.mark.dummy]
 
-class TestObtenerSituacionTributaria(unittest.TestCase):
 
+class TestObtenerSituacionTributaria(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.client = Contribuyentes()
 
     # CASO 1: situación tributaria
     def test_obtener_situacion_tributaria(self):
-        contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        contribuyente_rut = getenv(
+            'TEST_CONTRIBUYENTE_IDENTIFICADOR',
+            '',
+        ).strip()
         if contribuyente_rut == '':
             print('test_situacion_tributaria(): no probó funcionalidad.')
             return
         try:
-            situacion_tributaria = self.client.situacion_tributaria(contribuyente_rut)
+            situacion_tributaria = self.client.situacion_tributaria(
+                contribuyente_rut,
+            )
 
             self.assertIsNotNone(situacion_tributaria)
 
             if self.verbose:
                 print(
                     'test_situacion_tributaria(): situacion_tributaria',
-                    situacion_tributaria
+                    situacion_tributaria,
                 )
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

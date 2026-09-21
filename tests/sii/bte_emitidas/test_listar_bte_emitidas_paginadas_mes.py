@@ -20,6 +20,7 @@
 import unittest
 from datetime import datetime
 from os import getenv
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -28,15 +29,21 @@ from apigatewaycl.api_client.sii.bte import BteEmitidas
 
 pytestmark = pytest.mark.readonly
 
-class TestListarBteEmitidasPaginadasMes(unittest.TestCase):
 
+class TestListarBteEmitidasPaginadasMes(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
+        cls.contribuyente_rut = getenv(
+            'TEST_CONTRIBUYENTE_IDENTIFICADOR',
+            '',
+        ).strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
         cls.client = BteEmitidas(cls.contribuyente_rut, contribuyente_clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
 
     # CASO 2: boletas del periodo por mes
     def test_listar_bte_emitidas_paginadas_mes(self):
@@ -45,12 +52,17 @@ class TestListarBteEmitidasPaginadasMes(unittest.TestCase):
             while True:
                 documentos = self.client.documentos(
                     self.contribuyente_rut,
-                    self.periodo, pagina = pagina
+                    self.periodo,
+                    pagina=pagina,
                 )
-                print('test_documentos_paginacion_periodo(): Pagina %(pagina)s documentos %(documentos)s' % {
-                    'pagina': pagina,
-                    'documentos': documentos,
-                })
+                print(
+                    'test_documentos_paginacion_periodo(): '
+                    'Pagina %(pagina)s documentos %(documentos)s'
+                    % {
+                        'pagina': pagina,
+                        'documentos': documentos,
+                    },
+                )
                 pagina += 1
                 if pagina > documentos['n_paginas']:
                     break
@@ -58,4 +70,4 @@ class TestListarBteEmitidasPaginadasMes(unittest.TestCase):
             self.assertTrue(True)
 
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

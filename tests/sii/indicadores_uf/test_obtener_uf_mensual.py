@@ -20,6 +20,7 @@
 import unittest
 from datetime import datetime
 from os import getenv
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -28,17 +29,16 @@ from apigatewaycl.api_client.sii.indicadores import Uf
 
 pytestmark = [pytest.mark.readonly, pytest.mark.dummy]
 
-class TestObtenerUfMensual(unittest.TestCase):
 
+class TestObtenerUfMensual(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.client = Uf()
-        #cls.anio = getenv('TEST_ANIO', datetime.now().strftime("%Y")).strip()
 
     # CASO 2: obtener valores de la UF de todo un mes (enero del anio)
     def test_obtener_uf_mensual(self):
-        periodo = datetime.now().strftime("%Y%m")
+        periodo = datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m')
         try:
             mensual = self.client.mensual(periodo)
 
@@ -47,4 +47,4 @@ class TestObtenerUfMensual(unittest.TestCase):
             if self.verbose:
                 print('test_uf_mensual(): mensual', mensual)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

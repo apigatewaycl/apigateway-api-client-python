@@ -27,12 +27,15 @@ from apigatewaycl.api_client.sii.misii import Contribuyente
 
 pytestmark = pytest.mark.readonly
 
-class TestMiSiiObtenerDatosContribuyentes(unittest.TestCase):
 
+class TestMiSiiObtenerDatosContribuyentes(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
+        cls.contribuyente_rut = getenv(
+            'TEST_CONTRIBUYENTE_IDENTIFICADOR',
+            '',
+        ).strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
         cls.client = Contribuyente(cls.contribuyente_rut, contribuyente_clave)
 
@@ -46,4 +49,4 @@ class TestMiSiiObtenerDatosContribuyentes(unittest.TestCase):
             if self.verbose:
                 print('test_misii_contribuyente_datos(): datos', datos)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})
