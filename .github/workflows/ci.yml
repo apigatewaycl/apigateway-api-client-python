@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ['3.11']  # Puedes cambiar las versiones según necesites
+        python-version: ['3.13', '3.14']
 
     steps:
       - name: Check out repository code
