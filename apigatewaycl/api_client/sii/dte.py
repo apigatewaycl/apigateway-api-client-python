@@ -120,6 +120,49 @@ class Contribuyentes(ApiBase):
         """
         # TODO: Implementar.
 
+    def autorizacion_certificado(
+        self, rut: str, certificacion: str | None = None
+    ) -> Any:
+        """
+        Estado de autorización de un contribuyente, con certificado.
+
+        A diferencia de `autorizacion()` (`GET`, pública), esta
+        variante requiere certificado digital y agrega el correo
+        electrónico de intercambio del contribuyente a la respuesta.
+
+        :param str rut: RUT del contribuyente a consultar.
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+        :return: Autorización, resolución, dirección regional,
+            software declarado, email de intercambio y documentos
+            autorizados.
+        :rtype: dict
+        """
+        # TODO: Implementar.
+
+    def autorizados(
+        self,
+        certificacion: str | None = None,
+        dia: str | None = None,
+        formato: str | None = None,
+    ) -> Any:
+        """
+        Descarga masiva de contribuyentes autorizados a emitir DTE.
+
+        Descarga la base completa del SII (cercana a un millón de
+        registros, cientos de MB, hasta 15 minutos). No es para
+        consultas puntuales de un RUT — para eso usar `autorizacion()`
+        o `autorizacion_certificado()`.
+
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+        :param str dia: Fecha de corte (AAAAMMDD o AAAA-MM-DD).
+        :param str formato: `'json'`, `'csv'` o `'csv_sii'` (oficial
+            del SII, sin transformar — recomendado).
+        :return: Listado de contribuyentes autorizados (RUT, razón
+            social, resolución, email de intercambio, URL).
+        :rtype: list[dict]
+        """
+        # TODO: Implementar.
+
 
 class Emitidos(ApiBase):
     """
