@@ -55,8 +55,9 @@ class TestObservarBheRecibida(unittest.TestCase):
             '',
         ).strip()
         if observar_emisor_rut == '' or observar_numero == '':
-            print('test_observar(): no probó funcionalidad.')
-            return
+            self.skipTest(
+                'faltan TEST_BHE_RECIBIDAS_OBSERVAR_* en test.env.',
+            )
         observar = self.client.observar(observar_emisor_rut, observar_numero)
 
         self.assertIsNotNone(observar)

@@ -55,8 +55,9 @@ class TestEnviarEmailBheEmitida(unittest.TestCase):
                 self.periodo,
             )
             if len(documentos) == 0:
-                print('test_email(): no probó funcionalidad.')
-                return
+                self.skipTest(
+                    'la API no devolvió documentos con los cuales probar.',
+                )
             boleta_codigo = documentos[0]['codigo']
 
             email = self.client.email(boleta_codigo, receptor_email)

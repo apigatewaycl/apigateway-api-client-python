@@ -43,8 +43,9 @@ class TestEmitirBhe(unittest.TestCase):
     # CASO 5: emitir una boleta
     def test_emitir_bhe(self):
         if self.receptor_rut == '':
-            print('test_emitir(): no probó funcionalidad.')
-            return
+            self.skipTest(
+                'falta TEST_BHE_EMITIDAS_RECEPTOR_RUT en test.env.',
+            )
         fecha_emision = datetime.now(
             ZoneInfo('America/Santiago'),
         ).strftime('%Y-%m-%d')

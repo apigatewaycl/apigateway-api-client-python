@@ -60,8 +60,9 @@ class TestDescargarPdfDteEmitido(unittest.TestCase):
                 },
             )
             if len(documentos) == 0:
-                print('test_pdf(): no probó funcionalidad.')
-                return
+                self.skipTest(
+                    'la API no devolvió documentos con los cuales probar.',
+                )
             dte = documentos[0]['dte']
             folio = documentos[0]['folio']
             pdf = self.client.pdf(

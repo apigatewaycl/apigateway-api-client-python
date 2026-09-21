@@ -56,8 +56,9 @@ class TestVerificarDte(unittest.TestCase):
             or fecha == ''
             or total == ''
         ):
-            print('test_verificar(): no probó funcionalidad.')
-            return
+            self.skipTest(
+                'faltan TEST_DTE_EMITIDOS_VERIFICAR_* en test.env.',
+            )
         try:
             verificar = self.client.verificar(
                 self.contribuyente_rut,

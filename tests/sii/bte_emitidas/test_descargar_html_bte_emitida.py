@@ -55,8 +55,9 @@ class TestDescargarHtmlBteEmitida(unittest.TestCase):
                 self.periodo,
             )
             if len(documentos) == 0:
-                print('test_html(): no probó funcionalidad.')
-                return
+                self.skipTest(
+                    'la API no devolvió documentos con los cuales probar.',
+                )
             boleta_codigo = documentos[0]['codigo']
             html = self.client.html(boleta_codigo)
 

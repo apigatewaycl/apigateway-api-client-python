@@ -53,8 +53,9 @@ class TestAnularBteEmitida(unittest.TestCase):
                 self.periodo,
             )
             if len(documentos) == 0:
-                print('test_anular(): no probó funcionalidad.')
-                return
+                self.skipTest(
+                    'la API no devolvió documentos con los cuales probar.',
+                )
             boleta_numero = documentos[-1]['numero']
 
             anular = self.client.anular(

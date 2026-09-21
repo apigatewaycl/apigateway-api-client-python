@@ -49,8 +49,9 @@ class TestObtenerReceptorTasaBteEmitida(unittest.TestCase):
     # CASO 5: tasa de receptor
     def test_obtener_receptor_tasa_bte_emitida(self):
         if self.receptor_rut == '':
-            print('test_receptor_tasa(): no probó funcionalidad.')
-            return
+            self.skipTest(
+                'falta TEST_BTE_EMITIDAS_RECEPTOR_RUT en test.env.',
+            )
         try:
             receptor_tasa = self.client.receptor_tasa(
                 self.contribuyente_rut,

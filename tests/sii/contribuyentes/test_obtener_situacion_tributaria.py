@@ -41,8 +41,9 @@ class TestObtenerSituacionTributaria(unittest.TestCase):
             '',
         ).strip()
         if contribuyente_rut == '':
-            print('test_situacion_tributaria(): no probó funcionalidad.')
-            return
+            self.skipTest(
+                'falta TEST_CONTRIBUYENTE_IDENTIFICADOR en test.env.',
+            )
         try:
             situacion_tributaria = self.client.situacion_tributaria(
                 contribuyente_rut,

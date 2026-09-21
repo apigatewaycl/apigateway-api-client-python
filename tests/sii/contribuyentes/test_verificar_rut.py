@@ -39,8 +39,9 @@ class TestVerificarRut(unittest.TestCase):
         erut_rut = getenv('TEST_ERUT_RUT', '').strip()
         erut_serie = getenv('TEST_ERUT_SERIE', '').strip()
         if erut_rut == '' or erut_serie == '':
-            print('test_verificar_rut(): no probó funcionalidad.')
-            return
+            self.skipTest(
+                'faltan TEST_ERUT_RUT/TEST_ERUT_SERIE en test.env.',
+            )
         try:
             verificar_rut = self.client.verificar_rut(erut_rut, erut_serie)
 

@@ -54,8 +54,9 @@ class TestDescargarPdfBheRecibida(unittest.TestCase):
                 self.periodo,
             )
             if len(documentos) == 0:
-                print('test_pdf(): no probó funcionalidad.')
-                return
+                self.skipTest(
+                    'la API no devolvió documentos con los cuales probar.',
+                )
             boleta_codigo = documentos[0]['codigo']
             pdf = self.client.pdf(boleta_codigo)
 
