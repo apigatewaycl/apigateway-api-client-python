@@ -40,7 +40,8 @@ class TestVerificarAutorizacionContribuyenteDte(unittest.TestCase):
 
     def test_verificar_autorizacion_contribuyente_dte(self):
         try:
-            autorizacion = self.client.autorizacion(self.contribuyente_rut)
+            respuesta = self.client.autorizacion(self.contribuyente_rut)
+            autorizacion = respuesta['data']
 
             self.assertIsNotNone(autorizacion)
 

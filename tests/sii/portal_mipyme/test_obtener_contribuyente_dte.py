@@ -48,7 +48,7 @@ class TestObtenerContribuyenteDte(unittest.TestCase):
                 self.identificador,
                 self.contribuyente_rut,
                 int(dte),
-            )
+            )['data']
 
             self.assertIsNotNone(info)
 

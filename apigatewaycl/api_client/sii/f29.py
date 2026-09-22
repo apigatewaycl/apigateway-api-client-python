@@ -21,7 +21,7 @@
 Módulo para el Formulario 29 (F29) del SII.
 
 Para más información sobre la API, consulte la `documentación completa
-del Formulario 29 <https://developers.apigateway.cl/>`_.
+del Formulario 29 <https://www.apigateway.cl/docs>`_.
 """
 
 from __future__ import annotations
@@ -40,7 +40,12 @@ class F29(ApiBase):
     :param kwargs: Argumentos adicionales.
     """
 
-    def __init__(self, identificador: str, clave: str, **kwargs: str) -> None:
+    def __init__(
+        self,
+        identificador: str,
+        clave: str,
+        **kwargs: str,
+    ) -> None:
         """Autentica con `identificador`/`clave` del contribuyente."""
         super().__init__(
             identificador=identificador,
@@ -56,32 +61,46 @@ class F29(ApiBase):
         observaciones, con observaciones, con observaciones
         justificadas, o sin declaración presentada).
 
-        :return: Listado de períodos con su estado de declaración.
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, listado de períodos con su estado de declaración.
+        :rtype: dict
         """
-        # TODO: Implementar.
+        url = '/sii/f29/obtener_estados'
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()
 
     def detalles_declaracion(self, folio: str) -> Any:
         """
         Detalles de una declaración del Formulario 29 por folio.
 
         :param str folio: Folio del formulario 29.
-        :return: Folio, período, fecha/hora, estado e historial de la
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, folio, período, fecha/hora, estado e historial de la
             declaración.
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = '/sii/f29/detalles_declaracion/%(folio)s' % {'folio': folio}
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()
 
     def declaraciones_listado(self, periodo: str) -> Any:
         """
         Listado de declaraciones del Formulario 29 por período.
 
         :param str periodo: Período a consultar (AAAA o AAAA-MM).
-        :return: Listado de declaraciones (período, folio, RUT, fecha
-            y estado) del período.
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, listado de declaraciones (período, folio, RUT, fecha y
+            estado) del período.
+        :rtype: dict
         """
-        # TODO: Implementar.
+        url = '/sii/f29/declaraciones/listado/%(periodo)s' % {
+            'periodo': periodo,
+        }
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()
 
     def certificado_solemne_pdf(self, folio: str) -> Any:
         """
@@ -91,7 +110,10 @@ class F29(ApiBase):
         :return: Contenido del PDF del certificado solemne.
         :rtype: bytes
         """
-        # TODO: Implementar.
+        url = '/sii/f29/certificado_solemne/pdf/%(folio)s' % {'folio': folio}
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.content
 
     def formulario_compacto_pdf(self, folio: str) -> Any:
         """
@@ -101,4 +123,7 @@ class F29(ApiBase):
         :return: Contenido del PDF del formulario compacto.
         :rtype: bytes
         """
-        # TODO: Implementar.
+        url = '/sii/f29/formulario_compacto/pdf/%(folio)s' % {'folio': folio}
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.content

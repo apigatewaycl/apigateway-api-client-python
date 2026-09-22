@@ -62,7 +62,7 @@ class TestObtenerComprasDetalleRcv(unittest.TestCase):
                     self.contribuyente_rut,
                     self.periodo,
                     estado,
-                )
+                )['data']
                 if self.verbose:
                     print(
                         'test_compras_detalle_rcv(): compras_resumen',
@@ -80,7 +80,7 @@ class TestObtenerComprasDetalleRcv(unittest.TestCase):
                             self.periodo,
                             resumen['rsmnTipoDocInteger'],
                             estado,
-                        )
+                        )['data']
                         if self.verbose:
                             print(
                                 'test_compras_detalle_rcv(): compras_detalle',

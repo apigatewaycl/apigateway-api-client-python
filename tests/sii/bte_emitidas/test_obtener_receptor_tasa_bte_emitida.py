@@ -56,7 +56,7 @@ class TestObtenerReceptorTasaBteEmitida(unittest.TestCase):
             receptor_tasa = self.client.receptor_tasa(
                 self.contribuyente_rut,
                 self.receptor_rut,
-            )
+            )['data']
 
             self.assertIsNotNone(receptor_tasa)
 

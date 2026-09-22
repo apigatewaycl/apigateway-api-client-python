@@ -38,7 +38,9 @@ class TestListarActividadesPrimeraCat(unittest.TestCase):
 
     def test_listar_actividades_primera_cat(self):
         try:
-            listado_primera_categoria = self.client.listado_primera_categoria()
+            listado_primera_categoria = (
+                self.client.listado_primera_categoria()['data']
+            )
 
             self.assertIsNotNone(listado_primera_categoria)
 

@@ -50,12 +50,13 @@ class TestDescargarPdfBheEmitida(unittest.TestCase):
             documentos = self.client.documentos(
                 self.contribuyente_rut,
                 self.periodo,
-            )
-            if len(documentos) == 0:
+            )['data']
+            boletas = documentos.get('boletas') if documentos else None
+            if not boletas:
                 self.skipTest(
                     'la API no devolvió documentos con los cuales probar.',
                 )
-            boleta_codigo = documentos[0]['codigo']
+            boleta_codigo = boletas[0]['codigo']
             pdf = self.client.pdf(boleta_codigo)
 
             # Retrocede dos niveles para salir de 'dte_facturacion'

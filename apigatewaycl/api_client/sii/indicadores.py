@@ -22,14 +22,12 @@ Módulo para obtener indicadores desde el SII.
 
 Para más información sobre la API, consulte la `documentación completa
 de Indicadores
-<https://developers.apigateway.cl/#65aa568c-4c5a-448b-9f3b-95c3d9153e4d>`_.
+<https://www.apigateway.cl/docs>`_.
 """
 
 from __future__ import annotations
 
 from typing import Any
-
-import requests
 
 from .. import ApiBase
 
@@ -42,90 +40,115 @@ class Uf(ApiBase):
     diarios.
     """
 
-    @staticmethod
-    def _datos(response: requests.Response) -> dict[str, Any]:
-        """
-        Cuerpo de la respuesta como diccionario.
-
-        Cuando no hay datos para el recurso pedido, v1 responde 200 con
-        el cuerpo vacío, que no es JSON válido. Se trata como si no
-        hubiera datos en vez de propagar el error de decodificación.
-
-        :param requests.Response response: Respuesta de la API.
-        :return: Cuerpo decodificado, o un diccionario vacío.
-        :rtype: dict
-        """
-        try:
-            datos = response.json()
-        except ValueError:
-            return {}
-        return datos if isinstance(datos, dict) else {}
-
     def anual(self, anio: int) -> Any:
         """
         Obtiene los valores de la UF para un año específico.
 
         :param int anio: Año para el cual se quieren los valores de UF.
-        :return: Respuesta JSON con los valores de la UF del año.
+        :return: Respuesta de la API, con `data` y `metadata`. En
+            `data`, los valores de la UF del año, con el año como
+            clave.
         :rtype: dict
         """
-        anio_str = str(anio)
-        url = '/sii/indicadores/uf/anual/%(anio)s' % {'anio': anio_str}
+        url = '/sii/indicadores/uf/anual/%(anio)s' % {'anio': anio}
         response = self.client.get(url)
-        return self._datos(response).get(anio_str) or {}
+        return response.json()
 
     def mensual(self, periodo: str) -> Any:
         """
         Obtiene los valores de la UF para un mes específico.
 
-        En v2 es un recurso propio (`/uf/mensual/{periodo}`). En v1 no
-        existe: el mes está anidado bajo `/uf/anual/{anio}/{mes}`. La
-        respuesta es equivalente en ambas, con el período (AAAAMM) como
-        clave.
-
         :param str periodo: Período en formato AAAAMM (año y mes).
-        :return: Respuesta JSON con los valores de la UF del mes.
+        :return: Respuesta de la API, con `data` y `metadata`. En
+            `data`, los valores de la UF del mes, con el período
+            (AAAAMM) como clave.
         :rtype: dict
         """
-        if self.client.version == 'v1':
-            url = '/sii/indicadores/uf/anual/%(anio)s/%(mes)s' % {
-                'anio': periodo[:4],
-                'mes': periodo[4:6],
-            }
-        else:
-            url = '/sii/indicadores/uf/mensual/%(periodo)s' % {
-                'periodo': periodo,
-            }
+        url = '/sii/indicadores/uf/mensual/%(periodo)s' % {
+            'periodo': periodo,
+        }
         response = self.client.get(url)
-        return self._datos(response).get(periodo) or {}
+        return response.json()
 
-    def diario(self, dia: str) -> float:
+    def diario(self, dia: str) -> Any:
         """
         Obtiene el valor de la UF para un día específico.
 
-        En v2 es un recurso propio (`/uf/diario/{dia}`) y la respuesta
-        es plana (el valor directo). En v1 no existe: el día está
-        anidado bajo `/uf/anual/{anio}/{mes}/{dia}`, pero la respuesta
-        es equivalente.
-
         :param str dia: Fecha en formato AAAA-MM-DD o AAAAMMDD.
-        :return: Valor de la UF para el día especificado.
-        :rtype: float
+        :return: Respuesta de la API, con `data` y `metadata`. En
+            `data`, el valor de la UF del día, con la fecha
+            normalizada a AAAAMMDD como clave. Para una fecha sin
+            valor publicado la clave viene presente pero en `null`.
+        :rtype: dict
         """
-        # La respuesta siempre normaliza la clave a AAAAMMDD (sin
-        # guiones), sin importar el formato con el que se pidió `dia`.
-        key = dia.replace('-', '')
-        if self.client.version == 'v1':
-            url = '/sii/indicadores/uf/anual/%(anio)s/%(mes)s/%(dia)s' % {
-                'anio': key[:4],
-                'mes': key[4:6],
-                'dia': key[6:8],
-            }
-        else:
-            url = '/sii/indicadores/uf/diario/%(dia)s' % {'dia': dia}
+        url = '/sii/indicadores/uf/diario/%(dia)s' % {'dia': dia}
         response = self.client.get(url)
-        # Para una fecha sin valor publicado la API responde con la
-        # clave presente pero en `null`, así que no basta con mirar si
-        # la clave existe.
-        valor = self._datos(response).get(key)
-        return float(valor) if valor is not None else 0.0
+        return response.json()
+
+
+class CorreccionMonetaria(ApiBase):
+    """
+    Cliente para los factores de corrección monetaria del SII.
+
+    Recurso público — solo requiere el token de la plataforma, no
+    credenciales de un contribuyente.
+    """
+
+    def anual(self, anio: int) -> Any:
+        """
+        Factores de corrección monetaria de un año.
+
+        :param int anio: Año a consultar.
+        :return: Respuesta de la API, con `data` y `metadata`. En
+            `data`, los factores del año, con el año como clave y un
+            factor por cada mes (`'1'` a `'12'`).
+        :rtype: dict
+        """
+        url = '/sii/indicadores/correccion_monetaria/anual/%(anio)s' % {
+            'anio': anio,
+        }
+        response = self.client.get(url)
+        return response.json()
+
+
+class ImpuestoSegundaCategoria(ApiBase):
+    """
+    Cliente para el impuesto único de segunda categoría del SII.
+
+    Recurso público — solo requiere el token de la plataforma, no
+    credenciales de un contribuyente.
+    """
+
+    def anual(self, anio: int) -> Any:
+        """
+        Tramos del impuesto de segunda categoría de un año.
+
+        :param int anio: Año a consultar.
+        :return: Respuesta de la API, con `data` y `metadata`. En
+            `data`, los tramos del año, con el año como clave. Cada
+            tramo trae `desde`, `hasta`, `tasa`, `rebaja` y `maximo`.
+        :rtype: dict
+        """
+        url = '/sii/indicadores/impuesto_segunda_categoria/anual/%(anio)s' % {
+            'anio': anio
+        }
+        response = self.client.get(url)
+        return response.json()
+
+    def mensual(self, periodo: str) -> Any:
+        """
+        Tramos del impuesto de segunda categoría de un mes.
+
+        :param str periodo: Período en formato AAAAMM (año y mes).
+        :return: Respuesta de la API, con `data` y `metadata`. En
+            `data`, los tramos del período, con el período (AAAAMM)
+            como clave. Cada tramo trae `desde`, `hasta`, `tasa`,
+            `rebaja` y `maximo`.
+        :rtype: dict
+        """
+        url = (
+            '/sii/indicadores/impuesto_segunda_categoria/mensual/%(periodo)s'
+            % {'periodo': periodo}
+        )
+        response = self.client.get(url)
+        return response.json()

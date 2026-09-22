@@ -21,7 +21,7 @@
 Módulo para tasación fiscal de vehículos del SII.
 
 Para más información sobre la API, consulte la `documentación completa
-de Vehículos <https://developers.apigateway.cl/>`_.
+de Vehículos <https://www.apigateway.cl/docs>`_.
 """
 
 from __future__ import annotations
@@ -52,21 +52,44 @@ class Vehiculos(ApiBase):
         """
         Busca la tasación fiscal de un vehículo y su permiso de circulación.
 
-        Sin filtros, descarga todos los registros — se recomienda al
-        menos `marca` y `anio` para una búsqueda eficiente.
+        `categoria` y `tipo` son obligatorios: sin ellos la API
+        responde `Debe especificar la categoría del vehículo.` o
+        `Debe especificar el tipo de vehículo.`. Los IDs válidos se
+        obtienen con `categorias_tipos()` y `categorias_marcas()`.
+        Agregar `marca` y `anio` acota bastante el resultado.
 
         :param int anio: Año del vehículo.
         :param int anio_tasa: Año fiscal de la búsqueda (por defecto
             el año actual).
-        :param int categoria: ID de categoría (1 = liviano).
+        :param int categoria: ID de categoría, obligatorio
+            (1 = liviano).
         :param int marca: ID de la marca (ej. 229 = SUZUKI).
         :param str modelo: Modelo del vehículo.
-        :param int tipo: ID del tipo de vehículo (6 = SUV).
+        :param int tipo: ID del tipo de vehículo, obligatorio
+            (6 = SUV).
         :param str version: Versión del vehículo.
-        :return: Listado de vehículos que calzan con la búsqueda.
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, listado de vehículos que calzan con la búsqueda.
+        :rtype: dict
         """
-        # TODO: Implementar.
+        # La API recibe los filtros como el cuerpo completo, no
+        # anidados bajo una clave. Los que no se indiquen no se envían.
+        filtros = {
+            'anio': anio,
+            'anio_tasa': anio_tasa,
+            'categoria': categoria,
+            'marca': marca,
+            'modelo': modelo,
+            'tipo': tipo,
+            'version': version,
+        }
+        body = {
+            clave: valor
+            for clave, valor in filtros.items()
+            if valor is not None
+        }
+        response = self.client.post('/sii/vehiculos/tasacion/buscar', body)
+        return response.json()
 
     def categorias_tipos(self, categoria: str) -> Any:
         """
@@ -74,10 +97,15 @@ class Vehiculos(ApiBase):
 
         :param str categoria: ID de categoría (`'1'` livianos, `'2'`
             pesados, `'3'` motos).
-        :return: Listado de tipos (id, nombre).
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, listado de tipos (id, nombre).
+        :rtype: dict
         """
-        # TODO: Implementar.
+        url = '/sii/vehiculos/categorias/tipos/%(categoria)s' % {
+            'categoria': categoria,
+        }
+        response = self.client.get(url)
+        return response.json()
 
     def categorias_marcas(self, categoria: str) -> Any:
         """
@@ -85,10 +113,15 @@ class Vehiculos(ApiBase):
 
         :param str categoria: ID de categoría (`'1'` livianos, `'2'`
             pesados, `'3'` motos).
-        :return: Listado de marcas (id, nombre).
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, listado de marcas (id, nombre).
+        :rtype: dict
         """
-        # TODO: Implementar.
+        url = '/sii/vehiculos/categorias/marcas/%(categoria)s' % {
+            'categoria': categoria,
+        }
+        response = self.client.get(url)
+        return response.json()
 
     def categorias_caracteristicas(self, categoria: str) -> Any:
         """
@@ -96,7 +129,12 @@ class Vehiculos(ApiBase):
 
         :param str categoria: ID de categoría (`'1'` livianos, `'2'`
             pesados, `'3'` motos).
-        :return: Listado de características, con sus valores posibles.
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, listado de características, con sus valores posibles.
+        :rtype: dict
         """
-        # TODO: Implementar.
+        url = '/sii/vehiculos/categorias/caracteristicas/%(categoria)s' % {
+            'categoria': categoria,
+        }
+        response = self.client.get(url)
+        return response.json()

@@ -42,24 +42,25 @@ class TestAnularBheEmitida(unittest.TestCase):
             datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
         ).strip()
         cls.contribuyente_rut = getenv('TEST_USUARIO_RUT', '').strip()
+        # Anular es IRREVERSIBLE en el SII. Este test nunca elige una
+        # boleta por su cuenta: exige el folio exacto, para que no
+        # pueda dispararse sin intención explícita.
+        cls.folio = getenv('TEST_BHE_ANULAR_FOLIO', '').strip()
+        if not cls.folio:
+            raise unittest.SkipTest(
+                'TEST_BHE_ANULAR_FOLIO no configurado: este test anula '
+                'de forma irreversible una BHE real en el SII.'
+            )
 
     # CASO 7: anular
     def test_anular_bhe_emitida(self):
         try:
-            documentos = self.client.documentos(
-                self.contribuyente_rut,
-                self.periodo,
-            )
-            if len(documentos) == 0:
-                self.skipTest(
-                    'la API no devolvió documentos con los cuales probar.',
-                )
-            boleta_numero = documentos[-1]['numero']
+            boleta_numero = self.folio
             anular = self.client.anular(
                 self.contribuyente_rut,
                 boleta_numero,
                 BheEmitidas.ANULACION_CAUSA_ERROR_DIGITACION,
-            )
+            )['data']
 
             self.assertIsNotNone(anular)
 

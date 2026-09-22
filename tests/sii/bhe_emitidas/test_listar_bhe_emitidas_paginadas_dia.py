@@ -47,18 +47,12 @@ class TestListarBheEmitidasPaginadasDia(unittest.TestCase):
     def test_listar_bhe_emitidas_paginadas_dia(self):
         try:
             pagina = 1
-            pagina_sig_codigo = None
             while True:
                 documentos = self.client.documentos(
                     self.contribuyente_rut,
                     self.periodo,
                     pagina=pagina,
-                    pagina_sig_codigo=(
-                        pagina_sig_codigo
-                        if self.client.client.version == 'v1'
-                        else None
-                    ),
-                )
+                )['data']
                 print(
                     'test_documentos_paginacion_periodo_mes(): '
                     'Pagina %(pagina)s documentos %(documentos)s'
@@ -67,8 +61,6 @@ class TestListarBheEmitidasPaginadasDia(unittest.TestCase):
                         'documentos': documentos,
                     },
                 )
-                if self.client.client.version == 'v1':
-                    pagina_sig_codigo = documentos['pagina_sig_codigo']
                 pagina += 1
                 if pagina > documentos['n_paginas']:
                     break

@@ -65,20 +65,16 @@ class TestListarBheRecibidasPaginadas(unittest.TestCase):
     def _get_documentos(self):
         documentos = []
         pagina = 1
-        pagina_sig_codigo = None
         while True:
-            documentos_pagina = self.client.documentos(
+            datos = self.client.documentos(
                 self.contribuyente_rut,
                 self.periodo,
                 pagina,
-                pagina_sig_codigo
-                if self.client.client.version == 'v1'
-                else None,
-            )
-            if documentos_pagina['pagina_sig_codigo'] == '00000000000000':
+            )['data']
+            if not datos:
                 break
-            if self.client.client.version == 'v1':
-                pagina_sig_codigo = documentos_pagina['pagina_sig_codigo']
-            documentos = documentos + documentos_pagina['boletas']
+            documentos = documentos + datos.get('boletas', [])
+            if pagina >= datos.get('n_paginas', 1):
+                break
             pagina += 1
         return documentos

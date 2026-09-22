@@ -25,8 +25,8 @@ load_dotenv(Path(__file__).parent / 'test.env')
 
 _TOKEN = 'APIGATEWAY_API_TOKEN'
 
-# Recurso liviano y de solo lectura, disponible tanto en v1 como en v2,
-# que no depende de los datos de ninguna cuenta en particular.
+# Recurso liviano y de solo lectura que no depende de los datos de
+# ninguna cuenta en particular.
 _SONDEO = '/sii/indicadores/uf/anual/2025'
 
 _HTTP_SIN_AUTORIZACION = (401, 403)

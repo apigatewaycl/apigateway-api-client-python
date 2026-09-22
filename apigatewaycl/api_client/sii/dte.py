@@ -22,7 +22,7 @@ Módulo para Documentos Tributarios Electrónicos (DTE) del SII.
 
 Para más información sobre la API, consulte la `documentación completa
 de los DTE
-<https://developers.apigateway.cl/#8c113b9a-ea05-4981-9273-73e3f20ef991>`_.
+<https://www.apigateway.cl/docs>`_.
 """
 
 from __future__ import annotations
@@ -37,17 +37,48 @@ class Contribuyentes(ApiBase):
     Cliente para los endpoints de contribuyentes de la API de API Gateway.
 
     Proporciona métodos para consultar la autorización de emisión de
-    DTE de un contribuyente.
+    DTE de un contribuyente, sus datos privados y sus usuarios
+    autorizados.
+
+    :param str identificador: Identificador del contribuyente
+        (opcional, sólo para los recursos que requieren autenticación).
+    :param str clave: Clave del identificador (opcional).
+    :param kwargs: Argumentos adicionales.
     """
 
-    def autorizacion(self, rut: str, certificacion: bool | None = None) -> Any:
+    def __init__(
+        self,
+        identificador: str | None = None,
+        clave: str | None = None,
+        **kwargs: str,
+    ) -> None:
+        """
+        Autentica con `identificador`/`clave` del contribuyente.
+
+        Ambos son opcionales porque `autorizacion()` es un recurso
+        público: no requiere credenciales del contribuyente.
+        """
+        argumentos: dict[str, str] = dict(kwargs)
+        if identificador and clave:
+            argumentos['identificador'] = identificador
+            argumentos['clave'] = clave
+        super().__init__(
+            **argumentos,  # type: ignore[arg-type]
+        )
+
+    def autorizacion(
+        self,
+        rut: str,
+        certificacion: bool | None = None,
+    ) -> Any:
         """
         Verifica si un contribuyente está autorizado para emitir DTE.
 
         :param str rut: RUT del contribuyente a verificar.
         :param bool certificacion: Indica si se consulta en ambiente
             de certificación (opcional).
-        :return: Respuesta JSON con el estado de autorización.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, estado de autorización.
         :rtype: dict
         """
         certificacion_flag = 1 if certificacion else 0
@@ -60,7 +91,9 @@ class Contribuyentes(ApiBase):
         return response.json()
 
     def datos(
-        self, contribuyente: str, certificacion: str | None = None
+        self,
+        contribuyente: str,
+        certificacion: str | None = None,
     ) -> Any:
         """
         Datos privados del contribuyente autenticado.
@@ -70,10 +103,18 @@ class Contribuyentes(ApiBase):
 
         :param str contribuyente: RUT del contribuyente.
         :param str certificacion: `'0'` producción, `'1'` certificación.
-        :return: Datos privados del contribuyente.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, datos privados del contribuyente.
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/dte/contribuyentes/datos/%(contribuyente)s'
+            % {'contribuyente': contribuyente},
+            certificacion=certificacion,
+        )
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()
 
     def set_datos(
         self,
@@ -87,21 +128,40 @@ class Contribuyentes(ApiBase):
         :param str contribuyente: RUT del contribuyente a actualizar.
         :param dict datos: Datos a actualizar (`emails`, `software`).
         :param str certificacion: `'0'` producción, `'1'` certificación.
-        :return: Datos privados del contribuyente, ya actualizados.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, datos privados del contribuyente, ya actualizados.
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/dte/contribuyentes/set_datos/%(contribuyente)s'
+            % {'contribuyente': contribuyente},
+            certificacion=certificacion,
+        )
+        body = {'auth': self._get_auth_pass(), 'datos': datos}
+        response = self.client.post(url, data=body)
+        return response.json()
 
-    def usuarios(self, rut: str, certificacion: str | None = None) -> Any:
+    def usuarios(
+        self,
+        rut: str,
+        certificacion: str | None = None,
+    ) -> Any:
         """
         Listado de usuarios autorizados de un contribuyente.
 
         :param str rut: RUT del contribuyente a consultar.
         :param str certificacion: `'0'` producción, `'1'` certificación.
-        :return: Listado de usuarios, con nombre, RUN y permisos.
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, listado de usuarios, con nombre, RUN y permisos.
+        :rtype: dict
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/dte/contribuyentes/usuarios/%(rut)s' % {'rut': rut},
+            certificacion=certificacion,
+        )
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()
 
     def set_usuario(
         self,
@@ -115,13 +175,23 @@ class Contribuyentes(ApiBase):
         :param str contribuyente: RUT del contribuyente a actualizar.
         :param dict usuario: Usuario a asignar (`run` y `permisos`).
         :param str certificacion: `'0'` producción, `'1'` certificación.
-        :return: Usuario asignado, con sus permisos.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, usuario asignado, con sus permisos.
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/dte/contribuyentes/set_usuario/%(contribuyente)s'
+            % {'contribuyente': contribuyente},
+            certificacion=certificacion,
+        )
+        body = {'auth': self._get_auth_pass(), 'usuario': usuario}
+        response = self.client.post(url, data=body)
+        return response.json()
 
     def autorizacion_certificado(
-        self, rut: str, certificacion: str | None = None
+        self,
+        rut: str,
+        certificacion: str | None = None,
     ) -> Any:
         """
         Estado de autorización de un contribuyente, con certificado.
@@ -132,12 +202,18 @@ class Contribuyentes(ApiBase):
 
         :param str rut: RUT del contribuyente a consultar.
         :param str certificacion: `'0'` producción, `'1'` certificación.
-        :return: Autorización, resolución, dirección regional,
-            software declarado, email de intercambio y documentos
-            autorizados.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, autorización, resolución, dirección regional, software
+            declarado, email de intercambio y documentos autorizados.
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/dte/contribuyentes/autorizado/%(rut)s' % {'rut': rut},
+            certificacion=certificacion,
+        )
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()
 
     def autorizados(
         self,
@@ -156,12 +232,30 @@ class Contribuyentes(ApiBase):
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :param str dia: Fecha de corte (AAAAMMDD o AAAA-MM-DD).
         :param str formato: `'json'`, `'csv'` o `'csv_sii'` (oficial
-            del SII, sin transformar — recomendado).
-        :return: Listado de contribuyentes autorizados (RUT, razón
-            social, resolución, email de intercambio, URL).
-        :rtype: list[dict]
+            del SII, sin transformar — recomendado y valor por defecto
+            de la API).
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, listado de contribuyentes autorizados (RUT, razón
+            social, resolución, email de intercambio, URL). Con
+            `formato='json'` se entrega ya decodificado; con los dos formatos
+            CSV se entrega el archivo crudo, sin decodificar (`csv_sii` viene
+            en ISO-8859-1).
+        :rtype: dict | bytes
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/dte/contribuyentes/autorizados',
+            certificacion=certificacion,
+            dia=dia,
+            formato=formato,
+        )
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        # Sólo `json` responde JSON. Los dos formatos CSV (incluído
+        # `csv_sii`, el que aplica la API si no se pide otro) vienen
+        # como texto plano y decodificarlos fallaría.
+        if formato == 'json':
+            return response.json()
+        return response.content
 
 
 class Emitidos(ApiBase):
@@ -175,7 +269,12 @@ class Emitidos(ApiBase):
     :param kwargs: Argumentos adicionales.
     """
 
-    def __init__(self, identificador: str, clave: str, **kwargs: str) -> None:
+    def __init__(
+        self,
+        identificador: str,
+        clave: str,
+        **kwargs: str,
+    ) -> None:
         """Autentica con `identificador`/`clave` del contribuyente."""
         super().__init__(
             identificador=identificador,
@@ -205,8 +304,9 @@ class Emitidos(ApiBase):
         :param int total: Monto total del DTE.
         :param str firma: Firma electrónica del DTE (opcional).
         :param bool certificacion: Indica si la verificación es en
-        ambiente de certificación (opcional).
-        :return: Respuesta JSON con el resultado de la verificación del DTE.
+            ambiente de certificación (opcional).
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, resultado de la verificación del DTE.
         :rtype: dict
         """
         certificacion_flag = 1 if certificacion else 0
@@ -246,10 +346,22 @@ class Emitidos(ApiBase):
         :param int track_id: Identificador del envío.
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :param str formato: `'json'` o `'html'`.
-        :return: Estado del envío y resumen de documentos por tipo de DTE.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, estado del envío y resumen de documentos por tipo de
+            DTE.
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/dte/emitidos/estado_envio/%(emisor)s/%(track_id)s'
+            % {'emisor': emisor, 'track_id': track_id},
+            certificacion=certificacion,
+            formato=formato,
+        )
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        # Con `formato='html'` la API igual responde JSON: el HTML
+        # viene como una cadena dentro del cuerpo.
+        return response.json()
 
 
 class Iecv(ApiBase):
@@ -261,7 +373,12 @@ class Iecv(ApiBase):
     :param kwargs: Argumentos adicionales.
     """
 
-    def __init__(self, identificador: str, clave: str, **kwargs: str) -> None:
+    def __init__(
+        self,
+        identificador: str,
+        clave: str,
+        **kwargs: str,
+    ) -> None:
         """Autentica con `identificador`/`clave` del contribuyente."""
         super().__init__(
             identificador=identificador,
@@ -290,7 +407,22 @@ class Iecv(ApiBase):
         :param int track_id: Identificador del envío del libro a
             reemplazar.
         :param str certificacion: `'0'` producción, `'1'` certificación.
-        :return: Código de reemplazo del libro.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, código de reemplazo del libro.
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/dte/iecv/codigo_reemplazo/%(emisor)s/%(periodo)s'
+            '/%(operacion)s/%(tipo)s/%(track_id)s'
+            % {
+                'emisor': emisor,
+                'periodo': periodo,
+                'operacion': operacion,
+                'tipo': tipo,
+                'track_id': track_id,
+            },
+            certificacion=certificacion,
+        )
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()

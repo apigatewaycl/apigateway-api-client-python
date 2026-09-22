@@ -42,7 +42,7 @@ class TestMiSiiObtenerDatosContribuyentes(unittest.TestCase):
     # CASO 1: datos del contribuyente en su página de MiSii
     def test_misii_obtener_datos_contribuyente(self):
         try:
-            datos = self.client.datos()
+            datos = self.client.datos()['data']
 
             self.assertIsNotNone(datos)
 

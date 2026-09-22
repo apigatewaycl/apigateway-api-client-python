@@ -53,7 +53,7 @@ class TestDescargarHtmlBteEmitida(unittest.TestCase):
             documentos = self.client.documentos(
                 self.contribuyente_rut,
                 self.periodo,
-            )
+            )['data']
             if len(documentos) == 0:
                 self.skipTest(
                     'la API no devolvió documentos con los cuales probar.',

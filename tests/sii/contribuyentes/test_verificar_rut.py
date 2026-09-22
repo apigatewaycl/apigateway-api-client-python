@@ -43,7 +43,8 @@ class TestVerificarRut(unittest.TestCase):
                 'faltan TEST_ERUT_RUT/TEST_ERUT_SERIE en test.env.',
             )
         try:
-            verificar_rut = self.client.verificar_rut(erut_rut, erut_serie)
+            respuesta = self.client.verificar_rut(erut_rut, erut_serie)
+            verificar_rut = respuesta['data']
 
             self.assertIsNotNone(verificar_rut)
 

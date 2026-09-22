@@ -43,7 +43,10 @@ class TestObtenerUfDiario(unittest.TestCase):
     # (1ero de enero del ANIO)
     def test_obtener_uf_diario(self):
         try:
-            diario = self.client.diario(self.fecha)
+            respuesta = self.client.diario(self.fecha)
+            self.assertIn('data', respuesta)
+            self.assertIn('metadata', respuesta)
+            diario = respuesta['data']
 
             self.assertIsNotNone(diario)
 

@@ -44,24 +44,25 @@ class TestAnularBteEmitida(unittest.TestCase):
             'TEST_PERIODO',
             datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
         ).strip()
+        # Anular es IRREVERSIBLE en el SII. Este test nunca elige una
+        # boleta por su cuenta: exige el folio exacto, para que no
+        # pueda dispararse sin intención explícita.
+        cls.folio = getenv('TEST_BTE_ANULAR_FOLIO', '').strip()
+        if not cls.folio:
+            raise unittest.SkipTest(
+                'TEST_BTE_ANULAR_FOLIO no configurado: este test anula '
+                'de forma irreversible una BTE real en el SII.'
+            )
 
     # CASO 4: anular boleta
     def test_anular_bte_emitida(self):
         try:
-            documentos = self.client.documentos(
-                self.contribuyente_rut,
-                self.periodo,
-            )
-            if len(documentos) == 0:
-                self.skipTest(
-                    'la API no devolvió documentos con los cuales probar.',
-                )
-            boleta_numero = documentos[-1]['numero']
+            boleta_numero = self.folio
 
             anular = self.client.anular(
                 self.contribuyente_rut,
                 boleta_numero,
-            )
+            )['data']
 
             self.assertIsNotNone(anular)
 

@@ -51,7 +51,7 @@ class TestListarBteEmitidas(unittest.TestCase):
             documentos = self.client.documentos(
                 self.contribuyente_rut,
                 self.periodo,
-            )
+            )['data']
 
             self.assertTrue(True)
 

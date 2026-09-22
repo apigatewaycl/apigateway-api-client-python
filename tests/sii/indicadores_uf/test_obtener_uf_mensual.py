@@ -40,7 +40,10 @@ class TestObtenerUfMensual(unittest.TestCase):
     def test_obtener_uf_mensual(self):
         periodo = datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m')
         try:
-            mensual = self.client.mensual(periodo)
+            respuesta = self.client.mensual(periodo)
+            self.assertIn('data', respuesta)
+            self.assertIn('metadata', respuesta)
+            mensual = respuesta['data']
 
             self.assertIsNotNone(mensual)
 

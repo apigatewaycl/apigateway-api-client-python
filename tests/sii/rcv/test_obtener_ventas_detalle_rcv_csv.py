@@ -52,7 +52,7 @@ class TestObtemerVentasDetalleRcvCsv(unittest.TestCase):
             ventas_detalle = self.client.ventas_detalle(
                 self.contribuyente_rut,
                 self.periodo,
-            )
+            )['data']
             if self.verbose:
                 print(
                     'test_ventas_detalle_rcv_csv(): ventas_detalle',

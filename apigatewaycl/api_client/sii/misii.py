@@ -22,7 +22,7 @@ Módulo para interactuar con la sección MiSii de un contribuyente.
 
 Para más información sobre la API, consulte la `documentación completa
 de MiSii
-<https://developers.apigateway.cl/#b585f374-f106-46a9-9f47-666d478b8ac8>`_.
+<https://www.apigateway.cl/docs>`_.
 """
 
 from __future__ import annotations
@@ -40,7 +40,12 @@ class Contribuyente(ApiBase):
     solicitudes a la API.
     """
 
-    def __init__(self, identificador: str, clave: str, **kwargs: str) -> None:
+    def __init__(
+        self,
+        identificador: str,
+        clave: str,
+        **kwargs: str,
+    ) -> None:
         """Autentica con `identificador`/`clave` (usuario del SII)."""
         super().__init__(
             identificador=identificador,
@@ -48,17 +53,16 @@ class Contribuyente(ApiBase):
             **kwargs,  # type: ignore[arg-type]
         )
 
-    def datos(self, auth_cache: bool | None = None) -> Any:
+    def datos(self) -> Any:
         """
         Obtiene los datos de MiSii del contribuyente autenticado en el SII.
 
-        :return: Respuesta JSON con los datos del contribuyente.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, datos del contribuyente.
         :rtype: dict
         """
         url = '/sii/misii/contribuyente/datos'
         body = {'auth': self._get_auth_pass()}
-        if auth_cache is not None:
-            url += '&auth_cache=0'
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -75,7 +79,12 @@ class Representantes(ApiBase):
     :param kwargs: Argumentos adicionales.
     """
 
-    def __init__(self, identificador: str, clave: str, **kwargs: str) -> None:
+    def __init__(
+        self,
+        identificador: str,
+        clave: str,
+        **kwargs: str,
+    ) -> None:
         """Autentica con `identificador`/`clave` (usuario del SII)."""
         super().__init__(
             identificador=identificador,
@@ -89,10 +98,14 @@ class Representantes(ApiBase):
 
         Incluye también el listado de permisos que se pueden asignar.
 
-        :return: Datos del representado, sus representantes y permisos.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, datos del representado, sus representantes y permisos.
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = '/sii/misii/representantes/listado'
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()
 
 
 class Representados(ApiBase):
@@ -107,7 +120,12 @@ class Representados(ApiBase):
     :param kwargs: Argumentos adicionales.
     """
 
-    def __init__(self, identificador: str, clave: str, **kwargs: str) -> None:
+    def __init__(
+        self,
+        identificador: str,
+        clave: str,
+        **kwargs: str,
+    ) -> None:
         """Autentica con `identificador`/`clave` (usuario del SII)."""
         super().__init__(
             identificador=identificador,
@@ -119,19 +137,34 @@ class Representados(ApiBase):
         """
         Listado de contribuyentes que representa el usuario autenticado.
 
-        :return: Datos del representante, sus representados y permisos.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, datos del representante, sus representados y permisos.
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = '/sii/misii/representados/listado'
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()
 
-    def representar(self, rut: str, permisos: str) -> Any:
+    def representar(
+        self,
+        rut: str,
+        permisos: str,
+    ) -> Any:
         """
         Asigna qué contribuyente representar en las siguientes llamadas.
 
         :param str rut: RUT del contribuyente a representar.
         :param str permisos: Códigos APPL de MiSII separados por coma
             (ej. `'RPETC,MISII'` — ver tabla de códigos en la spec).
-        :return: Datos del contribuyente representado.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, datos del contribuyente representado.
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = '/sii/misii/representados/representar/%(rut)s/%(permisos)s' % {
+            'rut': rut,
+            'permisos': permisos,
+        }
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()

@@ -53,7 +53,7 @@ class TestListarBheEmitidasPaginadasMes(unittest.TestCase):
                     self.periodo,
                     pagina=pagina,
                     pagina_sig_codigo=None,
-                )
+                )['data']
                 print(
                     'test_documentos_paginacion_periodo_mes(): '
                     'Pagina %(pagina)s documentos %(documentos)s'

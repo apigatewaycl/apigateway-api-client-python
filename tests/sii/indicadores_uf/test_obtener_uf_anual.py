@@ -41,7 +41,10 @@ class TestObtenerUfAnual(unittest.TestCase):
     def test_obtener_uf_anual(self):
         anio = 2025
         try:
-            anual = self.client.anual(anio)
+            respuesta = self.client.anual(anio)
+            self.assertIn('data', respuesta)
+            self.assertIn('metadata', respuesta)
+            anual = respuesta['data']
 
             self.assertIsNotNone(anual)
 

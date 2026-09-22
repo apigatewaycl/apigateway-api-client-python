@@ -45,9 +45,12 @@ class TestObtenerSituacionTributaria(unittest.TestCase):
                 'falta TEST_CONTRIBUYENTE_IDENTIFICADOR en test.env.',
             )
         try:
-            situacion_tributaria = self.client.situacion_tributaria(
+            respuesta = self.client.situacion_tributaria(
                 contribuyente_rut,
             )
+            self.assertIn('data', respuesta)
+            self.assertIn('metadata', respuesta)
+            situacion_tributaria = respuesta['data']
 
             self.assertIsNotNone(situacion_tributaria)
 

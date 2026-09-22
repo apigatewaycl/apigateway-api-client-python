@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   apigatewaycl.api_client.previred
    apigatewaycl.api_client.sii
 
 Module contents
@@ -14,5 +15,5 @@ Module contents
 
 .. automodule:: apigatewaycl.api_client
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

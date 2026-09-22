@@ -58,7 +58,8 @@ class TestObservarBheRecibida(unittest.TestCase):
             self.skipTest(
                 'faltan TEST_BHE_RECIBIDAS_OBSERVAR_* en test.env.',
             )
-        observar = self.client.observar(observar_emisor_rut, observar_numero)
+        respuesta = self.client.observar(observar_emisor_rut, observar_numero)
+        observar = respuesta['data']
 
         self.assertIsNotNone(observar)
 

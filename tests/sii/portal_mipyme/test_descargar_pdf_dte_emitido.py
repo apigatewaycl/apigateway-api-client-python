@@ -58,7 +58,7 @@ class TestDescargarPdfDteEmitido(unittest.TestCase):
                     'FEC_DESDE': self.fecha_desde,
                     'FEC_HASTA': self.fecha_hasta,
                 },
-            )
+            )['data']
             if len(documentos) == 0:
                 self.skipTest(
                     'la API no devolvió documentos con los cuales probar.',
@@ -87,9 +87,6 @@ class TestDescargarPdfDteEmitido(unittest.TestCase):
             # Crear la carpeta si no existe
             os.makedirs(output_dir, exist_ok=True)
 
-            # usar el folio también funciona, pero es más lento porque se debe
-            # buscar en el portal mipyme el código del DTE a partir del folio
-            # pdf = self.client.pdf(self.contribuyente_rut, dte, folio)
             filename = os.path.join(
                 output_dir,
                 'MIPYME_DTE_EMITIDO_%(contribuyente_rut)s'

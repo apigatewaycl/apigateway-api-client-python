@@ -50,7 +50,7 @@ class TestListarBhesEmitidas(unittest.TestCase):
                 self.contribuyente_rut,
                 self.periodo,
                 pagina=1,
-            )
+            )['data']
 
             self.assertTrue(True)
 

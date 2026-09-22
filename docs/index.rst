@@ -1,8 +1,3 @@
-.. Cliente API Gateway para Python documentation master file, created by
-   sphinx-quickstart on Sun Jan  7 18:10:25 2024.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 API Gateway: Cliente de API en Python - Documentación
 =====================================================
 
@@ -17,6 +12,13 @@ API Gateway: Cliente de API en Python - Documentación
 
 Bienvenido a la documentación del cliente de API de API Gateway CL.
 
+API Gateway es un proyecto que tiene por objetivo gestionar trámites del
+Servicio de Impuestos Internos (SII) de Chile.
+
+Aquí podrás encontrar la biblioteca escrita en lenguaje Python para la
+integración con el Servicio de Impuestos Internos (SII) asociada la creación
+de BHE, DTE, obtención de datos de contribuyente, etc.
+
 .. toctree::
    :titlesonly:
 
@@ -29,17 +31,6 @@ Bienvenido a la documentación del cliente de API de API Gateway CL.
 
    modules
 
-Índices y tablas
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
-API Gateway es un proyecto que tiene por objetivo gestionar trámites del Servicio de Impuestos Internos (SII) de Chile.
-
-Aquí podrás encontrar la biblioteca escrita en lenguaje Python para la integración con el Servicio de Impuestos Internos (SII) asociada la creación de BHE, DTE, obtención de datos de contribuyente, etc.
-
 Enlaces
 -------
 
@@ -47,3 +38,10 @@ Enlaces
 - `Código fuente en GitHub <https://github.com/apigatewaycl/apigateway-api-client-python>`_
 - `Paquete en PyPI <https://pypi.org/project/apigatewaycl>`_
 - `Documentación <https://api-client-python.docs.apigateway.cl/>`_
+
+Índices y tablas
+----------------
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

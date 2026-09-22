@@ -58,7 +58,7 @@ class TestDescargarXmlDteEmitido(unittest.TestCase):
                     'FEC_DESDE': self.fecha_desde,
                     'FEC_HASTA': self.fecha_hasta,
                 },
-            )
+            )['data']
             if len(documentos) == 0:
                 self.skipTest(
                     'la API no devolvió documentos con los cuales probar.',

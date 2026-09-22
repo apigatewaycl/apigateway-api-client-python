@@ -68,7 +68,7 @@ class TestVerificarDte(unittest.TestCase):
                 fecha,
                 total,
                 firma if firma != '' else None,
-            )
+            )['data']
 
             self.assertIsNotNone(verificar)
 

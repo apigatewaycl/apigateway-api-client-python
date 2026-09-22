@@ -21,7 +21,7 @@
 Módulo para la emisión de Boletas de Terceros Electrónicas del SII.
 
 Para más información sobre la API, consulte la `documentación completa de las
-BTE <https://developers.apigateway.cl/#e08f50ab-5509-48ab-81ab-63fc8e5985e1>`_.
+BTE <https://www.apigateway.cl/docs>`_.
 """
 
 from __future__ import annotations
@@ -43,7 +43,12 @@ class BteEmitidas(ApiBase):
     :param kwargs: Argumentos adicionales.
     """
 
-    def __init__(self, identificador: str, clave: str, **kwargs: str) -> None:
+    def __init__(
+        self,
+        identificador: str,
+        clave: str,
+        **kwargs: str,
+    ) -> None:
         """Autentica con `identificador`/`clave` del contribuyente."""
         super().__init__(
             identificador=identificador,
@@ -52,46 +57,62 @@ class BteEmitidas(ApiBase):
         )
 
     def documentos(
-        self, emisor: str, periodo: str, pagina: int | None = None
+        self,
+        emisor: str,
+        periodo: str,
+        pagina: int = 1,
     ) -> Any:
         """
         Obtiene los documentos BTE emitidos por un emisor en un periodo.
 
+        La API exige `pagina`: parte en `1` y se avanza de a una.
+
         :param str emisor: RUT del emisor de las BTE.
         :param str periodo: Período de las BTE emitidas.
-        :return: Respuesta JSON con los documentos BTE.
-        :rtype: list[dict]
+        :param int pagina: Página a consultar, partiendo desde `1`.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, documentos BTE.
+        :rtype: dict
         """
-        url = '/sii/bte/emitidas/documentos/%(emisor)s/%(periodo)s' % {
-            'emisor': emisor,
-            'periodo': periodo,
-        }
-        if pagina is not None:
-            url += '?pagina=%(pagina)s' % {
-                'pagina': pagina,
-            }
+        url = self._build_url(
+            '/sii/bte/emitidas/documentos/%(emisor)s/%(periodo)s'
+            % {'emisor': emisor, 'periodo': periodo},
+            pagina=pagina,
+        )
         body = {'auth': self._get_auth_pass()}
         response = self.client.post(url, data=body)
         return response.json()
 
-    def resumen(self, emisor: str, anio: str) -> Any:
+    def resumen(
+        self,
+        emisor: str,
+        anio: str,
+    ) -> Any:
         """
         Resumen anual y mensual de boletas de terceros emitidas.
 
         :param str emisor: RUT del emisor de las BTE.
         :param str anio: Año del resumen.
-        :return: Resumen anual y, por cada mes, su propio resumen.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, resumen anual y, por cada mes, su propio resumen.
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = '/sii/bte/emitidas/resumen/%(emisor)s/%(anio)s' % {
+            'emisor': emisor,
+            'anio': anio,
+        }
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()
 
     def html(self, codigo: str) -> bytes:
         """
         Obtiene la representación HTML de una BTE emitida.
 
         :param str codigo: Código único de la BTE.
-        :return: Contenido HTML de la BTE.
-        :rtype: str
+        :return: Contenido HTML de la BTE, sin decodificar (viene en
+            ISO-8859-1).
+        :rtype: bytes
         """
         url = '/sii/bte/emitidas/html/%(codigo)s' % {'codigo': codigo}
         body = {'auth': self._get_auth_pass()}
@@ -103,7 +124,8 @@ class BteEmitidas(ApiBase):
         Emite una nueva Boleta de Tercero Electrónica.
 
         :param dict datos: Datos de la boleta a emitir.
-        :return: Respuesta JSON con la confirmación de la emisión de la BTE.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, confirmación de la emisión de la BTE.
         :rtype: dict
         """
         body = {'auth': self._get_auth_pass(), 'boleta': datos}
@@ -124,7 +146,8 @@ class BteEmitidas(ApiBase):
         :param str numero: Número de la boleta.
         :param int causa: Causa de anulación.
         :param str periodo: Período de emisión de la boleta (opcional).
-        :return: Respuesta JSON con la confirmación de la anulación.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, confirmación de la anulación.
         :rtype: dict
         """
         body = {'auth': self._get_auth_pass()}
@@ -138,7 +161,10 @@ class BteEmitidas(ApiBase):
         return response.json()
 
     def documento(
-        self, emisor: str, folio: int, periodo: str | None = None
+        self,
+        emisor: str,
+        folio: int,
+        periodo: str | None = None,
     ) -> Any:
         """
         Detalle de una BTE emitida específica (no un listado).
@@ -146,13 +172,27 @@ class BteEmitidas(ApiBase):
         :param str emisor: RUT del emisor.
         :param int folio: Folio de la boleta.
         :param str periodo: Período de la boleta (AAAAMM), opcional.
-        :return: Datos de la boleta (número, código, montos, estado).
+            Se envía como parámetro de consulta, según lo documenta la
+            API. Ojo: hoy la vista de v2 lo lee del cuerpo, así que lo
+            ignora hasta que se corrija allá.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, datos de la boleta (número, código, montos, estado).
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/bte/emitidas/documento/%(emisor)s/%(folio)s'
+            % {'emisor': emisor, 'folio': folio},
+            periodo=periodo,
+        )
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()
 
     def receptor_tasa(
-        self, emisor: str, receptor: str, periodo: str | None = None
+        self,
+        emisor: str,
+        receptor: str,
+        periodo: str | None = None,
     ) -> Any:
         """
         Obtiene la tasa de retención aplicada a un receptor por un emisor.
@@ -160,7 +200,8 @@ class BteEmitidas(ApiBase):
         :param str emisor: RUT del emisor de la boleta.
         :param str receptor: RUT del receptor de la boleta.
         :param str periodo: Período de emisión de la boleta (opcional).
-        :return: Respuesta JSON con la tasa de retención.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, tasa de retención.
         :rtype: dict
         """
         body = {'auth': self._get_auth_pass()}
@@ -183,7 +224,12 @@ class BteRecibidas(ApiBase):
     :param kwargs: Argumentos adicionales.
     """
 
-    def __init__(self, identificador: str, clave: str, **kwargs: str) -> None:
+    def __init__(
+        self,
+        identificador: str,
+        clave: str,
+        **kwargs: str,
+    ) -> None:
         """Autentica con `identificador`/`clave` del contribuyente."""
         super().__init__(
             identificador=identificador,
@@ -191,7 +237,12 @@ class BteRecibidas(ApiBase):
             **kwargs,  # type: ignore[arg-type]
         )
 
-    def documentos(self, receptor: str, periodo: str, pagina: int) -> Any:
+    def documentos(
+        self,
+        receptor: str,
+        periodo: str,
+        pagina: int,
+    ) -> Any:
         """
         Obtiene los documentos BTE recibidos por un receptor en un periodo.
 
@@ -201,17 +252,31 @@ class BteRecibidas(ApiBase):
         :param str receptor: RUT del receptor de las BTE.
         :param str periodo: Período de las BTE buscadas.
         :param int pagina: Página a consultar, partiendo desde `1`.
-        :return: Boletas y `metadata` (n_boletas, n_paginas).
+        :return: Respuesta de la API, con `data` y `metadata`. En
+            `data`, las boletas junto a `n_boletas` y `n_paginas`; sin
+            resultados, `data` viene como lista vacía en vez de ese
+            diccionario.
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/bte/recibidas/documentos/%(receptor)s/%(periodo)s'
+            % {'receptor': receptor, 'periodo': periodo},
+            pagina=pagina,
+        )
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()
 
-    def html(self, codigo: str) -> Any:
+    def html(self, codigo: str) -> bytes:
         """
         Obtiene la representación HTML de una BTE recibida.
 
         :param str codigo: Código único de la BTE recibida.
-        :return: Contenido HTML de la BTE.
-        :rtype: str
+        :return: Contenido HTML de la BTE, sin decodificar (viene en
+            ISO-8859-1).
+        :rtype: bytes
         """
-        # TODO: Implementar.
+        url = '/sii/bte/recibidas/html/%(codigo)s' % {'codigo': codigo}
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.content

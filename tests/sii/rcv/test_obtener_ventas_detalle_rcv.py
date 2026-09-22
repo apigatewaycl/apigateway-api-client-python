@@ -52,7 +52,7 @@ class TestObtenerVentasDetalleRcv(unittest.TestCase):
             ventas_resumen = self.client.ventas_resumen(
                 self.contribuyente_rut,
                 self.periodo,
-            )
+            )['data']
             if self.verbose:
                 print(
                     'test_ventas_detalle_rcv(): ventas_resumen',
@@ -69,7 +69,7 @@ class TestObtenerVentasDetalleRcv(unittest.TestCase):
                         self.contribuyente_rut,
                         self.periodo,
                         resumen['rsmnTipoDocInteger'],
-                    )
+                    )['data']
                     if self.verbose:
                         print(
                             'test_ventas_detalle_rcv(): ventas_detalle',

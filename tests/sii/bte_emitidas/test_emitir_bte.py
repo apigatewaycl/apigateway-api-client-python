@@ -83,7 +83,7 @@ class TestEmitirBte(unittest.TestCase):
             ],
         }
         try:
-            emitir = self.client.emitir(datos_bte)
+            emitir = self.client.emitir(datos_bte)['data']
 
             self.assertIsNotNone(emitir)
 

@@ -57,7 +57,7 @@ class TestObtenerDtesEmitidos(unittest.TestCase):
                     'FEC_DESDE': self.fecha_desde,
                     'FEC_HASTA': self.fecha_hasta,
                 },
-            )
+            )['data']
 
             self.assertTrue(True)
 

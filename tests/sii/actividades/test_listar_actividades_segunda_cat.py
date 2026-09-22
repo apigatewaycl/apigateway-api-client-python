@@ -38,7 +38,9 @@ class TestListarActividadesSegundaCat(unittest.TestCase):
 
     def test_listar_actividades_segunda_cat(self):
         try:
-            listado_segunda_categoria = self.client.listado_segunda_categoria()
+            listado_segunda_categoria = (
+                self.client.listado_segunda_categoria()['data']
+            )
 
             self.assertIsNotNone(listado_segunda_categoria)
 

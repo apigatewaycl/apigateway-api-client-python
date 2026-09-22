@@ -22,7 +22,7 @@ Módulo para interactuar con el Registro de Compra y Venta del SII.
 
 Para más información sobre la API, consulte la `documentación completa
 del RCV
-<https://developers.apigateway.cl/#ef1f7d54-2e86-4732-bb91-d3448b383d66>`_.
+<https://www.apigateway.cl/docs>`_.
 """
 
 from __future__ import annotations
@@ -44,7 +44,12 @@ class Rcv(ApiBase):
     :param kwargs: Argumentos adicionales.
     """
 
-    def __init__(self, identificador: str, clave: str, **kwargs: str) -> None:
+    def __init__(
+        self,
+        identificador: str,
+        clave: str,
+        **kwargs: str,
+    ) -> None:
         """Autentica con `identificador`/`clave` del contribuyente."""
         super().__init__(
             identificador=identificador,
@@ -53,7 +58,10 @@ class Rcv(ApiBase):
         )
 
     def compras_resumen(
-        self, receptor: str, periodo: str, estado: str = 'REGISTRO'
+        self,
+        receptor: str,
+        periodo: str,
+        estado: str = 'REGISTRO',
     ) -> Any:
         """
         Obtiene un resumen de las compras de un receptor en un periodo.
@@ -62,8 +70,9 @@ class Rcv(ApiBase):
         :param str periodo: Período de tiempo de las compras.
         :param str estado: Estado de las compras ('REGISTRO',
             'PENDIENTE', 'NO_INCLUIR', 'RECLAMADO').
-        :return: Respuesta JSON con el resumen de compras.
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, resumen de compras.
+        :rtype: dict
         """
         url = (
             '/sii/rcv/compras/resumen/%(receptor)s/%(periodo)s/%(estado)s'
@@ -91,8 +100,9 @@ class Rcv(ApiBase):
             'PENDIENTE', 'NO_INCLUIR', 'RECLAMADO').
         :param str tipo: Tipo de formato de respuesta ('rcv_csv' o
             'rcv').
-        :return: Respuesta JSON con detalles de las compras.
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, detalles de las compras.
+        :rtype: dict
         """
         es_registro = dte == 0 and estado == 'REGISTRO'
         tipo = 'rcv_csv' if es_registro else tipo or 'rcv'
@@ -129,10 +139,21 @@ class Rcv(ApiBase):
         :param list documentos: Documentos a los que asignar el tipo
             de transacción.
         :param str certificacion: `'0'` producción, `'1'` certificación.
-        :return: Vacío cuando la asignación fue exitosa.
-        :rtype: None
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, vacío cuando la asignación fue exitosa.
+        :rtype: dict
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/rcv/compras/set_tipo_transaccion/%(receptor)s/%(periodo)s'
+            % {'receptor': receptor, 'periodo': periodo},
+            certificacion=certificacion,
+        )
+        body = {
+            'auth': self._get_auth_pass(),
+            'documentos': documentos,
+        }
+        response = self.client.post(url, data=body)
+        return response.json()
 
     def ventas_set_resumen(
         self,
@@ -154,19 +175,35 @@ class Rcv(ApiBase):
             (AAAAMM).
         :param list documentos: Resumen de documentos a asignar.
         :param str certificacion: `'0'` producción, `'1'` certificación.
-        :return: `True` si el resumen fue asignado.
-        :rtype: bool
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, `True` si el resumen fue asignado.
+        :rtype: dict
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/rcv/ventas/set_resumen/%(emisor)s/%(periodo)s'
+            % {'emisor': emisor, 'periodo': periodo},
+            certificacion=certificacion,
+        )
+        body = {
+            'auth': self._get_auth_pass(),
+            'documentos': documentos,
+        }
+        response = self.client.post(url, data=body)
+        return response.json()
 
-    def ventas_resumen(self, emisor: str, periodo: str) -> Any:
+    def ventas_resumen(
+        self,
+        emisor: str,
+        periodo: str,
+    ) -> Any:
         """
         Obtiene un resumen de las ventas de un emisor en un periodo.
 
         :param str emisor: RUT del emisor de las ventas.
         :param str periodo: Período de tiempo de las ventas.
-        :return: Respuesta JSON con el resumen de ventas.
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, resumen de ventas.
+        :rtype: dict
         """
         url = '/sii/rcv/ventas/resumen/%(emisor)s/%(periodo)s' % {
             'emisor': emisor,
@@ -191,8 +228,9 @@ class Rcv(ApiBase):
         :param int dte: Tipo de DTE.
         :param str tipo: Tipo de formato de respuesta ('rcv_csv' o
             'rcv').
-        :return: Respuesta JSON con detalles de las ventas.
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, detalles de las ventas.
+        :rtype: dict
         """
         tipo = 'rcv_csv' if dte == 0 else tipo or 'rcv'
         url = (
@@ -234,7 +272,8 @@ class Rcv(ApiBase):
             'NO_INCLUIR', 'RECLAMADO').
         :type estado: str
 
-        :return: Respuesta JSON con la solicitud de envío.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, solicitud de envío.
         :rtype: dict
         """
         url = '/sii/rcv/compras/async/solicitar'
@@ -278,7 +317,8 @@ class Rcv(ApiBase):
             'NO_INCLUIR', 'RECLAMADO').
         :type estado: str
 
-        :return: Respuesta JSON con el estado de la solicitud.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, estado de la solicitud.
         :rtype: dict
         """
         url = '/sii/rcv/compras/async/estado/%(receptor)s'
@@ -324,7 +364,8 @@ class Rcv(ApiBase):
             'NO_INCLUIR', 'RECLAMADO').
         :type estado: str
 
-        :return: Respuesta JSON con los detalles de las compras.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, detalles de las compras.
         :rtype: dict
         """
         url = '/sii/rcv/compras/async/detalle/%(receptor)s'
@@ -359,7 +400,8 @@ class Rcv(ApiBase):
             o el tipo de DTE.
         :type dte: int
 
-        :return: Respuesta JSON con la solicitud de envío.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, solicitud de envío.
         :rtype: dict
         """
         url = '/sii/rcv/ventas/async/solicitar'
@@ -396,7 +438,8 @@ class Rcv(ApiBase):
             o el tipo de DTE.
         :type dte: int
 
-        :return: Respuesta JSON con el estado de la solicitud.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, estado de la solicitud.
         :rtype: dict
         """
         url = '/sii/rcv/ventas/async/estado/%(emisor)s'
@@ -435,7 +478,8 @@ class Rcv(ApiBase):
             o el tipo de DTE.
         :type dte: int
 
-        :return: Respuesta JSON con los detalles de las ventas.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, detalles de las ventas.
         :rtype: dict
         """
         url = '/sii/rcv/ventas/async/detalle/%(emisor)s'

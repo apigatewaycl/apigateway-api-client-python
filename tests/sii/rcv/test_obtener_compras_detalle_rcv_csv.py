@@ -52,7 +52,7 @@ class TestObtenerComprasDetalleRcvCsv(unittest.TestCase):
             compras_detalle = self.client.compras_detalle(
                 self.contribuyente_rut,
                 self.periodo,
-            )
+            )['data']
 
             self.assertIsNotNone(compras_detalle)
 
