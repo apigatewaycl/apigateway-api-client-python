@@ -164,17 +164,16 @@ class BteEmitidas(ApiBase):
         self,
         emisor: str,
         folio: int,
-        periodo: str | None = None,
+        periodo: str,
     ) -> Any:
         """
         Detalle de una BTE emitida específica (no un listado).
 
         :param str emisor: RUT del emisor.
         :param int folio: Folio de la boleta.
-        :param str periodo: Período de la boleta (AAAAMM), opcional.
-            Se envía como parámetro de consulta, según lo documenta la
-            API. Ojo: hoy la vista de v2 lo lee del cuerpo, así que lo
-            ignora hasta que se corrija allá.
+        :param str periodo: Período de la boleta (AAAAMM). Acota la
+            consulta a ese mes: sin él, el SII se recorre año por año
+            buscando el folio.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos de la boleta (número, código, montos, estado).
         :rtype: dict

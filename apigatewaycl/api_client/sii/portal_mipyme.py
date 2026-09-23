@@ -297,6 +297,7 @@ class DteEmitidos(Dte):
         emisor: str,
         dte: str,
         folio: str,
+        fecha_emision: str | None = None,
     ) -> bytes:
         """
         Obtiene el XML de un DTE emitido.
@@ -304,14 +305,17 @@ class DteEmitidos(Dte):
         :param str emisor: RUT del emisor.
         :param str dte: Tipo de DTE.
         :param str folio: Número de folio del DTE.
+        :param str fecha_emision: Fecha de emisión del documento
+            (AAAA-MM-DD). Ayuda al Portal MIPYME a ubicar el documento
+            cuando no basta con el tipo y el folio.
         :return: Contenido del XML del DTE emitido, sin decodificar.
         :rtype: bytes
         """
-        url = '/sii/mipyme/emitidos/xml/%(emisor)s/%(dte)s/%(folio)s' % {
-            'emisor': emisor,
-            'dte': dte,
-            'folio': folio,
-        }
+        url = self._build_url(
+            '/sii/mipyme/emitidos/xml/%(emisor)s/%(dte)s/%(folio)s'
+            % {'emisor': emisor, 'dte': dte, 'folio': folio},
+            fecha_emision=fecha_emision,
+        )
         body = {'auth': self._get_auth_pass()}
         response = self.client.post(url, data=body)
         return response.content
@@ -376,6 +380,7 @@ class DteRecibidos(Dte):
         emisor: str,
         dte: str,
         folio: str,
+        fecha_emision: str | None = None,
     ) -> bytes:
         """
         Obtiene el XML de un DTE recibido.
@@ -384,10 +389,13 @@ class DteRecibidos(Dte):
         :param str emisor: RUT del emisor.
         :param str dte: Tipo de DTE.
         :param str folio: Número de folio del DTE.
+        :param str fecha_emision: Fecha de emisión del documento
+            (AAAA-MM-DD). Ayuda al Portal MIPYME a ubicar el documento
+            cuando no basta con el tipo y el folio.
         :return: Contenido del XML del DTE recibido, sin decodificar.
         :rtype: bytes
         """
-        url = (
+        url = self._build_url(
             '/sii/mipyme/recibidos/xml/'
             '%(receptor)s/%(emisor)s/%(dte)s/%(folio)s'
             % {
@@ -395,7 +403,8 @@ class DteRecibidos(Dte):
                 'emisor': emisor,
                 'dte': dte,
                 'folio': folio,
-            }
+            },
+            fecha_emision=fecha_emision,
         )
         body = {'auth': self._get_auth_pass()}
         response = self.client.post(url, data=body)

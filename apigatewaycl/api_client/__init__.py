@@ -49,6 +49,30 @@ from requests.exceptions import HTTPError, RequestException, Timeout
 
 _HTTP_OK = 200
 
+# La API avisa con esta cabecera cuando el SII pidió reautenticar, y el
+# mensaje de error también lo dice. Ver la documentación de la API:
+# "conviene repetir la consulta con auth_cache=0 para forzar un login".
+_CABECERA_SESION = 'X-Auth-Session-Problem'
+_TEXTO_SESION = 'volver a autenticar'
+
+
+def _sesion_caida(response: requests.Response) -> bool:
+    """
+    Indica si la API avisó que hay que reautenticar ante el SII.
+
+    Ocurre cuando el SII cerró la sesión antes de que venciera y la
+    API intentó reutilizar la que tenía guardada.
+
+    :param requests.Response response: Respuesta de la API.
+    :return: True si corresponde repetir forzando un login nuevo.
+    :rtype: bool
+    """
+    if response.headers.get(_CABECERA_SESION) == '1':
+        return True
+    if response.status_code == _HTTP_OK:
+        return False
+    return _TEXTO_SESION in response.text[:2000]
+
 
 class ApiClient:
     """
@@ -61,6 +85,10 @@ class ApiClient:
     :param bool raise_for_status: Si se debe lanzar una excepción
         automáticamente para respuestas de error HTTP. Por defecto es
         True.
+    :param bool auth_cache: Con `False` se fuerza un login nuevo en el
+        SII en vez de reutilizar la sesión guardada. Sirve para
+        recuperarse cuando el portal cerró la sesión antes de que
+        venciera y la API responde que hay que volver a autenticar.
     """
 
     _api_version = 'v2'
@@ -72,12 +100,14 @@ class ApiClient:
         token: str | None = None,
         url: str | None = None,
         raise_for_status: bool = True,
+        auth_cache: bool | None = None,
     ) -> None:
         """Construye el cliente validando el token y la URL."""
         self.token = self.__validate_token(token)
         self.url = self.__validate_url(url)
         self.headers = self.__generate_headers()
         self.raise_for_status = raise_for_status
+        self.auth_cache = auth_cache
 
     def __validate_token(self, token: str | None) -> str:
         """
@@ -150,6 +180,14 @@ class ApiClient:
             'version': self._api_version,
             'resource': resource,
         }
+        if self.auth_cache is not None:
+            # La API lo lee para cualquier recurso de scraping, así que
+            # se agrega de forma transversal y no método por método.
+            separador = '&' if '?' in api_path else '?'
+            api_path += '%(sep)sauth_cache=%(valor)s' % {
+                'sep': separador,
+                'valor': '1' if self.auth_cache else '0',
+            }
         full_url = urllib.parse.urljoin(self.url + '/', api_path.lstrip('/'))
         headers = headers or {}
         headers = {**self.headers, **headers}
@@ -162,6 +200,25 @@ class ApiClient:
                 data=data,
                 headers=headers,
             )
+            # Si la sesión del SII se cayó, se repite una sola vez
+            # forzando un login nuevo. Es de rescate: dejar
+            # `auth_cache=0` en todas las llamadas abre una sesión por
+            # consulta y el SII bloquea la cuenta al pasar de diez.
+            if self.auth_cache is None and _sesion_caida(response):
+                reintento = urllib.parse.urljoin(
+                    self.url + '/',
+                    (
+                        api_path
+                        + ('&' if '?' in api_path else '?')
+                        + 'auth_cache=0'
+                    ).lstrip('/'),
+                )
+                response = requests.request(
+                    method,
+                    reintento,
+                    data=data,
+                    headers=headers,
+                )
             return self.__check_and_return_response(response)
         except RequestsConnectionError as error:
             raise ApiException(
@@ -329,29 +386,51 @@ class ApiBase:
     `abstractmethod` — todas comparten exactamente el mismo `__init__`
     (autenticación), no hay nada que declarar como contrato acá.
 
+    Los dos primeros argumentos posicionales son siempre las
+    credenciales del contribuyente, en todas las clases. Antes, las que
+    no definían su propio `__init__` heredaban este con `api_token` y
+    `api_url` al frente, así que `Clase(rut, clave)` terminaba usando
+    la clave como URL de la API.
+
+    :param str identificador: RUT del contribuyente, o el certificado
+        digital en PEM o en base64. Opcional: los recursos públicos no
+        lo necesitan.
+    :param str clave: Clave del identificador, o la llave privada
+        cuando el identificador es un certificado en PEM.
     :param str api_token: Token de autenticación para la API.
     :param str api_url: URL base para la API.
     :param bool api_raise_for_status: Si se debe lanzar una excepción
         automáticamente para respuestas de error HTTP. Por defecto es
         True.
+    :param bool api_auth_cache: Con `False` se fuerza un login nuevo en
+        el SII en vez de reutilizar la sesión guardada.
     :param dict kwargs: Argumentos adicionales para la autenticación.
     """
 
     def __init__(
         self,
+        identificador: str | None = None,
+        clave: str | None = None,
         api_token: str | None = None,
         api_url: str | None = None,
         api_raise_for_status: bool = True,
+        api_auth_cache: bool | None = None,
         **kwargs: str,
     ) -> None:
-        """Arma el `ApiClient` y configura la autenticación (`kwargs`)."""
+        """Arma el `ApiClient` y configura la autenticación."""
         self.auth: dict[str, Any] = {}
         self.client = ApiClient(
             api_token,
             api_url,
             api_raise_for_status,
+            api_auth_cache,
         )
-        self.__setup_auth(kwargs)
+        credenciales = dict(kwargs)
+        if identificador is not None:
+            credenciales['identificador'] = identificador
+        if clave is not None:
+            credenciales['clave'] = clave
+        self.__setup_auth(credenciales)
 
     def __setup_auth(self, kwargs: dict[str, str]) -> None:
         """

@@ -71,17 +71,16 @@ class BheEmitidas(ApiBase):
         emisor: str,
         periodo: str,
         pagina: int = 1,
-        pagina_sig_codigo: str | None = None,
     ) -> Any:
         """
         Obtiene los documentos de BHE emitidos por un emisor en un periodo.
 
-        La API exige `pagina`: parte en `1` y se avanza de a una.
+        La API exige `pagina`: parte en `1` y se avanza de a una,
+        hasta `n_paginas`.
 
         :param str emisor: RUT del emisor de las boletas.
         :param str periodo: Período de tiempo de las boletas emitidas.
         :param int pagina: Página a consultar, partiendo desde `1`.
-        :param str pagina_sig_codigo: Código de la página siguiente.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, documentos de BHE.
         :rtype: dict
@@ -90,7 +89,6 @@ class BheEmitidas(ApiBase):
             '/sii/bhe/emitidas/documentos/%(emisor)s/%(periodo)s'
             % {'emisor': emisor, 'periodo': periodo},
             pagina=pagina,
-            pagina_sig_codigo=pagina_sig_codigo,
         )
         body = {'auth': self._get_auth_pass()}
         response = self.client.post(url, data=body)
@@ -199,17 +197,16 @@ class BheRecibidas(ApiBase):
         receptor: str,
         periodo: str,
         pagina: int = 1,
-        pagina_sig_codigo: str | None = None,
     ) -> Any:
         """
         Obtiene los documentos de BHE recibidos por un receptor en un periodo.
 
-        La API exige `pagina`: parte en `1` y se avanza de a una.
+        La API exige `pagina`: parte en `1` y se avanza de a una,
+        hasta `n_paginas`.
 
         :param str receptor: RUT del receptor de las boletas.
         :param str periodo: Período de tiempo de las boletas recibidas.
         :param int pagina: Página a consultar, partiendo desde `1`.
-        :param str pagina_sig_codigo: Código de la página siguiente.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, documentos de BHE.
         :rtype: dict
@@ -218,7 +215,6 @@ class BheRecibidas(ApiBase):
             '/sii/bhe/recibidas/documentos/%(receptor)s/%(periodo)s'
             % {'receptor': receptor, 'periodo': periodo},
             pagina=pagina,
-            pagina_sig_codigo=pagina_sig_codigo or '00000000000000',
         )
         body = {'auth': self._get_auth_pass()}
         response = self.client.post(url, data=body)
