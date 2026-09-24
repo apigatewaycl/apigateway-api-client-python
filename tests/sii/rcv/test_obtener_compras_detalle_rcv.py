@@ -57,6 +57,9 @@ class TestObtenerComprasDetalleRcv(unittest.TestCase):
     # En este caso el detalle de los documentos se trae por tipo
     def test_obtener_compras_detalle_rcv(self):
         try:
+            # El detalle sólo se puede pedir para un tipo de documento que
+            # aparezca en el resumen; si ninguno califica, no hay qué probar.
+            probados = 0
             for estado in self.estados:
                 compras_resumen = self.client.compras_resumen(
                     self.contribuyente_rut,
@@ -86,15 +89,20 @@ class TestObtenerComprasDetalleRcv(unittest.TestCase):
                                 'test_compras_detalle_rcv(): compras_detalle',
                                 compras_detalle,
                             )
+                        self.assertIsNotNone(compras_detalle)
+                        probados += 1
                         # sólo se obtiene un detalle para probar la API
                         # más rápido
                         break
-
-                    self.assertIsNotNone(compras_detalle)
                 else:
                     print(
                         'test_compras_detalle_rcv(): compras_resumen: '
                         'Libro compras RCV vacío.',
                     )
+            if not probados:
+                self.skipTest(
+                    'el RCV de compras no tiene documentos electrónicos con '
+                    'los cuales probar el detalle.',
+                )
         except ApiException as e:
             self.fail('ApiException: %(e)s' % {'e': e})

@@ -71,10 +71,12 @@ class TestObtenerEstadoCesion(unittest.TestCase):
     def test_obtener_estado_cesion(self):
         try:
             cesion = self._primera_cesion()
+            # El listado entrega las columnas del CSV del SII tal cual,
+            # en mayúsculas.
             estado = self.client.estado(
-                cesion['emisor'],
-                cesion['dte'],
-                cesion['folio'],
+                cesion['VENDEDOR'],
+                cesion['TIPO_DOC'],
+                cesion['FOLIO_DOC'],
             )['data']
 
             self.assertIsNotNone(estado)

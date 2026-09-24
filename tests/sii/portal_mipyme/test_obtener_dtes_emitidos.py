@@ -56,6 +56,7 @@ class TestObtenerDtesEmitidos(unittest.TestCase):
                 {
                     'FEC_DESDE': self.fecha_desde,
                     'FEC_HASTA': self.fecha_hasta,
+                    'NUM_PAG': 1,
                 },
             )['data']
 

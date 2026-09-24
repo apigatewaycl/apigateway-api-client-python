@@ -57,6 +57,7 @@ class TestDescargarXmlDteRecibido(unittest.TestCase):
                 {
                     'FEC_DESDE': self.fecha_desde,
                     'FEC_HASTA': self.fecha_hasta,
+                    'NUM_PAG': 1,
                 },
             )['data']
             if len(documentos) == 0:
@@ -66,7 +67,15 @@ class TestDescargarXmlDteRecibido(unittest.TestCase):
             emisor = str(documentos[0]['rut']) + '-' + documentos[0]['dv']
             dte = documentos[0]['dte']
             folio = documentos[0]['folio']
-            xml = self.client.xml(self.contribuyente_rut, emisor, dte, folio)
+            # Sin la fecha de emisión el Portal MIPYME no ubica el
+            # documento y la API responde que no era el XML del DTE.
+            xml = self.client.xml(
+                self.contribuyente_rut,
+                emisor,
+                dte,
+                folio,
+                documentos[0]['fecha'],
+            )
 
             # Retrocede dos niveles para salir de 'dte_facturacion'
             # y entrar en 'tests'
