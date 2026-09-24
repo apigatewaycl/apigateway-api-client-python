@@ -66,7 +66,7 @@ class F29(ApiBase):
         :rtype: dict
         """
         url = '/sii/f29/obtener_estados'
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -81,7 +81,7 @@ class F29(ApiBase):
         :rtype: dict
         """
         url = '/sii/f29/detalles_declaracion/%(folio)s' % {'folio': folio}
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -98,7 +98,7 @@ class F29(ApiBase):
         url = '/sii/f29/declaraciones/listado/%(periodo)s' % {
             'periodo': periodo,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -111,7 +111,7 @@ class F29(ApiBase):
         :rtype: bytes
         """
         url = '/sii/f29/certificado_solemne/pdf/%(folio)s' % {'folio': folio}
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.content
 
@@ -124,6 +124,6 @@ class F29(ApiBase):
         :rtype: bytes
         """
         url = '/sii/f29/formulario_compacto/pdf/%(folio)s' % {'folio': folio}
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.content

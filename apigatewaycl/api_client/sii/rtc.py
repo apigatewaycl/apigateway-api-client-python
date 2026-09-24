@@ -88,7 +88,7 @@ class Cesiones(ApiBase):
             },
             certificacion=certificacion,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.content
 
@@ -111,7 +111,7 @@ class Cesiones(ApiBase):
             % {'track_id': track_id},
             certificacion=certificacion,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -138,7 +138,7 @@ class Cesiones(ApiBase):
             % {'emisor': emisor, 'dte': dte, 'folio': folio},
             certificacion=certificacion,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -175,7 +175,7 @@ class Cesiones(ApiBase):
             certificacion=certificacion,
             formato=formato,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         if formato in ('xml', 'csv', 'txt'):
             return response.content

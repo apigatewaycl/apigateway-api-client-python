@@ -112,7 +112,7 @@ class Contribuyentes(ApiBase):
             % {'contribuyente': contribuyente},
             certificacion=certificacion,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -137,7 +137,7 @@ class Contribuyentes(ApiBase):
             % {'contribuyente': contribuyente},
             certificacion=certificacion,
         )
-        body = {'auth': self._get_auth_pass(), 'datos': datos}
+        body = {'auth': self._get_auth(), 'datos': datos}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -159,7 +159,7 @@ class Contribuyentes(ApiBase):
             '/sii/dte/contribuyentes/usuarios/%(rut)s' % {'rut': rut},
             certificacion=certificacion,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -184,7 +184,7 @@ class Contribuyentes(ApiBase):
             % {'contribuyente': contribuyente},
             certificacion=certificacion,
         )
-        body = {'auth': self._get_auth_pass(), 'usuario': usuario}
+        body = {'auth': self._get_auth(), 'usuario': usuario}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -211,7 +211,7 @@ class Contribuyentes(ApiBase):
             '/sii/dte/contribuyentes/autorizado/%(rut)s' % {'rut': rut},
             certificacion=certificacion,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -248,7 +248,7 @@ class Contribuyentes(ApiBase):
             dia=dia,
             formato=formato,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         # Sólo `json` responde JSON. Los dos formatos CSV (incluído
         # `csv_sii`, el que aplica la API si no se pide otro) vienen
@@ -315,7 +315,7 @@ class Emitidos(ApiBase):
             % {'certificacion_flag': certificacion_flag}
         )
         body = {
-            'auth': self._get_auth_pass(),
+            'auth': self._get_auth(),
             'dte': {
                 'emisor': emisor,
                 'receptor': receptor,
@@ -357,7 +357,7 @@ class Emitidos(ApiBase):
             certificacion=certificacion,
             formato=formato,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         # Con `formato='html'` la API igual responde JSON: el HTML
         # viene como una cadena dentro del cuerpo.
@@ -423,6 +423,6 @@ class Iecv(ApiBase):
             },
             certificacion=certificacion,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()

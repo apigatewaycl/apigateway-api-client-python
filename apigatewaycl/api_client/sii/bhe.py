@@ -90,7 +90,7 @@ class BheEmitidas(ApiBase):
             % {'emisor': emisor, 'periodo': periodo},
             pagina=pagina,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -103,7 +103,7 @@ class BheEmitidas(ApiBase):
             En `data`, confirmación de la emisión.
         :rtype: dict
         """
-        body = {'auth': self._get_auth_pass(), 'boleta': boleta}
+        body = {'auth': self._get_auth(), 'boleta': boleta}
         response = self.client.post('/sii/bhe/emitidas/emitir', data=body)
         return response.json()
 
@@ -116,7 +116,7 @@ class BheEmitidas(ApiBase):
         :rtype: bytes
         """
         url = '/sii/bhe/emitidas/pdf/%(codigo)s' % {'codigo': codigo}
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.content
 
@@ -136,7 +136,7 @@ class BheEmitidas(ApiBase):
         """
         url = '/sii/bhe/emitidas/email/%(codigo)s' % {'codigo': codigo}
         body = {
-            'auth': self._get_auth_pass(),
+            'auth': self._get_auth(),
             'destinatario': {'email': email},
         }
         response = self.client.post(url, data=body)
@@ -162,7 +162,7 @@ class BheEmitidas(ApiBase):
             '/sii/bhe/emitidas/anular/%(emisor)s/%(folio)s?causa=%(causa)s'
             % {'emisor': emisor, 'folio': folio, 'causa': causa}
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -216,7 +216,7 @@ class BheRecibidas(ApiBase):
             % {'receptor': receptor, 'periodo': periodo},
             pagina=pagina,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -229,7 +229,7 @@ class BheRecibidas(ApiBase):
         :rtype: bytes
         """
         url = '/sii/bhe/recibidas/pdf/%(codigo)s' % {'codigo': codigo}
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.content
 
@@ -254,7 +254,7 @@ class BheRecibidas(ApiBase):
             '?causa=%(causa)s'
             % {'emisor': emisor, 'numero': numero, 'causa': causa}
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -315,7 +315,7 @@ class ConsultasPorTerceros(ApiBase):
             'periodo': periodo,
             'folio': folio,
         }
-        body: dict[str, Any] = {'auth': self._get_auth_pass()}
+        body: dict[str, Any] = {'auth': self._get_auth()}
         body.update(
             {
                 clave: valor
