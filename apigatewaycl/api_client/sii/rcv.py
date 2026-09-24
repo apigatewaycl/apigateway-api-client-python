@@ -141,22 +141,26 @@ class Rcv(ApiBase):
         self,
         receptor: str,
         periodo: str,
-        documentos: list[dict[str, Any]],
+        documento: dict[str, Any],
         certificacion: str | None = None,
     ) -> Any:
         """
-        Asigna el tipo de transacción y código de IVA a compras del RCV.
+        Asigna el tipo de transacción y código de IVA a una compra del RCV.
 
-        Cada elemento de `documentos` lleva `emisor`, `dte`, `folio`,
-        `tipo_transaccion` (1 a 6) y `codigo_iva`.
+        Se envía un solo documento, que debe estar en el Registro de
+        Compras del período; el resto mantiene su tipo de transacción.
+        Lleva `emisor`, `dte` (33, 34, 43, 46, 56 o 61), `folio`,
+        `tipo_transaccion` (1 a 7) y `codigo_iva`, que debe ser uno de
+        los permitidos para ese `tipo_transaccion`.
 
-        :param str receptor: RUT del receptor de los documentos.
+        :param str receptor: RUT del receptor del documento.
         :param str periodo: Período del registro (AAAAMM).
-        :param list documentos: Documentos a los que asignar el tipo
-            de transacción.
+        :param dict documento: Documento al que asignar el tipo de
+            transacción.
         :param str certificacion: `'0'` producción, `'1'` certificación.
-        :return: Respuesta de la API, con `data` y `metadata`.
-            En `data`, vacío cuando la asignación fue exitosa.
+        :return: Respuesta de la API, con `data` y `metadata`. En `data`,
+            el resultado del SII, donde `codigo` `0` indica éxito. Si el
+            SII rechaza el documento, la API responde con error.
         :rtype: dict
         """
         url = self._build_url(
@@ -166,7 +170,7 @@ class Rcv(ApiBase):
         )
         body = {
             'auth': self._get_auth(),
-            'documentos': documentos,
+            'documento': documento,
         }
         response = self.client.post(url, data=body)
         return response.json()
