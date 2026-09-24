@@ -50,11 +50,12 @@ class TestListarBteEmitidasPaginadasMes(unittest.TestCase):
         try:
             pagina = 1
             while True:
-                documentos = self.client.documentos(
+                respuesta = self.client.documentos(
                     self.contribuyente_rut,
                     self.periodo,
                     pagina=pagina,
-                )['data']
+                )
+                documentos = respuesta['data']
                 print(
                     'test_documentos_paginacion_periodo(): '
                     'Pagina %(pagina)s documentos %(documentos)s'
@@ -63,12 +64,12 @@ class TestListarBteEmitidasPaginadasMes(unittest.TestCase):
                         'documentos': documentos,
                     },
                 )
-                # Sin boletas la API responde [] en vez del dict con
-                # `n_paginas`, así que no hay nada que paginar.
+                # `data` es la lista de boletas y el total de páginas
+                # viene en `metadata`. Sin boletas no hay qué paginar.
                 if not documentos:
                     break
                 pagina += 1
-                if pagina > documentos['n_paginas']:
+                if pagina > respuesta['metadata']['n_paginas']:
                     break
 
             self.assertTrue(True)

@@ -71,14 +71,17 @@ class TestObtenerCertificadoCesion(unittest.TestCase):
     def test_obtener_certificado_cesion(self):
         try:
             cesion = self._primera_cesion()
+            # El listado entrega las columnas del CSV del SII tal cual,
+            # en mayúsculas. La fecha que pide el certificado es la de
+            # la cesión, no la del documento, y viene con hora.
             certificado = self.client.certificado(
-                cesion['emisor'],
-                cesion['dte'],
-                cesion['folio'],
-                cesion['fecha'],
-            )['data']
+                cesion['VENDEDOR'],
+                cesion['TIPO_DOC'],
+                cesion['FOLIO_DOC'],
+                cesion['FCH_CESION'].split(' ')[0],
+            )
 
-            self.assertIsNotNone(certificado)
+            self.assertTrue(certificado)
 
             if self.verbose:
                 print('test_certificado(): certificado', certificado)

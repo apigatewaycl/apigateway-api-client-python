@@ -77,9 +77,10 @@ deberá indicar el token del usuario. Ejemplo con el cliente genérico:
 
 .. code:: python
 
-    import apigatewaycl
+    from apigatewaycl.api_client import ApiClient
+
     APIGATEWAY_API_TOKEN = "aquí-tu-token-de-usuario"
-    client = apigatewaycl.api_client.ApiClient(APIGATEWAY_API_TOKEN)
+    client = ApiClient(APIGATEWAY_API_TOKEN)
 
 El siguiente es un ejemplo con el cliente específico de Rcv. Primero se pasan
 los datos obligatorios de RUT y clave del usuario. Luego además se pasa el token
@@ -87,10 +88,11 @@ del usuario de la API.
 
 .. code:: python
 
-    import apigatewaycl
+    from apigatewaycl.api_client.sii.rcv import Rcv
+
     APIGATEWAY_API_TOKEN = "aquí-tu-token-de-usuario"
     SII_USUARIO_RUT = ""
     SII_USUARIO_CLAVE = ""
-    rcv_client = Rcv(SII_USUARIO_RUT, SII_USUARIO_CLAVE, api_token = APIGATEWAY_API_TOKEN)
+    rcv_client = Rcv(SII_USUARIO_RUT, SII_USUARIO_CLAVE, api_token=APIGATEWAY_API_TOKEN)
 
-Si se usan variables de entorno, en ambos ejemplos se puede omitir el argumento `api_token`.
+Si se usa la variable de entorno, en ambos ejemplos se puede omitir el token.

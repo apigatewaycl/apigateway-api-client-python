@@ -52,14 +52,12 @@ class TestDescargarHtmlBteRecibida(unittest.TestCase):
 
     def test_descargar_html_bte_recibida(self):
         try:
-            recibidas = self.client.documentos(
+            # `data` es directamente la lista de boletas.
+            boletas = self.client.documentos(
                 self.contribuyente_rut,
                 self.periodo,
                 1,
             )['data']
-            # Sin resultados la API responde [] en vez del dict con
-            # la clave 'boletas'.
-            boletas = recibidas.get('boletas') or [] if recibidas else []
             if not boletas:
                 self.skipTest(
                     'la API no devolvió boletas con las cuales probar.',

@@ -60,21 +60,22 @@ class Cesiones(ApiBase):
         folio: str,
         fecha: str,
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> bytes:
         """
         Certificado de cesión de un DTE, con cedente/cesionario/fecha.
 
-        El certificado del SII viene en HTML, pero la API lo envuelve
-        en JSON: se entrega como una cadena dentro del cuerpo.
+        El certificado es un documento, no datos: la API lo entrega en
+        HTML tal cual lo emite el SII, sin `data` ni `metadata`.
 
         :param str emisor: RUT del emisor del documento.
         :param str dte: Código del tipo de documento.
         :param str folio: Folio del documento.
-        :param str fecha: Fecha de emisión del documento (AAAA-MM-DD).
+        :param str fecha: Fecha de la cesión (AAAA-MM-DD), no la de
+            emisión del documento. Es el campo `FCH_CESION` del
+            listado de cesiones que entrega `documentos()`.
         :param str certificacion: `'0'` producción, `'1'` certificación.
-        :return: Respuesta de la API, con `data` y `metadata`.
-            En `data`, certificado de cesión en HTML.
-        :rtype: dict
+        :return: Certificado de cesión en HTML, sin decodificar.
+        :rtype: bytes
         """
         url = self._build_url(
             '/sii/rtc/cesiones/certificado/%(emisor)s/%(dte)s/%(folio)s'
@@ -89,7 +90,7 @@ class Cesiones(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return response.content
 
     def estado_envio(
         self,

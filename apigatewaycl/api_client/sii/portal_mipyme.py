@@ -195,32 +195,6 @@ class Borradores(Dte):
         response = self.client.post('/sii/mipyme/borradores/emitir', data=body)
         return response.json()
 
-    def pdf(
-        self,
-        emisor: str,
-        codigo: str,
-    ) -> Any:
-        """
-        Descarga el PDF de un documento borrador, en base64.
-
-        Nota de la propia API: servicio no implementado por API Gateway.
-
-        :param str emisor: RUT del emisor de los documentos.
-        :param str codigo: Código del borrador (del listado de documentos).
-        :return: Respuesta de la API, con `data` y `metadata`.
-            En `data`, pDF del borrador, codificado en base64.
-        :rtype: dict
-        """
-        url = '/sii/mipyme/borradores/pdf/%(emisor)s/%(codigo)s' % {
-            'emisor': emisor,
-            'codigo': codigo,
-        }
-        body = {'auth': self._get_auth()}
-        response = self.client.post(url, data=body)
-        # A diferencia de los PDF de emitidos/recibidos, la API no
-        # responde el archivo binario: lo entrega en JSON, en base64.
-        return response.json()
-
     def eliminar(
         self,
         emisor: str,

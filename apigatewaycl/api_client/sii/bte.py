@@ -252,9 +252,8 @@ class BteRecibidas(ApiBase):
         :param str periodo: Período de las BTE buscadas.
         :param int pagina: Página a consultar, partiendo desde `1`.
         :return: Respuesta de la API, con `data` y `metadata`. En
-            `data`, las boletas junto a `n_boletas` y `n_paginas`; sin
-            resultados, `data` viene como lista vacía en vez de ese
-            diccionario.
+            `data`, la lista de boletas; en `metadata`, `n_boletas` y
+            `n_paginas`.
         :rtype: dict
         """
         url = self._build_url(
