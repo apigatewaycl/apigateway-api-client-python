@@ -161,15 +161,24 @@ class Borradores(Dte):
         filtros: dict[str, Any] | None = None,
     ) -> Any:
         """
-        Listado de documentos borradores, ordenado por fecha descendente.
+        Listado de documentos borradores del emisor.
 
-        `filtros` permite filtrar por cualquier campo del borrador
-        (ej. `ptdc_CODIGO`, `efxp_RUT_RECEP`, `efxp_MNT_TOTAL`).
+        Por defecto entrega todos los borradores, ordenados por fecha
+        ascendente. Para paginar se indica `NUM_PAG` en `filtros` (100
+        borradores por página) y `metadata.n_paginas` dice cuántas páginas
+        hay con los filtros usados.
+
+        Filtros disponibles: `NUM_PAG`, `CODIGO` (código del borrador),
+        `TPO_DOC` (código de DTE), `RUT_RECP` (RUT del receptor, con o sin
+        dígito verificador), `RZN_SOC` (razón social del receptor, o parte
+        de ella), `FEC_DESDE` y `FEC_HASTA` (AAAA-MM-DD) y `ORDEN`
+        (`FecAsc` o `FecDesc`).
 
         :param str emisor: RUT del emisor de los documentos.
-        :param dict filtros: Filtros por campo del borrador (opcional).
+        :param dict filtros: Filtros de búsqueda (opcional).
         :return: Respuesta de la API, con `data` y `metadata`.
-            En `data`, listado de borradores.
+            En `data`, listado de borradores con los campos del Portal
+            MIPYME en minúsculas; el código del borrador es `ehdr_codigo`.
         :rtype: dict
         """
         url = '/sii/mipyme/borradores/documentos/%(emisor)s' % {
@@ -271,7 +280,7 @@ class DteEmitidos(Dte):
         emisor: str,
         dte: str,
         folio: str,
-        fecha_emision: str | None = None,
+        fecha_emision: str,
     ) -> bytes:
         """
         Obtiene el XML de un DTE emitido.
@@ -280,8 +289,8 @@ class DteEmitidos(Dte):
         :param str dte: Tipo de DTE.
         :param str folio: Número de folio del DTE.
         :param str fecha_emision: Fecha de emisión del documento
-            (AAAA-MM-DD). Ayuda al Portal MIPYME a ubicar el documento
-            cuando no basta con el tipo y el folio.
+            (AAAA-MM-DD). Sin ella el Portal MIPYME no ubica el
+            documento y la API no entrega el XML.
         :return: Contenido del XML del DTE emitido, sin decodificar.
         :rtype: bytes
         """
@@ -354,7 +363,7 @@ class DteRecibidos(Dte):
         emisor: str,
         dte: str,
         folio: str,
-        fecha_emision: str | None = None,
+        fecha_emision: str,
     ) -> bytes:
         """
         Obtiene el XML de un DTE recibido.
@@ -364,8 +373,8 @@ class DteRecibidos(Dte):
         :param str dte: Tipo de DTE.
         :param str folio: Número de folio del DTE.
         :param str fecha_emision: Fecha de emisión del documento
-            (AAAA-MM-DD). Ayuda al Portal MIPYME a ubicar el documento
-            cuando no basta con el tipo y el folio.
+            (AAAA-MM-DD). Sin ella el Portal MIPYME no ubica el
+            documento y la API no entrega el XML.
         :return: Contenido del XML del DTE recibido, sin decodificar.
         :rtype: bytes
         """

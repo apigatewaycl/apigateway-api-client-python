@@ -32,11 +32,11 @@ pytestmark = pytest.mark.risky
 
 
 class TestAsignarTipoTransaccionComprasRcv(unittest.TestCase):
-    # Los documentos van en una variable de entorno con el mismo JSON
-    # que recibe la API, para no inventar folios ni tocar documentos
-    # del RCV que no se hayan elegido a propósito. Ejemplo:
-    # [{"emisor": "77666555-4", "dte": 33, "folio": 1,
-    #   "tipo_transaccion": 1, "codigo_iva": 1}]
+    # El documento va en una variable de entorno con el mismo JSON que
+    # recibe la API, para no inventar folios ni tocar documentos del RCV
+    # que no se hayan elegido a propósito. Ejemplo:
+    # {"emisor": "77666555-4", "dte": 33, "folio": 1,
+    #  "tipo_transaccion": 1, "codigo_iva": 1}
     @classmethod
     def setUpClass(cls):
         cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
@@ -49,14 +49,14 @@ class TestAsignarTipoTransaccionComprasRcv(unittest.TestCase):
             'TEST_PERIODO',
             datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
         ).strip()
-        documentos = getenv('TEST_RCV_COMPRAS_DOCUMENTOS', '').strip()
-        if not documentos:
+        documento = getenv('TEST_RCV_COMPRAS_DOCUMENTO', '').strip()
+        if not documento:
             raise unittest.SkipTest(
-                'TEST_RCV_COMPRAS_DOCUMENTOS no configurado: este test '
-                'le cambia el tipo de transacción a documentos reales '
+                'TEST_RCV_COMPRAS_DOCUMENTO no configurado: este test '
+                'le cambia el tipo de transacción a un documento real '
                 'del RCV.'
             )
-        cls.documentos = json.loads(documentos)
+        cls.documento = json.loads(documento)
         cls.client = Rcv(cls.contribuyente_rut, contribuyente_clave)
 
     def test_asignar_tipo_transaccion_compras_rcv(self):
@@ -64,7 +64,7 @@ class TestAsignarTipoTransaccionComprasRcv(unittest.TestCase):
             resultado = self.client.compras_set_tipo_transaccion(
                 self.contribuyente_rut,
                 self.periodo,
-                self.documentos,
+                self.documento,
             )['data']
 
             if self.verbose:

@@ -111,8 +111,9 @@ class Rcv(ApiBase):
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :param str formato: `'json'` o `'csv'`.
         :return: Respuesta de la API, con `data` y `metadata`.
-            En `data`, detalles de las compras.
-        :rtype: dict
+            En `data`, detalles de las compras. Con `formato` `'csv'` se
+            entrega el archivo crudo, sin decodificar.
+        :rtype: dict | bytes
         """
         es_registro = dte == 0 and estado == 'REGISTRO'
         tipo = 'rcv_csv' if es_registro else tipo or 'rcv'
@@ -131,28 +132,35 @@ class Rcv(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
+        # Con `csv` la API responde el archivo tal cual, no JSON.
+        if formato == 'csv':
+            return response.content
         return response.json()
 
     def compras_set_tipo_transaccion(
         self,
         receptor: str,
         periodo: str,
-        documentos: list[dict[str, Any]],
+        documento: dict[str, Any],
         certificacion: str | None = None,
     ) -> Any:
         """
-        Asigna el tipo de transacción y código de IVA a compras del RCV.
+        Asigna el tipo de transacción y código de IVA a una compra del RCV.
 
-        Cada elemento de `documentos` lleva `emisor`, `dte`, `folio`,
-        `tipo_transaccion` (1 a 6) y `codigo_iva`.
+        Se envía un solo documento, que debe estar en el Registro de
+        Compras del período; el resto mantiene su tipo de transacción.
+        Lleva `emisor`, `dte` (33, 34, 43, 46, 56 o 61), `folio`,
+        `tipo_transaccion` (1 a 7) y `codigo_iva`, que debe ser uno de
+        los permitidos para ese `tipo_transaccion`.
 
-        :param str receptor: RUT del receptor de los documentos.
+        :param str receptor: RUT del receptor del documento.
         :param str periodo: Período del registro (AAAAMM).
-        :param list documentos: Documentos a los que asignar el tipo
-            de transacción.
+        :param dict documento: Documento al que asignar el tipo de
+            transacción.
         :param str certificacion: `'0'` producción, `'1'` certificación.
-        :return: Respuesta de la API, con `data` y `metadata`.
-            En `data`, vacío cuando la asignación fue exitosa.
+        :return: Respuesta de la API, con `data` y `metadata`. En `data`,
+            el resultado del SII, donde `codigo` `0` indica éxito. Si el
+            SII rechaza el documento, la API responde con error.
         :rtype: dict
         """
         url = self._build_url(
@@ -162,7 +170,7 @@ class Rcv(ApiBase):
         )
         body = {
             'auth': self._get_auth(),
-            'documentos': documentos,
+            'documento': documento,
         }
         response = self.client.post(url, data=body)
         return response.json()
@@ -251,8 +259,9 @@ class Rcv(ApiBase):
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :param str formato: `'json'` o `'csv'`.
         :return: Respuesta de la API, con `data` y `metadata`.
-            En `data`, detalles de las ventas.
-        :rtype: dict
+            En `data`, detalles de las ventas. Con `formato` `'csv'` se
+            entrega el archivo crudo, sin decodificar.
+        :rtype: dict | bytes
         """
         tipo = 'rcv_csv' if dte == 0 else tipo or 'rcv'
         url = self._build_url(
@@ -264,6 +273,9 @@ class Rcv(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
+        # Con `csv` la API responde el archivo tal cual, no JSON.
+        if formato == 'csv':
+            return response.content
         return response.json()
 
     def compras_async_solicitar(
@@ -272,6 +284,7 @@ class Rcv(ApiBase):
         periodo: str,
         dte: int = 0,
         estado: str = 'REGISTRO',
+        certificacion: str | None = None,
     ) -> Any:
         """
         Solicita el envío de los detalles de las compras de un receptor.
@@ -291,6 +304,9 @@ class Rcv(ApiBase):
             'NO_INCLUIR', 'RECLAMADO').
         :type estado: str
 
+        :param certificacion: `'0'` producción, `'1'` certificación.
+        :type certificacion: str
+
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, solicitud de envío.
         :rtype: dict
@@ -302,6 +318,7 @@ class Rcv(ApiBase):
             'dte': dte,
             'estado': estado,
         }
+        url = self._build_url(url, certificacion=certificacion)
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
@@ -313,6 +330,7 @@ class Rcv(ApiBase):
         id_solicitud: str,
         dte: int = 0,
         estado: str = 'REGISTRO',
+        certificacion: str | None = None,
     ) -> Any:
         """
         Obtiene el estado de la solicitud de los detalles de las compras.
@@ -336,6 +354,9 @@ class Rcv(ApiBase):
             'NO_INCLUIR', 'RECLAMADO').
         :type estado: str
 
+        :param certificacion: `'0'` producción, `'1'` certificación.
+        :type certificacion: str
+
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, estado de la solicitud.
         :rtype: dict
@@ -349,6 +370,7 @@ class Rcv(ApiBase):
             'dte': dte,
             'estado': estado,
         }
+        url = self._build_url(url, certificacion=certificacion)
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
@@ -360,6 +382,7 @@ class Rcv(ApiBase):
         id_solicitud: str,
         dte: int = 0,
         estado: str = 'REGISTRO',
+        certificacion: str | None = None,
     ) -> Any:
         """
         Obtiene los detalles de las compras de un receptor en un periodo.
@@ -383,6 +406,9 @@ class Rcv(ApiBase):
             'NO_INCLUIR', 'RECLAMADO').
         :type estado: str
 
+        :param certificacion: `'0'` producción, `'1'` certificación.
+        :type certificacion: str
+
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, detalles de las compras.
         :rtype: dict
@@ -396,6 +422,7 @@ class Rcv(ApiBase):
             'dte': dte,
             'estado': estado,
         }
+        url = self._build_url(url, certificacion=certificacion)
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
@@ -405,6 +432,7 @@ class Rcv(ApiBase):
         emisor: str,
         periodo: str,
         dte: int = 0,
+        certificacion: str | None = None,
     ) -> Any:
         """
         Solicita el envío de los detalles de las ventas de un emisor.
@@ -419,6 +447,9 @@ class Rcv(ApiBase):
             o el tipo de DTE.
         :type dte: int
 
+        :param certificacion: `'0'` producción, `'1'` certificación.
+        :type certificacion: str
+
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, solicitud de envío.
         :rtype: dict
@@ -429,6 +460,7 @@ class Rcv(ApiBase):
             'periodo': periodo,
             'dte': dte,
         }
+        url = self._build_url(url, certificacion=certificacion)
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
@@ -439,6 +471,7 @@ class Rcv(ApiBase):
         periodo: str,
         id_solicitud: str,
         dte: int = 0,
+        certificacion: str | None = None,
     ) -> Any:
         """
         Obtiene el estado de la solicitud de los detalles de las ventas.
@@ -457,6 +490,9 @@ class Rcv(ApiBase):
             o el tipo de DTE.
         :type dte: int
 
+        :param certificacion: `'0'` producción, `'1'` certificación.
+        :type certificacion: str
+
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, estado de la solicitud.
         :rtype: dict
@@ -469,6 +505,7 @@ class Rcv(ApiBase):
             'id_solicitud': id_solicitud,
             'dte': dte,
         }
+        url = self._build_url(url, certificacion=certificacion)
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
@@ -479,6 +516,7 @@ class Rcv(ApiBase):
         periodo: str,
         id_solicitud: str,
         dte: int = 0,
+        certificacion: str | None = None,
     ) -> Any:
         """
         Obtiene los detalles de las ventas de un emisor.
@@ -497,6 +535,9 @@ class Rcv(ApiBase):
             o el tipo de DTE.
         :type dte: int
 
+        :param certificacion: `'0'` producción, `'1'` certificación.
+        :type certificacion: str
+
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, detalles de las ventas.
         :rtype: dict
@@ -509,6 +550,7 @@ class Rcv(ApiBase):
             'id_solicitud': id_solicitud,
             'dte': dte,
         }
+        url = self._build_url(url, certificacion=certificacion)
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()

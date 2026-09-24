@@ -59,6 +59,7 @@ class Caf(ApiBase):
         self,
         emisor: str,
         dte: int,
+        certificacion: str | None = None,
     ) -> Any:
         """
         Estado de timbraje de un tipo de DTE.
@@ -68,14 +69,16 @@ class Caf(ApiBase):
 
         :param str emisor: RUT del emisor.
         :param int dte: Código del tipo de documento.
+        :param str certificacion: `'0'` producción, `'1'` certificación.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos del tipo de DTE y situación del contribuyente.
         :rtype: dict
         """
-        url = '/sii/dte/caf/estado_timbraje/%(emisor)s/%(dte)s' % {
-            'emisor': emisor,
-            'dte': dte,
-        }
+        url = self._build_url(
+            '/sii/dte/caf/estado_timbraje/%(emisor)s/%(dte)s'
+            % {'emisor': emisor, 'dte': dte},
+            certificacion=certificacion,
+        )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
@@ -260,6 +263,7 @@ class Caf(ApiBase):
         folio_inicial: int,
         folio_final: int,
         estado: str,
+        certificacion: str | None = None,
     ) -> Any:
         """
         Estados de un rango de folios en el SII, agrupados por tramos.
@@ -268,12 +272,14 @@ class Caf(ApiBase):
         :param int dte: Código del tipo de documento.
         :param int folio_inicial: Primer folio del rango.
         :param int folio_final: Último folio del rango.
-        :param str estado: Estado de los folios a consultar.
+        :param str estado: Estado de los folios a consultar: `recibidos`,
+            `anulados` o `pendientes`.
+        :param str certificacion: `'0'` producción, `'1'` certificación.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de tramos (inicial/final/cantidad).
         :rtype: dict
         """
-        url = (
+        url = self._build_url(
             '/sii/dte/caf/estados/%(emisor)s/%(dte)s/%(folio_inicial)s'
             '/%(folio_final)s/%(estado)s'
             % {
@@ -282,7 +288,8 @@ class Caf(ApiBase):
                 'folio_inicial': folio_inicial,
                 'folio_final': folio_final,
                 'estado': estado,
-            }
+            },
+            certificacion=certificacion,
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)

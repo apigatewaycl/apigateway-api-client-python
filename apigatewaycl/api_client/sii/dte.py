@@ -291,7 +291,7 @@ class Emitidos(ApiBase):
         fecha: str,
         total: int,
         firma: str | None = None,
-        certificacion: bool | None = None,
+        certificacion: str | None = None,
     ) -> Any:
         """
         Verifica la validez de un DTE emitido.
@@ -303,16 +303,16 @@ class Emitidos(ApiBase):
         :param str fecha: Fecha de emisión del DTE.
         :param int total: Monto total del DTE.
         :param str firma: Firma electrónica del DTE (opcional).
-        :param bool certificacion: Indica si la verificación es en
-            ambiente de certificación (opcional).
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+            Sólo aplica a documentos que no son boletas: las boletas (39
+            y 41) se verifican siempre en producción.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, resultado de la verificación del DTE.
         :rtype: dict
         """
-        certificacion_flag = 1 if certificacion else 0
-        url = (
-            '/sii/dte/emitidos/verificar?certificacion=%(certificacion_flag)s'
-            % {'certificacion_flag': certificacion_flag}
+        url = self._build_url(
+            '/sii/dte/emitidos/verificar',
+            certificacion=certificacion,
         )
         body = {
             'auth': self._get_auth(),
