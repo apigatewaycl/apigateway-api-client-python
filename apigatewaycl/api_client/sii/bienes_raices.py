@@ -173,7 +173,7 @@ class BienesRaices(ApiBase):
             ubicación, inscripción, avalúos y contribuciones.
         :rtype: dict
         """
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(
             '/sii/bienes_raices/propiedades/contribuyente',
             data=body,

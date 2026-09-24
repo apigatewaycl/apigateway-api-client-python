@@ -78,7 +78,7 @@ class Rcv(ApiBase):
             '/sii/rcv/compras/resumen/%(receptor)s/%(periodo)s/%(estado)s'
             % {'receptor': receptor, 'periodo': periodo, 'estado': estado}
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -117,7 +117,7 @@ class Rcv(ApiBase):
                 'tipo': tipo,
             }
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -149,7 +149,7 @@ class Rcv(ApiBase):
             certificacion=certificacion,
         )
         body = {
-            'auth': self._get_auth_pass(),
+            'auth': self._get_auth(),
             'documentos': documentos,
         }
         response = self.client.post(url, data=body)
@@ -185,7 +185,7 @@ class Rcv(ApiBase):
             certificacion=certificacion,
         )
         body = {
-            'auth': self._get_auth_pass(),
+            'auth': self._get_auth(),
             'documentos': documentos,
         }
         response = self.client.post(url, data=body)
@@ -209,7 +209,7 @@ class Rcv(ApiBase):
             'emisor': emisor,
             'periodo': periodo,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -243,7 +243,7 @@ class Rcv(ApiBase):
                 'tipo': tipo,
             }
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -283,7 +283,7 @@ class Rcv(ApiBase):
             'dte': dte,
             'estado': estado,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -330,7 +330,7 @@ class Rcv(ApiBase):
             'dte': dte,
             'estado': estado,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -377,7 +377,7 @@ class Rcv(ApiBase):
             'dte': dte,
             'estado': estado,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -410,7 +410,7 @@ class Rcv(ApiBase):
             'periodo': periodo,
             'dte': dte,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -450,7 +450,7 @@ class Rcv(ApiBase):
             'id_solicitud': id_solicitud,
             'dte': dte,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -490,6 +490,6 @@ class Rcv(ApiBase):
             'id_solicitud': id_solicitud,
             'dte': dte,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()

@@ -604,13 +604,19 @@ class ApiBase:
             'query': urllib.parse.urlencode(query),
         }
 
-    def _get_auth_pass(self) -> dict[str, Any]:
+    def _get_auth(self) -> dict[str, Any]:
         """
-        Obtiene la autenticación de tipo 'pass'.
+        Obtiene la autenticación configurada, validando sus datos.
 
-        :return: Información de autenticación.
+        La autenticación puede ser de tipo 'pass' (RUT y clave) o de
+        tipo 'cert' (certificado y llave en PEM, o archivo de la firma
+        electrónica en Base64 y su contraseña).
+
+        :return: Información de autenticación, con la clave 'pass' o
+            'cert' según el tipo configurado.
         :rtype: dict
-        :raises ApiException: Si falta información de autenticación.
+        :raises ApiException: Si falta información de autenticación o
+            viene vacía.
         """
         if 'pass' in self.auth:
             auth_pass = self.auth['pass']
@@ -624,28 +630,20 @@ class ApiBase:
                 raise ApiException('auth.pass.clave empty.')
         elif 'cert' in self.auth:
             auth_cert = self.auth['cert']
-            if (
-                'cert-data' in auth_cert
-                and auth_cert['cert-data'] == ''
-                and auth_cert['cert-data'] is None
+            if 'cert-data' in auth_cert and (
+                auth_cert['cert-data'] == '' or auth_cert['cert-data'] is None
             ):
                 raise ApiException('auth.cert.cert-data empty.')
-            if (
-                'pkey-data' in auth_cert
-                and auth_cert['pkey-data'] == ''
-                and auth_cert['pkey-data'] is None
+            if 'pkey-data' in auth_cert and (
+                auth_cert['pkey-data'] == '' or auth_cert['pkey-data'] is None
             ):
                 raise ApiException('auth.cert.pkey-data empty.')
-            if (
-                'file-data' in auth_cert
-                and auth_cert['file-data'] == ''
-                and auth_cert['file-data'] is None
+            if 'file-data' in auth_cert and (
+                auth_cert['file-data'] == '' or auth_cert['file-data'] is None
             ):
                 raise ApiException('auth.cert.file-data empty.')
-            if (
-                'file-pass' in auth_cert
-                and auth_cert['file-pass'] == ''
-                and auth_cert['file-pass'] is None
+            if 'file-pass' in auth_cert and (
+                auth_cert['file-pass'] == '' or auth_cert['file-pass'] is None
             ):
                 raise ApiException('auth.cert.file-pass empty.')
         else:

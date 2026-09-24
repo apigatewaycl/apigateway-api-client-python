@@ -62,7 +62,7 @@ class Contribuyente(ApiBase):
         :rtype: dict
         """
         url = '/sii/misii/contribuyente/datos'
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -103,7 +103,7 @@ class Representantes(ApiBase):
         :rtype: dict
         """
         url = '/sii/misii/representantes/listado'
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -142,7 +142,7 @@ class Representados(ApiBase):
         :rtype: dict
         """
         url = '/sii/misii/representados/listado'
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -165,6 +165,6 @@ class Representados(ApiBase):
             'rut': rut,
             'permisos': permisos,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()

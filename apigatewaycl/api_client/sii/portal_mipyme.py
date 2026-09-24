@@ -85,7 +85,7 @@ class Contribuyentes(PortalMipyme):
             '%(contribuyente)s/%(emisor)s/%(dte)s'
             % {'contribuyente': contribuyente, 'emisor': emisor, 'dte': dte}
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -175,7 +175,7 @@ class Borradores(Dte):
         url = '/sii/mipyme/borradores/documentos/%(emisor)s' % {
             'emisor': emisor,
         }
-        body = {'auth': self._get_auth_pass(), 'filtros': filtros or {}}
+        body = {'auth': self._get_auth(), 'filtros': filtros or {}}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -191,7 +191,7 @@ class Borradores(Dte):
             En `data`, el borrador creado.
         :rtype: dict
         """
-        body = {'auth': self._get_auth_pass(), 'dte': dte}
+        body = {'auth': self._get_auth(), 'dte': dte}
         response = self.client.post('/sii/mipyme/borradores/emitir', data=body)
         return response.json()
 
@@ -215,7 +215,7 @@ class Borradores(Dte):
             'emisor': emisor,
             'codigo': codigo,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         # A diferencia de los PDF de emitidos/recibidos, la API no
         # responde el archivo binario: lo entrega en JSON, en base64.
@@ -239,7 +239,7 @@ class Borradores(Dte):
             'emisor': emisor,
             'codigo': codigo,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -268,7 +268,7 @@ class DteEmitidos(Dte):
         :rtype: dict
         """
         url = '/sii/mipyme/emitidos/documentos/%(emisor)s' % {'emisor': emisor}
-        body = {'auth': self._get_auth_pass(), 'filtros': filtros or {}}
+        body = {'auth': self._get_auth(), 'filtros': filtros or {}}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -288,7 +288,7 @@ class DteEmitidos(Dte):
             'emisor': emisor,
             'codigo': codigo,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.content
 
@@ -316,7 +316,7 @@ class DteEmitidos(Dte):
             % {'emisor': emisor, 'dte': dte, 'folio': folio},
             fecha_emision=fecha_emision,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.content
 
@@ -350,7 +350,7 @@ class DteRecibidos(Dte):
         url = '/sii/mipyme/recibidos/documentos/%(receptor)s' % {
             'receptor': receptor
         }
-        body = {'auth': self._get_auth_pass(), 'filtros': filtros or {}}
+        body = {'auth': self._get_auth(), 'filtros': filtros or {}}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -370,7 +370,7 @@ class DteRecibidos(Dte):
             'receptor': receptor,
             'codigo': codigo,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.content
 
@@ -406,6 +406,6 @@ class DteRecibidos(Dte):
             },
             fecha_emision=fecha_emision,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.content

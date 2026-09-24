@@ -79,7 +79,7 @@ class BteEmitidas(ApiBase):
             % {'emisor': emisor, 'periodo': periodo},
             pagina=pagina,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -101,7 +101,7 @@ class BteEmitidas(ApiBase):
             'emisor': emisor,
             'anio': anio,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -115,7 +115,7 @@ class BteEmitidas(ApiBase):
         :rtype: bytes
         """
         url = '/sii/bte/emitidas/html/%(codigo)s' % {'codigo': codigo}
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.content
 
@@ -128,7 +128,7 @@ class BteEmitidas(ApiBase):
             En `data`, confirmación de la emisión de la BTE.
         :rtype: dict
         """
-        body = {'auth': self._get_auth_pass(), 'boleta': datos}
+        body = {'auth': self._get_auth(), 'boleta': datos}
         response = self.client.post('/sii/bte/emitidas/emitir', data=body)
         return response.json()
 
@@ -150,7 +150,7 @@ class BteEmitidas(ApiBase):
             En `data`, confirmación de la anulación.
         :rtype: dict
         """
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         url = (
             '/sii/bte/emitidas/anular/%(emisor)s/%(numero)s?causa=%(causa)s'
             % {'emisor': emisor, 'numero': numero, 'causa': causa}
@@ -183,7 +183,7 @@ class BteEmitidas(ApiBase):
             % {'emisor': emisor, 'folio': folio},
             periodo=periodo,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -203,7 +203,7 @@ class BteEmitidas(ApiBase):
             En `data`, tasa de retención.
         :rtype: dict
         """
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         url = '/sii/bte/emitidas/receptor_tasa/%(emisor)s/%(receptor)s' % {
             'emisor': emisor,
             'receptor': receptor,
@@ -262,7 +262,7 @@ class BteRecibidas(ApiBase):
             % {'receptor': receptor, 'periodo': periodo},
             pagina=pagina,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -276,6 +276,6 @@ class BteRecibidas(ApiBase):
         :rtype: bytes
         """
         url = '/sii/bte/recibidas/html/%(codigo)s' % {'codigo': codigo}
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.content

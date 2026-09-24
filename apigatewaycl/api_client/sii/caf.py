@@ -76,7 +76,7 @@ class Caf(ApiBase):
             'emisor': emisor,
             'dte': dte,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -104,7 +104,7 @@ class Caf(ApiBase):
             % {'emisor': emisor, 'dte': dte, 'cantidad': cantidad},
             certificacion=certificacion,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.content
 
@@ -141,7 +141,7 @@ class Caf(ApiBase):
             },
             certificacion=certificacion,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.content
 
@@ -172,7 +172,7 @@ class Caf(ApiBase):
             certificacion=certificacion,
             formato=formato,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -212,7 +212,7 @@ class Caf(ApiBase):
             certificacion=certificacion,
             formato=formato,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -249,7 +249,7 @@ class Caf(ApiBase):
             certificacion=certificacion,
             formato=formato,
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -284,6 +284,6 @@ class Caf(ApiBase):
                 'estado': estado,
             }
         )
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()

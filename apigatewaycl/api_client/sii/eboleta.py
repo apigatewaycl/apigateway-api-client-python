@@ -65,7 +65,7 @@ class EboletaContribuyente(ApiBase):
         url = '/sii/eboleta/contribuyente/emisor/%(emisor)s' % {
             'emisor': emisor,
         }
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return response.json()
 
@@ -77,7 +77,7 @@ class EboletaContribuyente(ApiBase):
             En `data`, listado de contribuyentes (RUT, DV y razón social).
         :rtype: dict
         """
-        body = {'auth': self._get_auth_pass()}
+        body = {'auth': self._get_auth()}
         response = self.client.post(
             '/sii/eboleta/contribuyente/emisores_autorizados',
             data=body,
@@ -128,7 +128,7 @@ class EboletaEmitidas(ApiBase):
         :rtype: dict
         """
         return {
-            'auth': self._get_auth_pass(),
+            'auth': self._get_auth(),
             'contribuyente': contribuyente,
             'folio': folio,
             'dte': dte,
@@ -170,7 +170,7 @@ class EboletaEmitidas(ApiBase):
             'estado': estado,
         }
         body: dict[str, Any] = {
-            'auth': self._get_auth_pass(),
+            'auth': self._get_auth(),
             'contribuyente': contribuyente,
             'date_from': date_from,
             'date_to': date_to,
@@ -202,7 +202,7 @@ class EboletaEmitidas(ApiBase):
             base64.
         :rtype: dict
         """
-        body = {'auth': self._get_auth_pass(), 'dte': dte}
+        body = {'auth': self._get_auth(), 'dte': dte}
         response = self.client.post('/sii/eboleta/emitidas/emitir', data=body)
         return response.json()
 
