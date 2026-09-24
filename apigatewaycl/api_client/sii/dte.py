@@ -170,13 +170,20 @@ class Contribuyentes(ApiBase):
         certificacion: str | None = None,
     ) -> Any:
         """
-        Asigna un usuario autorizado a un contribuyente.
+        Asigna un usuario autorizado, o modifica sus permisos si ya existe.
+
+        `usuario` lleva `run` y `permisos`, con las claves booleanas
+        `administrador`, `solicitar_folios`, `anular_folios`, `firmar`,
+        `enviar` y `consultar`; las que no vengan cuentan como `False`.
+        Para eliminar un usuario se envían todos los permisos en `False`:
+        no hay un recurso aparte para eliminar.
 
         :param str contribuyente: RUT del contribuyente a actualizar.
         :param dict usuario: Usuario a asignar (`run` y `permisos`).
         :param str certificacion: `'0'` producción, `'1'` certificación.
-        :return: Respuesta de la API, con `data` y `metadata`.
-            En `data`, usuario asignado, con sus permisos.
+        :return: Respuesta de la API, con `data` y `metadata`. En `data`,
+            la lista completa de usuarios autorizados después del cambio
+            (no solo el enviado), con sus permisos.
         :rtype: dict
         """
         url = self._build_url(
