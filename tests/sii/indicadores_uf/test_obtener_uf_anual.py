@@ -20,6 +20,7 @@
 import unittest
 from datetime import datetime
 from os import getenv
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -28,23 +29,26 @@ from apigatewaycl.api_client.sii.indicadores import Uf
 
 pytestmark = [pytest.mark.readonly, pytest.mark.dummy]
 
-class TestObtenerUfAnual(unittest.TestCase):
 
+class TestObtenerUfAnual(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.client = Uf()
-        cls.anio = datetime.now().strftime("%Y")
+        cls.anio = datetime.now(ZoneInfo('America/Santiago')).strftime('%Y')
 
     # CASO 1: obtener valores de la UF de todo un año
     def test_obtener_uf_anual(self):
         anio = 2025
         try:
-            anual = self.client.anual(anio)
+            respuesta = self.client.anual(anio)
+            self.assertIn('data', respuesta)
+            self.assertIn('metadata', respuesta)
+            anual = respuesta['data']
 
             self.assertIsNotNone(anual)
 
             if self.verbose:
                 print('test_uf_anual(): anual', anual)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

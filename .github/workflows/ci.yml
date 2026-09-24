@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master  # Ejecuta pruebas al hacer push en la rama 'master'
+      - dev-v6.0.0
 
 env:
   env_var: ${{ vars.ENV_CONTEXT_VAR }}
@@ -14,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ['3.11']  # Puedes cambiar las versiones según necesites
+        python-version: ['3.13', '3.14']
 
     steps:
       - name: Check out repository code

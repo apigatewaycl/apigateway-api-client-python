@@ -22,7 +22,7 @@ Módulo para obtener las actividades económicas del SII.
 
 Para más información sobre la API, consulte la `documentación completa
 de Actividades Económicas
-<https://developers.apigateway.cl/#e64eb128-173a-48c7-ab0b-b6152e59c327>`_.
+<https://www.apigateway.cl/docs>`_.
 """
 
 from __future__ import annotations
@@ -46,15 +46,14 @@ class ActividadesEconomicas(ApiBase):
 
         :param int categoria: Categoría de las actividades económicas
             (opcional).
-        :return: Respuesta JSON con el listado de actividades económicas.
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`. En `data`, el
+            listado de actividades económicas.
+        :rtype: dict
         """
-        url = '/sii/contribuyentes/actividades_economicas'
-        if categoria is not None:
-            if self.client.version == 'v1':
-                url += '/%(categoria)s' % {'categoria': categoria}
-            else:
-                url += '?categoria=%(categoria)s' % {'categoria': categoria}
+        url = self._build_url(
+            '/sii/contribuyentes/actividades_economicas',
+            categoria=categoria,
+        )
         response = self.client.get(url)
         return response.json()
 
@@ -62,8 +61,9 @@ class ActividadesEconomicas(ApiBase):
         """
         Obtiene un listado de actividades económicas de primera categoría.
 
-        :return: Respuesta JSON con el listado de primera categoría.
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`. En `data`, el
+            listado de primera categoría.
+        :rtype: dict
         """
         return self.listado(1)
 
@@ -71,7 +71,8 @@ class ActividadesEconomicas(ApiBase):
         """
         Obtiene un listado de actividades económicas de segunda categoría.
 
-        :return: Respuesta JSON con el listado de segunda categoría.
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`. En `data`, el
+            listado de segunda categoría.
+        :rtype: dict
         """
         return self.listado(2)

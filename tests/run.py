@@ -29,16 +29,18 @@ from dotenv import load_dotenv
 app_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, app_dir)
 
+
 # Clase especial para resultado de los tests
 class CustomTestResult(unittest.TextTestResult):
     def addFailure(self, test, err):
-        exception_type, value, traceback = err
+        exception_type, value, _traceback = err
         if exception_type is AssertionError:
-            self.stream.writeln(f"\nFAIL: {test.id()}")
-            self.stream.writeln(f"Assertion Error: {value}")
+            self.stream.writeln(f'\nFAIL: {test.id()}')
+            self.stream.writeln(f'Assertion Error: {value}')
         else:
             # Manejo estándar para otros errores
             super().addFailure(test, err)
+
 
 # Directorio de tests
 tests_dir = os.path.dirname(os.path.abspath(__file__))
@@ -48,22 +50,32 @@ if os.path.exists(os.path.join(tests_dir, 'test.env')):
     load_dotenv(os.path.join(tests_dir, 'test.env'), override=True)
 
 # Determinar si se pidió un test específico o se ejecutan todos
-parser = argparse.ArgumentParser(description='Ejecución de los casos de prueba')
+parser = argparse.ArgumentParser(
+    description='Ejecución de los casos de prueba',
+)
 parser.add_argument(
     'test_case',
-    nargs = '?',
-    default = None,
-    help = 'Permite especificar un test a ejecutar (ej: "sii.test_contribuyentes")'
+    nargs='?',
+    default=None,
+    help=(
+        'Permite especificar un test a ejecutar '
+        '(ej: "sii.test_contribuyentes")'
+    ),
 )
 args = parser.parse_args()
 
 # Cargar el test solicitado o todos los del directorio de tests
 loader = unittest.TestLoader()
-suite = loader.loadTestsFromName(args.test_case) if args.test_case else loader.discover(tests_dir)
+suite = (
+    loader.loadTestsFromName(args.test_case)
+    if args.test_case
+    else loader.discover(tests_dir)
+)
 
 # Ejecutar los tests
 runner = unittest.TextTestRunner(
-    failfast=True, resultclass=CustomTestResult # type: ignore
+    failfast=True,
+    resultclass=CustomTestResult,  # type: ignore
 )
 try:
     runner.run(suite)

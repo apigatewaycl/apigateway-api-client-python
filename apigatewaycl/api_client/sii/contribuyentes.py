@@ -22,7 +22,7 @@ Módulo para obtener datos de los contribuyentes a través del SII.
 
 Para más información sobre la API, consulte la `documentación completa
 de Contribuyentes
-<https://developers.apigateway.cl/#c88f90b6-36bb-4dc2-ba93-6e418ff42098>`_.
+<https://www.apigateway.cl/docs>`_.
 """
 
 from __future__ import annotations
@@ -45,7 +45,8 @@ class Contribuyentes(ApiBase):
         Obtiene la situación tributaria de un contribuyente.
 
         :param str rut: RUT del contribuyente.
-        :return: Respuesta JSON con la situación tributaria.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, situación tributaria.
         :rtype: dict
         """
         url = '/sii/contribuyentes/situacion_tributaria/tercero/%(rut)s' % {
@@ -54,13 +55,18 @@ class Contribuyentes(ApiBase):
         response = self.client.get(url)
         return response.json()
 
-    def verificar_rut(self, rut: str, serie: str) -> Any:
+    def verificar_rut(
+        self,
+        rut: str,
+        serie: str,
+    ) -> Any:
         """
         Verifica la cédula RUT de un contribuyente por su número de serie.
 
         :param str rut: RUT del contribuyente (ej. `76192083-9`).
         :param str serie: Número de serie de la cédula a verificar.
-        :return: Respuesta JSON con la verificación del RUT.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, verificación del RUT.
         :rtype: dict
         """
         url = '/sii/contribuyentes/rut/verificar/%(rut)s/%(serie)s' % {

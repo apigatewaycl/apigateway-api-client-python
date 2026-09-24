@@ -20,6 +20,7 @@
 import unittest
 from datetime import datetime
 from os import getenv
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -28,10 +29,11 @@ from apigatewaycl.api_client.sii.bhe import BheEmitidas
 
 pytestmark = pytest.mark.risky
 
+
 class TestEmitirBhe(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
         clave = getenv('TEST_USUARIO_CLAVE', '').strip()
         cls.client = BheEmitidas(cls.identificador, clave)
@@ -41,42 +43,45 @@ class TestEmitirBhe(unittest.TestCase):
     # CASO 5: emitir una boleta
     def test_emitir_bhe(self):
         if self.receptor_rut == '':
-            print('test_emitir(): no probó funcionalidad.')
-            return
-        fecha_emision = datetime.now().strftime("%Y-%m-%d")
+            self.skipTest(
+                'falta TEST_BHE_EMITIDAS_RECEPTOR_RUT en test.env.',
+            )
+        fecha_emision = datetime.now(
+            ZoneInfo('America/Santiago'),
+        ).strftime('%Y-%m-%d')
         datos_bhe = {
             'Encabezado': {
                 'IdDoc': {
                     'FchEmis': fecha_emision,
-                    'TipoRetencion': BheEmitidas.RETENCION_EMISOR
+                    'TipoRetencion': BheEmitidas.RETENCION_EMISOR,
                 },
                 'Emisor': {
-                    'RUTEmisor': self.contribuyente_rut
+                    'RUTEmisor': self.contribuyente_rut,
                 },
                 'Receptor': {
                     'RUTRecep': self.receptor_rut,
                     'RznSocRecep': 'Receptor generico',
                     'DirRecep': 'Santa Cruz',
-                    'CmnaRecep': 'Santa Cruz'
-                }
+                    'CmnaRecep': 'Santa Cruz',
+                },
             },
             'Detalle': [
                 {
                     'NmbItem': 'Prueba integracion API Gateway 1',
-                    'MontoItem': 50
+                    'MontoItem': 50,
                 },
                 {
                     'NmbItem': 'Prueba integracion API Gateway 2',
-                    'MontoItem': 100
-                }
-            ]
+                    'MontoItem': 100,
+                },
+            ],
         }
         try:
-            emitir = self.client.emitir(datos_bhe)
+            emitir = self.client.emitir(datos_bhe)['data']
 
             self.assertIsNotNone(emitir)
 
             if self.verbose:
                 print('test_emitir(): emitir', emitir)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

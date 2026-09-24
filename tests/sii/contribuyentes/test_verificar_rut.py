@@ -27,11 +27,11 @@ from apigatewaycl.api_client.sii.contribuyentes import Contribuyentes
 
 pytestmark = pytest.mark.readonly
 
-class TestVerificarRut(unittest.TestCase):
 
+class TestVerificarRut(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.client = Contribuyentes()
 
     # CASO2: verificación de cédula RUT mediante RUT y número de serie
@@ -39,16 +39,19 @@ class TestVerificarRut(unittest.TestCase):
         erut_rut = getenv('TEST_ERUT_RUT', '').strip()
         erut_serie = getenv('TEST_ERUT_SERIE', '').strip()
         if erut_rut == '' or erut_serie == '':
-            print('test_verificar_rut(): no probó funcionalidad.')
-            return
+            self.skipTest(
+                'faltan TEST_ERUT_RUT/TEST_ERUT_SERIE en test.env.',
+            )
         try:
-            verificar_rut = self.client.verificar_rut(erut_rut, erut_serie)
+            respuesta = self.client.verificar_rut(erut_rut, erut_serie)
+            verificar_rut = respuesta['data']
 
             self.assertIsNotNone(verificar_rut)
 
             if self.verbose:
                 print(
-                    'test_verificar_rut(): verificar_rut', verificar_rut
+                    'test_verificar_rut(): verificar_rut',
+                    verificar_rut,
                 )
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

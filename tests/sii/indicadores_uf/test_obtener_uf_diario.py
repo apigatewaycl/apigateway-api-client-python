@@ -20,6 +20,7 @@
 import unittest
 from datetime import datetime
 from os import getenv
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -28,22 +29,28 @@ from apigatewaycl.api_client.sii.indicadores import Uf
 
 pytestmark = [pytest.mark.readonly, pytest.mark.dummy]
 
-class TestObtenerUfDiario(unittest.TestCase):
 
+class TestObtenerUfDiario(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.client = Uf()
-        cls.fecha = datetime.now().strftime("%Y-%m-%d")
+        cls.fecha = datetime.now(
+            ZoneInfo('America/Santiago'),
+        ).strftime('%Y-%m-%d')
 
-    # CASO 3: obtener valores de la UF de un día específico (1ero de enero del ANIO)
+    # CASO 3: obtener valores de la UF de un día específico
+    # (1ero de enero del ANIO)
     def test_obtener_uf_diario(self):
         try:
-            diario = self.client.diario(self.fecha)
+            respuesta = self.client.diario(self.fecha)
+            self.assertIn('data', respuesta)
+            self.assertIn('metadata', respuesta)
+            diario = respuesta['data']
 
             self.assertIsNotNone(diario)
 
             if self.verbose:
                 print('test_uf_diario(): diario', diario)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

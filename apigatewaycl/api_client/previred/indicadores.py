@@ -21,7 +21,7 @@
 Módulo para los Indicadores Previsionales de Previred.
 
 Para más información sobre la API, consulte la `documentación completa
-de Previred <https://developers.apigateway.cl/>`_.
+de Previred <https://www.apigateway.cl/docs>`_.
 """
 
 from __future__ import annotations
@@ -38,10 +38,12 @@ class Indicadores(ApiBase):
         """
         Listado de URLs del PDF de los indicadores previsionales.
 
-        :return: Listado de indicadores con su URL de PDF y período.
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, listado de indicadores con su URL de PDF y período.
+        :rtype: dict
         """
-        # TODO: Implementar.
+        response = self.client.get('/previred/indicadores/periodos')
+        return response.json()
 
     def pdf(self, periodo: str) -> Any:
         """
@@ -51,7 +53,9 @@ class Indicadores(ApiBase):
         :return: Contenido del PDF del indicador.
         :rtype: bytes
         """
-        # TODO: Implementar.
+        url = '/previred/indicadores/pdf/%(periodo)s' % {'periodo': periodo}
+        response = self.client.get(url)
+        return response.content
 
     def data(self, periodo: str) -> Any:
         """
@@ -61,9 +65,12 @@ class Indicadores(ApiBase):
         `1,44%`) y los montos en pesos.
 
         :param str periodo: Período del indicador (AAAAMM).
-        :return: Períodos, moneda (UF/UTM/UTA), renta imponible, AFP,
-            seguro de cesantía, seguro social, otras cotizaciones,
-            ahorro previsional y asignación familiar.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, períodos, moneda (UF/UTM/UTA), renta imponible, AFP,
+            seguro de cesantía, seguro social, otras cotizaciones, ahorro
+            previsional y asignación familiar.
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = '/previred/indicadores/data/%(periodo)s' % {'periodo': periodo}
+        response = self.client.get(url)
+        return response.json()

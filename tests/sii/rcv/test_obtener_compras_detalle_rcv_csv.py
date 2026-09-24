@@ -20,6 +20,7 @@
 import unittest
 from datetime import datetime
 from os import getenv
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -28,15 +29,21 @@ from apigatewaycl.api_client.sii.rcv import Rcv
 
 pytestmark = pytest.mark.readonly
 
-class TestObtenerComprasDetalleRcvCsv(unittest.TestCase):
 
+class TestObtenerComprasDetalleRcvCsv(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
+        cls.contribuyente_rut = getenv(
+            'TEST_CONTRIBUYENTE_IDENTIFICADOR',
+            '',
+        ).strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
         cls.client = Rcv(cls.contribuyente_rut, contribuyente_clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
 
     # CASO 2: detalle de compras con tipo "rcv_csv"
     # En este caso se trae el detalle de los documentos en una llamada
@@ -44,14 +51,15 @@ class TestObtenerComprasDetalleRcvCsv(unittest.TestCase):
         try:
             compras_detalle = self.client.compras_detalle(
                 self.contribuyente_rut,
-                self.periodo
-            )
+                self.periodo,
+            )['data']
 
             self.assertIsNotNone(compras_detalle)
 
             if self.verbose:
-                print('test_compras_detalle_rcv_csv(): compras_detalle',
-                    compras_detalle
+                print(
+                    'test_compras_detalle_rcv_csv(): compras_detalle',
+                    compras_detalle,
                 )
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

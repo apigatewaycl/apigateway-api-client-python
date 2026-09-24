@@ -43,7 +43,10 @@ check: lint format-check typecheck test
 
 docs: $(VENV_READY)
 	$(VENV)/bin/pip install -e '.[docs]'
-	$(VENV)/bin/sphinx-apidoc -o docs apigatewaycl --force --separate
+	# Sin --separate: ese flag genera un .rst por módulo, una
+	# estructura distinta a la que está versionada en docs/ y a la
+	# que consume el workflow de publicación.
+	$(VENV)/bin/sphinx-apidoc -o docs apigatewaycl --force
 	$(VENV)/bin/sphinx-build -b html docs docs/_build/html
 
 build: $(VENV_READY)

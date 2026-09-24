@@ -20,6 +20,7 @@
 import unittest
 from datetime import datetime
 from os import getenv
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -28,15 +29,21 @@ from apigatewaycl.api_client.sii.rcv import Rcv
 
 pytestmark = pytest.mark.readonly
 
-class TestObtenerVentasDetalleRcv(unittest.TestCase):
 
+class TestObtenerVentasDetalleRcv(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
+        cls.contribuyente_rut = getenv(
+            'TEST_CONTRIBUYENTE_IDENTIFICADOR',
+            '',
+        ).strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
         cls.client = Rcv(cls.contribuyente_rut, contribuyente_clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
 
     # CASO 3: resumen de ventas y detalle de ventas con tipo "rcv"
     # En este caso el detalle de los documentos se trae por tipo
@@ -44,31 +51,39 @@ class TestObtenerVentasDetalleRcv(unittest.TestCase):
         try:
             ventas_resumen = self.client.ventas_resumen(
                 self.contribuyente_rut,
-                self.periodo
-            )
+                self.periodo,
+            )['data']
             if self.verbose:
                 print(
                     'test_ventas_detalle_rcv(): ventas_resumen',
-                    ventas_resumen
+                    ventas_resumen,
                 )
             if ventas_resumen['data'] is not None:
                 for resumen in ventas_resumen['data']:
-                    if resumen['dcvTipoIngresoDoc'] != 'DET_ELE' or resumen['rsmnTotDoc'] == 0:
+                    if (
+                        resumen['dcvTipoIngresoDoc'] != 'DET_ELE'
+                        or resumen['rsmnTotDoc'] == 0
+                    ):
                         continue
                     ventas_detalle = self.client.ventas_detalle(
                         self.contribuyente_rut,
                         self.periodo,
-                        resumen['rsmnTipoDocInteger']
-                    )
+                        resumen['rsmnTipoDocInteger'],
+                    )['data']
                     if self.verbose:
                         print(
                             'test_ventas_detalle_rcv(): ventas_detalle',
-                            ventas_detalle
+                            ventas_detalle,
                         )
-                    break # sólo se obtiene un detalle para probar la API más rápido
+                    # sólo se obtiene un detalle para probar la API
+                    # más rápido
+                    break
 
                 self.assertIsNotNone(ventas_detalle)
             else:
-                print('test_ventas_detalle_rcv(): ventas_resumen: Libro ventas RCV vacío.')
+                print(
+                    'test_ventas_detalle_rcv(): ventas_resumen: '
+                    'Libro ventas RCV vacío.',
+                )
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

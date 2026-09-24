@@ -20,6 +20,7 @@
 import unittest
 from datetime import datetime
 from os import getenv
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -28,27 +29,32 @@ from apigatewaycl.api_client.sii.bhe import BheEmitidas
 
 pytestmark = pytest.mark.readonly
 
+
 class TestListarBhesEmitidas(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
         clave = getenv('TEST_USUARIO_CLAVE', '').strip()
         cls.client = BheEmitidas(cls.identificador, clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
         cls.contribuyente_rut = getenv('TEST_USUARIO_RUT', '').strip()
 
     # CASO 1: boletas del periodo listado completo
     def test_listar_bhes_emitidas(self):
         try:
             documentos = self.client.documentos(
-                self.contribuyente_rut, self.periodo,
-                pagina = 1,
-            )
+                self.contribuyente_rut,
+                self.periodo,
+                pagina=1,
+            )['data']
 
             self.assertTrue(True)
 
             if self.verbose:
                 print('test_documentos(): documentos', documentos)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

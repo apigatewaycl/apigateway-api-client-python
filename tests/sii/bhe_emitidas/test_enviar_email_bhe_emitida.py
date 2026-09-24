@@ -20,6 +20,7 @@
 import unittest
 from datetime import datetime
 from os import getenv
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -28,33 +29,50 @@ from apigatewaycl.api_client.sii.bhe import BheEmitidas
 
 pytestmark = pytest.mark.risky
 
+
 class TestEnviarEmailBheEmitida(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
         clave = getenv('TEST_USUARIO_CLAVE', '').strip()
         cls.client = BheEmitidas(cls.identificador, clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
         cls.contribuyente_rut = getenv('TEST_USUARIO_RUT', '').strip()
+        # Envía un correo REAL: sin destinatario explícito no corre.
+        cls.receptor_email = getenv(
+            'TEST_BHE_EMITIDAS_RECEPTOR_EMAIL',
+            '',
+        ).strip()
+        if not cls.receptor_email:
+            raise unittest.SkipTest(
+                'TEST_BHE_EMITIDAS_RECEPTOR_EMAIL no configurado: este '
+                'test envía un correo real.'
+            )
 
     # CASO 6: enviar por email
     def test_enviar_email_bhe_emitida(self):
         try:
-            receptor_email = getenv('TEST_BHE_EMITIDAS_RECEPTOR_EMAIL', '').strip()
+            receptor_email = self.receptor_email
             documentos = self.client.documentos(
-                self.contribuyente_rut, self.periodo
-            )
-            if len(documentos) == 0:
-                print('test_email(): no probó funcionalidad.')
-                return
-            boleta_codigo = documentos[0]['codigo']
+                self.contribuyente_rut,
+                self.periodo,
+            )['data']
+            boletas = documentos.get('boletas') if documentos else None
+            if not boletas:
+                self.skipTest(
+                    'la API no devolvió documentos con los cuales probar.',
+                )
+            boleta_codigo = boletas[0]['codigo']
 
-            email = self.client.email(boleta_codigo, receptor_email)
+            email = self.client.email(boleta_codigo, receptor_email)['data']
 
             self.assertIsNotNone(email)
 
             if self.verbose:
                 print('test_email(): email', email)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

@@ -17,7 +17,22 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-"""Cliente base de la API de API Gateway (`ApiClient`/`ApiBase`)."""
+"""
+Cliente base de la API de API Gateway (`ApiClient`/`ApiBase`).
+
+Este cliente habla únicamente con la versión 2 de la API
+(`https://app.apigateway.cl/api/v2`). La versión 1 (legacy) ya no
+está soportada.
+
+Los métodos que responden JSON entregan el cuerpo tal cual lo envía
+la API, sin transformarlo::
+
+    {"data": ..., "metadata": {...}}
+
+`data` trae el resultado y `metadata` los datos de la consulta
+(marca de tiempo, paginación, etc.). Los recursos que responden un
+archivo (PDF, XML, CSV, HTML) entregan su contenido sin decodificar.
+"""
 
 from __future__ import annotations
 
@@ -34,6 +49,30 @@ from requests.exceptions import HTTPError, RequestException, Timeout
 
 _HTTP_OK = 200
 
+# La API avisa con esta cabecera cuando el SII pidió reautenticar, y el
+# mensaje de error también lo dice. Ver la documentación de la API:
+# "conviene repetir la consulta con auth_cache=0 para forzar un login".
+_CABECERA_SESION = 'X-Auth-Session-Problem'
+_TEXTO_SESION = 'volver a autenticar'
+
+
+def _sesion_caida(response: requests.Response) -> bool:
+    """
+    Indica si la API avisó que hay que reautenticar ante el SII.
+
+    Ocurre cuando el SII cerró la sesión antes de que venciera y la
+    API intentó reutilizar la que tenía guardada.
+
+    :param requests.Response response: Respuesta de la API.
+    :return: True si corresponde repetir forzando un login nuevo.
+    :rtype: bool
+    """
+    if response.headers.get(_CABECERA_SESION) == '1':
+        return True
+    if response.status_code == _HTTP_OK:
+        return False
+    return _TEXTO_SESION in response.text[:2000]
+
 
 class ApiClient:
     """
@@ -42,37 +81,33 @@ class ApiClient:
     :param str token: Token de autenticación del usuario. Si no se
         proporciona, se intentará obtener de una variable de entorno.
     :param str url: URL base de la API. Si no se proporciona, se usará
-        una URL por defecto según la versión.
-    :param str version: Versión de la API. Si no se proporciona, se
-        usará v2. También puede configurarse con la variable de
-        entorno APIGATEWAY_API_VERSION.
+        `https://app.apigateway.cl`.
     :param bool raise_for_status: Si se debe lanzar una excepción
         automáticamente para respuestas de error HTTP. Por defecto es
         True.
+    :param bool auth_cache: Con `False` se fuerza un login nuevo en el
+        SII en vez de reutilizar la sesión guardada. Sirve para
+        recuperarse cuando el portal cerró la sesión antes de que
+        venciera y la API responde que hay que volver a autenticar.
     """
 
-    _url_v1 = 'https://legacy.apigateway.cl'
-    _url_v2 = 'https://app.apigateway.cl'
+    _api_version = 'v2'
+    _default_url = 'https://app.apigateway.cl'
+    token_prefix = 'Token'
 
     def __init__(
         self,
         token: str | None = None,
         url: str | None = None,
-        version: str | None = None,
         raise_for_status: bool = True,
+        auth_cache: bool | None = None,
     ) -> None:
-        """Construye el cliente, validando token/url según `version`."""
-        self.version = version or getenv('APIGATEWAY_API_VERSION', 'v2')
-        if self.version == 'v1':
-            self.token_prefix = 'Bearer'
-            self._default_url = self._url_v1
-        else:
-            self.token_prefix = 'Token'
-            self._default_url = self._url_v2
+        """Construye el cliente validando el token y la URL."""
         self.token = self.__validate_token(token)
         self.url = self.__validate_url(url)
         self.headers = self.__generate_headers()
         self.raise_for_status = raise_for_status
+        self.auth_cache = auth_cache
 
     def __validate_token(self, token: str | None) -> str:
         """
@@ -138,13 +173,21 @@ class ApiClient:
             (opcional).
         :return: Respuesta de la solicitud.
         :rtype: requests.Response
-        :raises ApiException: Si el método HTTP no es soportado o si hay
-        un error de conexión.
+        :raises ApiException: Si el método HTTP no es soportado o si
+            hay un error de conexión.
         """
         api_path = '/api/%(version)s%(resource)s' % {
-            'version': self.version,
+            'version': self._api_version,
             'resource': resource,
         }
+        if self.auth_cache is not None:
+            # La API lo lee para cualquier recurso de scraping, así que
+            # se agrega de forma transversal y no método por método.
+            separador = '&' if '?' in api_path else '?'
+            api_path += '%(sep)sauth_cache=%(valor)s' % {
+                'sep': separador,
+                'valor': '1' if self.auth_cache else '0',
+            }
         full_url = urllib.parse.urljoin(self.url + '/', api_path.lstrip('/'))
         headers = headers or {}
         headers = {**self.headers, **headers}
@@ -152,8 +195,30 @@ class ApiClient:
             data = json.dumps(data)
         try:
             response = requests.request(
-                method, full_url, data=data, headers=headers
+                method,
+                full_url,
+                data=data,
+                headers=headers,
             )
+            # Si la sesión del SII se cayó, se repite una sola vez
+            # forzando un login nuevo. Es de rescate: dejar
+            # `auth_cache=0` en todas las llamadas abre una sesión por
+            # consulta y el SII bloquea la cuenta al pasar de diez.
+            if self.auth_cache is None and _sesion_caida(response):
+                reintento = urllib.parse.urljoin(
+                    self.url + '/',
+                    (
+                        api_path
+                        + ('&' if '?' in api_path else '?')
+                        + 'auth_cache=0'
+                    ).lstrip('/'),
+                )
+                response = requests.request(
+                    method,
+                    reintento,
+                    data=data,
+                    headers=headers,
+                )
             return self.__check_and_return_response(response)
         except RequestsConnectionError as error:
             raise ApiException(
@@ -175,8 +240,9 @@ class ApiClient:
         Verifica la respuesta de la solicitud HTTP y maneja los errores.
 
         :param requests.Response response: Objeto de respuesta de requests.
-        :return: Respuesta validada.
-        :rtype: requests.Response
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, respuesta validada.
+        :rtype: dict
         :raises ApiException: Si la respuesta contiene un error HTTP.
         """
         if response.status_code != _HTTP_OK and self.raise_for_status:
@@ -200,17 +266,12 @@ class ApiClient:
                 raise ApiException(
                     'Error HTTP: %(message)s' % {'message': message}
                 ) from http_error
-        if self.version == 'v2':
-            _original_json = response.json
-
-            def unwrap_data() -> Any:
-                return _original_json().get('data', _original_json())
-
-            response.json = unwrap_data  # type: ignore[method-assign,assignment]
         return response
 
     def get(
-        self, resource: str, headers: dict[str, str] | None = None
+        self,
+        resource: str,
+        headers: dict[str, str] | None = None,
     ) -> requests.Response:
         """
         Realiza una solicitud GET a la API.
@@ -223,7 +284,9 @@ class ApiClient:
         return self.__request('GET', resource, headers=headers)
 
     def delete(
-        self, resource: str, headers: dict[str, str] | None = None
+        self,
+        resource: str,
+        headers: dict[str, str] | None = None,
     ) -> requests.Response:
         """
         Realiza una solicitud DELETE a la API.
@@ -323,29 +386,51 @@ class ApiBase:
     `abstractmethod` — todas comparten exactamente el mismo `__init__`
     (autenticación), no hay nada que declarar como contrato acá.
 
+    Los dos primeros argumentos posicionales son siempre las
+    credenciales del contribuyente, en todas las clases. Antes, las que
+    no definían su propio `__init__` heredaban este con `api_token` y
+    `api_url` al frente, así que `Clase(rut, clave)` terminaba usando
+    la clave como URL de la API.
+
+    :param str identificador: RUT del contribuyente, o el certificado
+        digital en PEM o en base64. Opcional: los recursos públicos no
+        lo necesitan.
+    :param str clave: Clave del identificador, o la llave privada
+        cuando el identificador es un certificado en PEM.
     :param str api_token: Token de autenticación para la API.
     :param str api_url: URL base para la API.
-    :param str api_version: Versión de la API.
     :param bool api_raise_for_status: Si se debe lanzar una excepción
         automáticamente para respuestas de error HTTP. Por defecto es
         True.
+    :param bool api_auth_cache: Con `False` se fuerza un login nuevo en
+        el SII en vez de reutilizar la sesión guardada.
     :param dict kwargs: Argumentos adicionales para la autenticación.
     """
 
     def __init__(
         self,
+        identificador: str | None = None,
+        clave: str | None = None,
         api_token: str | None = None,
         api_url: str | None = None,
-        api_version: str | None = None,
         api_raise_for_status: bool = True,
+        api_auth_cache: bool | None = None,
         **kwargs: str,
     ) -> None:
-        """Arma el `ApiClient` y configura la autenticación (`kwargs`)."""
+        """Arma el `ApiClient` y configura la autenticación."""
         self.auth: dict[str, Any] = {}
         self.client = ApiClient(
-            api_token, api_url, api_version, api_raise_for_status
+            api_token,
+            api_url,
+            api_raise_for_status,
+            api_auth_cache,
         )
-        self.__setup_auth(kwargs)
+        credenciales = dict(kwargs)
+        if identificador is not None:
+            credenciales['identificador'] = identificador
+        if clave is not None:
+            credenciales['clave'] = clave
+        self.__setup_auth(credenciales)
 
     def __setup_auth(self, kwargs: dict[str, str]) -> None:
         """
@@ -360,8 +445,14 @@ class ApiBase:
             if self.__is_auth_pass(identificador):
                 self.auth = {'pass': {'rut': identificador, 'clave': clave}}
             elif self.__is_auth_cert_data(identificador):
+                # Se guardan normalizados: si vinieron en una sola
+                # línea con los saltos escapados, la API debe recibir
+                # los saltos reales.
                 self.auth = {
-                    'cert': {'cert-data': identificador, 'pkey-data': clave}
+                    'cert': {
+                        'cert-data': self._normalizar_pem(identificador),
+                        'pkey-data': self._normalizar_pem(clave),
+                    }
                 }
             elif self.__is_auth_file_data(identificador):
                 self.auth = {
@@ -428,27 +519,36 @@ class ApiBase:
         else:
             return True
 
+    @staticmethod
+    def _normalizar_pem(pem_str: str) -> str:
+        r"""
+        Convierte a saltos de línea reales los `\n` escritos como texto.
+
+        El tutorial oficial para extraer el PEM desde un `.p12` deja el
+        certificado y la llave en una sola línea, con los saltos
+        escapados, para poder pegarlos dentro de un JSON. Leído desde
+        Python ese archivo llega con los `\n` literales, así que se
+        normalizan antes de usarlo.
+
+        :param str pem_str: Contenido del PEM, tal cual se recibió.
+        :return: El mismo contenido con saltos de línea reales.
+        :rtype: str
+        """
+        return pem_str.replace('\\r\\n', '\n').replace('\\n', '\n')
+
     def __is_auth_cert_data(self, pem_str: str | None) -> bool:
         """
         Valida si una cadena tiene formato PEM válido.
 
-        El formato PEM debe cumplir con los siguientes criterios:
+        Acepta uno o varios bloques seguidos, porque el certificado de
+        una firma electrónica suele venir como cadena de certificación
+        con dos o más bloques `BEGIN CERTIFICATE`. También acepta el
+        PEM en una sola línea con los saltos escapados.
+
+        El formato PEM de cada bloque debe cumplir con lo siguiente:
             - Comienza con una línea "-----BEGIN [LABEL]-----"
             - Termina con una línea "-----END [LABEL]-----"
             - Contiene contenido Base64 válido entre BEGIN y END
-
-        **Ejemplos de PEM Válidos:**
-            ```
-            -----BEGIN CERTIFICATE-----
-            MIIDdzCCAl+gAwIBAgIEbGzVnzANBgkqhkiG9w0BAQsFADBvMQswCQYDVQQGEwJV
-            ...
-            -----END CERTIFICATE-----
-            ```
-
-        **Ejemplos de PEM Inválidos:**
-            - Falta la línea de inicio o fin.
-            - Contenido no codificado en Base64.
-            - Etiquetas de BEGIN y END que no coinciden.
 
         :param str pem_str: La cadena a validar.
         :return: True si la cadena tiene formato PEM válido.
@@ -456,31 +556,53 @@ class ApiBase:
         """
         if pem_str is None:
             return False
-        # Expresión regular para validar el formato PEM
+        texto = self._normalizar_pem(pem_str).strip()
         patron = re.compile(
-            r'-----BEGIN ([A-Z ]+)-----\s+'
-            r'([A-Za-z0-9+/=\s]+)'
-            r'-----END \1-----$',
-            re.MULTILINE,
+            r'-----BEGIN (?P<etiqueta>[A-Z ]+)-----\s+'
+            r'(?P<cuerpo>[A-Za-z0-9+/=\s]+?)'
+            r'-----END (?P=etiqueta)-----'
         )
-
-        # Intentar hacer match con el patrón
-        match = patron.fullmatch(pem_str.strip())
-        if not match:
+        bloques = list(patron.finditer(texto))
+        if not bloques:
             return False
-
-        # Extraer el contenido Base64
-        base64_content = (
-            match.group(2).replace('\n', '').replace('\r', '').strip()
-        )
-
-        # Verificar que el contenido Base64 sea válido
-        try:
-            base64.b64decode(base64_content, validate=True)
-        except (base64.binascii.Error, ValueError):  # type: ignore[attr-defined]
+        # Fuera de los bloques no puede haber nada más que espacios.
+        resto = texto
+        for bloque in bloques:
+            resto = resto.replace(bloque.group(0), '', 1)
+        if resto.strip():
             return False
-        else:
-            return True
+        # Cada bloque debe traer Base64 válido.
+        for bloque in bloques:
+            cuerpo = re.sub(r'\s', '', bloque.group('cuerpo'))
+            try:
+                base64.b64decode(cuerpo, validate=True)
+            except (base64.binascii.Error, ValueError):  # type: ignore[attr-defined]
+                return False
+        return True
+
+    def _build_url(self, recurso: str, **params: Any) -> str:
+        """
+        Arma un recurso de la API junto a su query string.
+
+        Los parámetros con valor `None` se omiten, para que la API
+        aplique el valor por defecto que tenga definido para cada uno.
+
+        :param str recurso: Recurso de la API, sin query string.
+        :param params: Parámetros a enviar en la query string.
+        :return: Recurso con la query string ya codificada.
+        :rtype: str
+        """
+        query = {
+            clave: str(valor)
+            for clave, valor in params.items()
+            if valor is not None
+        }
+        if not query:
+            return recurso
+        return '%(recurso)s?%(query)s' % {
+            'recurso': recurso,
+            'query': urllib.parse.urlencode(query),
+        }
 
     def _get_auth_pass(self) -> dict[str, Any]:
         """

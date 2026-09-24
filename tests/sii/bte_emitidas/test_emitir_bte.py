@@ -20,6 +20,7 @@
 import unittest
 from datetime import datetime
 from os import getenv
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -28,58 +29,65 @@ from apigatewaycl.api_client.sii.bte import BteEmitidas
 
 pytestmark = pytest.mark.risky
 
-class TestEmitirBte(unittest.TestCase):
 
+class TestEmitirBte(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
+        cls.contribuyente_rut = getenv(
+            'TEST_CONTRIBUYENTE_IDENTIFICADOR',
+            '',
+        ).strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
         cls.client = BteEmitidas(cls.contribuyente_rut, contribuyente_clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
         cls.receptor_rut = getenv('TEST_BTE_EMITIDAS_RECEPTOR_RUT', '').strip()
 
     # CASO 3: emitir boleta
     def test_emitir_bte(self):
         if self.receptor_rut == '':
-            print('test_emitir(): no probó funcionalidad.')
-            return
+            self.skipTest(
+                'falta TEST_BTE_EMITIDAS_RECEPTOR_RUT en test.env.',
+            )
         fecha_emision = getenv(
             'TEST_BTE_EMITIDAS_FECHA_EMISION',
-            datetime.now().strftime("%Y-%m-%d")
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y-%m-%d'),
         ).strip()
         datos_bte = {
             'Encabezado': {
                 'IdDoc': {
-                    'FchEmis': fecha_emision
+                    'FchEmis': fecha_emision,
                 },
                 'Emisor': {
-                    'RUTEmisor': self.contribuyente_rut
+                    'RUTEmisor': self.contribuyente_rut,
                 },
                 'Receptor': {
                     'RUTRecep': self.receptor_rut,
                     'RznSocRecep': 'Receptor generico',
                     'DirRecep': 'Santa Cruz',
-                    'CmnaRecep': 'Santa Cruz'
-                }
+                    'CmnaRecep': 'Santa Cruz',
+                },
             },
             'Detalle': [
                 {
                     'NmbItem': 'Prueba integracion API Gateway 1',
-                    'MontoItem': 50
+                    'MontoItem': 50,
                 },
                 {
                     'NmbItem': 'Prueba integracion API Gateway 2',
-                    'MontoItem': 100
-                }
-            ]
+                    'MontoItem': 100,
+                },
+            ],
         }
         try:
-            emitir = self.client.emitir(datos_bte)
+            emitir = self.client.emitir(datos_bte)['data']
 
             self.assertIsNotNone(emitir)
 
             if self.verbose:
                 print('test_emitir(): emitir', emitir)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

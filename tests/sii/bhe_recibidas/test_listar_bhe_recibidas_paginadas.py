@@ -20,6 +20,7 @@
 import unittest
 from datetime import datetime
 from os import getenv
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -28,15 +29,21 @@ from apigatewaycl.api_client.sii.bhe import BheRecibidas
 
 pytestmark = pytest.mark.readonly
 
-class TestListarBheRecibidasPaginadas(unittest.TestCase):
 
+class TestListarBheRecibidasPaginadas(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
+        cls.contribuyente_rut = getenv(
+            'TEST_CONTRIBUYENTE_IDENTIFICADOR',
+            '',
+        ).strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
         cls.client = BheRecibidas(cls.contribuyente_rut, contribuyente_clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
 
     # CASO 1: boletas del periodo paginadas
     def test_listar_bhe_recibidas_paginadas(self):
@@ -45,30 +52,29 @@ class TestListarBheRecibidasPaginadas(unittest.TestCase):
             if self.verbose:
                 print('test_documentos(): documentos', documentos)
                 print(
-                    'test_documentos(): len(documentos)', len(documentos)
+                    'test_documentos(): len(documentos)',
+                    len(documentos),
                 )
 
             self.assertTrue(True)
 
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})
 
     # Método privado que obtiene las boletas paginadas del CASO 1
     def _get_documentos(self):
         documentos = []
         pagina = 1
-        pagina_sig_codigo = None
         while True:
-            documentos_pagina = self.client.documentos(
+            datos = self.client.documentos(
                 self.contribuyente_rut,
                 self.periodo,
                 pagina,
-                pagina_sig_codigo if self.client.client.version == 'v1' else None
-            )
-            if documentos_pagina['pagina_sig_codigo'] == '00000000000000':
+            )['data']
+            if not datos:
                 break
-            if self.client.client.version == 'v1':
-                pagina_sig_codigo = documentos_pagina['pagina_sig_codigo']
-            documentos = documentos + documentos_pagina['boletas']
+            documentos = documentos + datos.get('boletas', [])
+            if pagina >= datos.get('n_paginas', 1):
+                break
             pagina += 1
         return documentos

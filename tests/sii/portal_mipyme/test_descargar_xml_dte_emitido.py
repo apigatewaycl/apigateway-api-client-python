@@ -21,6 +21,7 @@ import os
 import unittest
 from datetime import datetime
 from os import getenv
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -29,16 +30,22 @@ from apigatewaycl.api_client.sii.portal_mipyme import DteEmitidos
 
 pytestmark = pytest.mark.readonly
 
-class TestDescargarXmlDteEmitido(unittest.TestCase):
 
+class TestDescargarXmlDteEmitido(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
         clave = getenv('TEST_USUARIO_CLAVE', '').strip()
         cls.client = DteEmitidos(cls.identificador, clave)
-        cls.contribuyente_rut = getenv('TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT', '').strip()
-        anio = getenv('TEST_ANIO', datetime.now().strftime("%Y")).strip()
+        cls.contribuyente_rut = getenv(
+            'TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT',
+            '',
+        ).strip()
+        anio = getenv(
+            'TEST_ANIO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y'),
+        ).strip()
         cls.fecha_desde = f'{anio}-01-01'
         cls.fecha_hasta = f'{anio}-01-31'
 
@@ -50,35 +57,46 @@ class TestDescargarXmlDteEmitido(unittest.TestCase):
                 {
                     'FEC_DESDE': self.fecha_desde,
                     'FEC_HASTA': self.fecha_hasta,
-                }
-            )
+                },
+            )['data']
             if len(documentos) == 0:
-                print('test_xml(): no probó funcionalidad.')
-                return
+                self.skipTest(
+                    'la API no devolvió documentos con los cuales probar.',
+                )
             dte = documentos[0]['dte']
             folio = documentos[0]['folio']
             xml = self.client.xml(
                 self.contribuyente_rut,
                 documentos[0]['dte'],
-                documentos[0]['folio']
+                documentos[0]['folio'],
             )
 
-            # Retrocede dos niveles para salir de 'dte_facturacion' y entrar en 'tests'
-            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            # Retrocede dos niveles para salir de 'dte_facturacion'
+            # y entrar en 'tests'
+            base_dir = os.path.dirname(
+                os.path.dirname(os.path.dirname(__file__)),
+            )
 
             # Define la carpeta de destino correcta
-            output_dir = os.path.join(base_dir, 'archivos', 'sii', 'mipyme_dte_emitido_xml')
+            output_dir = os.path.join(
+                base_dir,
+                'archivos',
+                'sii',
+                'mipyme_dte_emitido_xml',
+            )
 
             # Crear la carpeta si no existe
             os.makedirs(output_dir, exist_ok=True)
 
             filename = os.path.join(
                 output_dir,
-                'MIPYME_DTE_EMITIDO_%(contribuyente_rut)s_T%(dte)sF%(folio)s.xml' % {
+                'MIPYME_DTE_EMITIDO_%(contribuyente_rut)s'
+                '_T%(dte)sF%(folio)s.xml'
+                % {
                     'contribuyente_rut': self.contribuyente_rut,
                     'dte': dte,
-                    'folio': folio
-                }
+                    'folio': folio,
+                },
             )
 
             with open(filename, 'wb') as f:
@@ -89,4 +107,4 @@ class TestDescargarXmlDteEmitido(unittest.TestCase):
             if self.verbose:
                 print('test_xml(): filename', filename)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

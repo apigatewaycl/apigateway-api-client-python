@@ -21,7 +21,7 @@
 Módulo para el Registro de Transferencia de Crédito (RTC) del SII.
 
 Para más información sobre la API, consulte la `documentación completa
-del RTC <https://developers.apigateway.cl/>`_.
+del RTC <https://www.apigateway.cl/docs>`_.
 """
 
 from __future__ import annotations
@@ -40,7 +40,12 @@ class Cesiones(ApiBase):
     :param kwargs: Argumentos adicionales.
     """
 
-    def __init__(self, identificador: str, clave: str, **kwargs: str) -> None:
+    def __init__(
+        self,
+        identificador: str,
+        clave: str,
+        **kwargs: str,
+    ) -> None:
         """Autentica con `identificador`/`clave` del contribuyente."""
         super().__init__(
             identificador=identificador,
@@ -59,31 +64,55 @@ class Cesiones(ApiBase):
         """
         Certificado de cesión de un DTE, con cedente/cesionario/fecha.
 
-        La respuesta es el certificado del SII en HTML, no un objeto
-        JSON.
+        El certificado del SII viene en HTML, pero la API lo envuelve
+        en JSON: se entrega como una cadena dentro del cuerpo.
 
         :param str emisor: RUT del emisor del documento.
         :param str dte: Código del tipo de documento.
         :param str folio: Folio del documento.
         :param str fecha: Fecha de emisión del documento (AAAA-MM-DD).
         :param str certificacion: `'0'` producción, `'1'` certificación.
-        :return: Certificado de cesión en HTML.
-        :rtype: str
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, certificado de cesión en HTML.
+        :rtype: dict
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/rtc/cesiones/certificado/%(emisor)s/%(dte)s/%(folio)s'
+            '/%(fecha)s'
+            % {
+                'emisor': emisor,
+                'dte': dte,
+                'folio': folio,
+                'fecha': fecha,
+            },
+            certificacion=certificacion,
+        )
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()
 
     def estado_envio(
-        self, track_id: str, certificacion: str | None = None
+        self,
+        track_id: str,
+        certificacion: str | None = None,
     ) -> Any:
         """
         Estado de envío de una cesión.
 
         :param str track_id: ID de la cesión.
         :param str certificacion: `'0'` producción, `'1'` certificación.
-        :return: Estado del envío y track id.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, estado del envío y track id.
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/rtc/cesiones/estado_envio/%(track_id)s'
+            % {'track_id': track_id},
+            certificacion=certificacion,
+        )
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()
 
     def estado(
         self,
@@ -99,10 +128,18 @@ class Cesiones(ApiBase):
         :param str dte: Código del tipo de documento.
         :param str folio: Folio del documento.
         :param str certificacion: `'0'` producción, `'1'` certificación.
-        :return: Estado de la cesión (y detalle, si hay tenedor vigente).
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, estado de la cesión (y detalle, si hay tenedor vigente).
         :rtype: dict
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/rtc/cesiones/estado/%(emisor)s/%(dte)s/%(folio)s'
+            % {'emisor': emisor, 'dte': dte, 'folio': folio},
+            certificacion=certificacion,
+        )
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        return response.json()
 
     def documentos(
         self,
@@ -126,7 +163,19 @@ class Cesiones(ApiBase):
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :param str formato: `'xml'`, `'csv'` o `'txt'` — de no
             indicarse, la respuesta es JSON.
-        :return: Listado de cesiones del período.
-        :rtype: list[dict]
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, listado de cesiones del período. Con `formato` `'xml'`,
+            `'csv'` o `'txt'` se entrega el archivo crudo, sin decodificar.
+        :rtype: dict | bytes
         """
-        # TODO: Implementar.
+        url = self._build_url(
+            '/sii/rtc/cesiones/documentos/%(desde)s/%(hasta)s/%(consulta)s'
+            % {'desde': desde, 'hasta': hasta, 'consulta': consulta},
+            certificacion=certificacion,
+            formato=formato,
+        )
+        body = {'auth': self._get_auth_pass()}
+        response = self.client.post(url, data=body)
+        if formato in ('xml', 'csv', 'txt'):
+            return response.content
+        return response.json()
