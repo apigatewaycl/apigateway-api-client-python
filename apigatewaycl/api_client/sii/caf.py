@@ -26,9 +26,9 @@ del CAF <https://www.apigateway.cl/docs>`_.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
-from .. import ApiBase
+from .. import ApiBase, Respuesta
 
 
 class Caf(ApiBase):
@@ -60,12 +60,32 @@ class Caf(ApiBase):
         emisor: str,
         dte: int,
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Estado de timbraje de un tipo de DTE.
 
         Folios timbrables y observaciones del SII sobre el
         contribuyente. Solo consulta, no solicita folios.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "dte": {
+                  "codigo": 33,
+                  "limitado": true,
+                  "maximo_autorizado": 100,
+                  "folios_disponibles": 20,
+                  "timbraje_permitido": 80
+                },
+                "contribuyente": {
+                  "observado": false,
+                  "glosa": null,
+                  "observaciones": []
+                }
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor.
         :param int dte: Código del tipo de documento.
@@ -81,7 +101,7 @@ class Caf(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def solicitar(
         self,
@@ -89,7 +109,7 @@ class Caf(ApiBase):
         dte: int,
         cantidad: int,
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> bytes:
         """
         Solicita un nuevo CAF (folios) al SII.
 
@@ -119,7 +139,7 @@ class Caf(ApiBase):
         folio_final: int,
         fecha_autorizacion: str,
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> bytes:
         """
         Obtiene el XML de un CAF ya solicitado.
 
@@ -155,9 +175,20 @@ class Caf(ApiBase):
         folio: int,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]] | str:
         """
         Estado de un folio en el SII (estado, glosa, track id de envío).
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "estado": "recibido",
+                "estado_glosa": "Documento recibido por el SII",
+                "track_id": "231986674"
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor del folio.
         :param int dte: Código del tipo de documento.
@@ -165,9 +196,9 @@ class Caf(ApiBase):
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :param str formato: `'json'` o `'html'`.
         :return: Respuesta de la API, con `data` y `metadata`.
-            En `data`, estado del folio. Con `formato='html'` la API igual
-            responde JSON: el HTML viene como una cadena dentro del cuerpo.
-        :rtype: dict
+            En `data`, estado del folio. Con `formato='html'` se entrega
+            el HTML del SII como `str`, sin `data` ni `metadata`.
+        :rtype: dict | str
         """
         url = self._build_url(
             '/sii/dte/caf/estado/%(emisor)s/%(dte)s/%(folio)s'
@@ -177,7 +208,11 @@ class Caf(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        # Con `formato='html'` la API responde el HTML como una cadena
+        # JSON, sin `data` ni `metadata`.
+        if formato == 'html':
+            return cast(str, response.json())
+        return self._json(response)
 
     def anular(
         self,
@@ -187,9 +222,23 @@ class Caf(ApiBase):
         folio_final: int,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]] | str:
         """
         Anula un rango de folios ya solicitados al SII.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "emisor": "76192083-9",
+                "fecha_anulacion": "2024-01-15",
+                "dte": 39,
+                "folio_inicial": 707,
+                "folio_final": 707,
+                "usuario": "12345678-9"
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor.
         :param int dte: Código del tipo de documento.
@@ -199,9 +248,9 @@ class Caf(ApiBase):
         :param str formato: `'json'` o `'html'`.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos de la anulación (fecha, usuario, rango). Con
-            `formato='html'` la API igual responde JSON: el HTML viene como una
-            cadena dentro del cuerpo.
-        :rtype: dict
+            `formato='html'` se entrega el HTML del SII como `str`, sin
+            `data` ni `metadata`.
+        :rtype: dict | str
         """
         url = self._build_url(
             '/sii/dte/caf/anular/%(emisor)s/%(dte)s/%(folio_inicial)s'
@@ -217,7 +266,11 @@ class Caf(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        # Con `formato='html'` la API responde el HTML como una cadena
+        # JSON, sin `data` ni `metadata`.
+        if formato == 'html':
+            return cast(str, response.json())
+        return self._json(response)
 
     def solicitudes(
         self,
@@ -226,12 +279,27 @@ class Caf(ApiBase):
         pagina: int,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[list[dict[str, Any]]] | str:
         """
         Listado paginado de solicitudes de CAF de un emisor.
 
         `pagina` parte en `1` — usar `metadata.siguiente_pagina` de la
         respuesta (`None` si es la última) para paginar.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "inicial": 1022,
+                  "final": 1022,
+                  "cantidad": 1,
+                  "fecha": "2025-09-24",
+                  "mandatario": "NOMBRE MANDATARIO 1"
+                }
+              ],
+              "metadata": {"timestamp": "...", "siguiente_pagina": 2}
+            }
 
         :param str emisor: RUT del emisor del CAF.
         :param int dte: Código del tipo de documento.
@@ -241,9 +309,9 @@ class Caf(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`. En
             `data`, el listado de solicitudes; en `metadata`,
             `siguiente_pagina` (`None` si es la última). Con
-            `formato='html'` la API igual responde JSON: el HTML viene
-            como una cadena dentro de `data`.
-        :rtype: dict
+            `formato='html'` se entrega el HTML del SII como `str`, sin
+            `data` ni `metadata`.
+        :rtype: dict | str
         """
         url = self._build_url(
             '/sii/dte/caf/solicitudes/%(emisor)s/%(dte)s'
@@ -254,7 +322,11 @@ class Caf(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        # Con `formato='html'` la API responde el HTML como una cadena
+        # JSON, sin `data` ni `metadata`.
+        if formato == 'html':
+            return cast(str, response.json())
+        return self._json(response)
 
     def estados(
         self,
@@ -264,9 +336,16 @@ class Caf(ApiBase):
         folio_final: int,
         estado: str,
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[list[dict[str, Any]]]:
         """
         Estados de un rango de folios en el SII, agrupados por tramos.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [{"inicial": 1002, "final": 1004, "cantidad": 3}],
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor.
         :param int dte: Código del tipo de documento.
@@ -293,4 +372,4 @@ class Caf(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)

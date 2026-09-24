@@ -41,11 +41,15 @@ import json
 import re
 import urllib.parse
 from os import getenv
-from typing import Any
+from typing import Any, cast
 
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
 from requests.exceptions import HTTPError, RequestException, Timeout
+
+from .tipos import Respuesta
+
+__all__ = ['ApiBase', 'ApiClient', 'ApiException', 'Respuesta']
 
 _HTTP_OK = 200
 
@@ -603,6 +607,22 @@ class ApiBase:
             'recurso': recurso,
             'query': urllib.parse.urlencode(query),
         }
+
+    @staticmethod
+    def _json(response: requests.Response) -> Respuesta[Any]:
+        """
+        Entrega el cuerpo JSON de la respuesta, tipado como `Respuesta`.
+
+        `requests` tipa `json()` como `Any`; el `cast` se hace acá una
+        sola vez en vez de repetirlo en cada método. `Respuesta[Any]`
+        se asigna a cualquier `Respuesta[T]`, así que cada método
+        declara la forma de `data` en su anotación sin otro `cast`.
+
+        :param requests.Response response: Respuesta de la API.
+        :return: Respuesta de la API, con `data` y `metadata`.
+        :rtype: dict
+        """
+        return cast(Respuesta[Any], response.json())
 
     def _get_auth(self) -> dict[str, Any]:
         """

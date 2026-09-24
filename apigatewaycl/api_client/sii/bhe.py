@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase
+from .. import ApiBase, Respuesta
 
 
 class BheEmitidas(ApiBase):
@@ -71,12 +71,32 @@ class BheEmitidas(ApiBase):
         emisor: str,
         periodo: str,
         pagina: int = 1,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Obtiene los documentos de BHE emitidos por un emisor en un periodo.
 
         La API exige `pagina`: parte en `1` y se avanza de a una,
         hasta `n_paginas`.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "boletas": [
+                  {
+                    "numero": 144,
+                    "rut": 0,
+                    "dv": "0",
+                    "nombre": "",
+                    "fecha": "2025-08-18",
+                    "...": "..."
+                  }
+                ],
+                "n_paginas": 1,
+                "n_boletas": 1
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor de las boletas.
         :param str periodo: Período de tiempo de las boletas emitidas.
@@ -92,11 +112,51 @@ class BheEmitidas(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
-    def emitir(self, boleta: dict[str, Any]) -> Any:
+    def emitir(self, boleta: dict[str, Any]) -> Respuesta[dict[str, Any]]:
         """
         Emite una nueva Boleta de Honorarios Electrónica.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "Encabezado": {
+                  "Emisor": {
+                    "CmnaOrigen": "Región",
+                    "CodigoDirOrigen": "065722046",
+                    "DirOrigen": "Dirección",
+                    "GiroEmis": "Giro",
+                    "RUTEmisor": "12345678-9",
+                    "...": "..."
+                  },
+                  "IdDoc": {
+                    "CodigoBarras": "Código de barras",
+                    "CodigoInferior": "Código inferior",
+                    "FchEmis": "2020-09-16",
+                    "Folio": 155,
+                    "TipoDTE": 66,
+                    "...": "..."
+                  },
+                  "Receptor": {
+                    "CmnaRecep": "Región",
+                    "CodigoCmnaRecep": 6205,
+                    "CodigoRegionRecep": 6,
+                    "DirRecep": "Dirección",
+                    "RUTRecep": "0-0",
+                    "...": "..."
+                  }
+                },
+                "Detalle": [
+                  {
+                    "MontoItem": 50,
+                    "NmbItem": "Prueba integracion API Gateway 1"
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param dict boleta: Información detallada de la boleta a emitir.
         :return: Respuesta de la API, con `data` y `metadata`.
@@ -105,7 +165,7 @@ class BheEmitidas(ApiBase):
         """
         body = {'auth': self._get_auth(), 'boleta': boleta}
         response = self.client.post('/sii/bhe/emitidas/emitir', data=body)
-        return response.json()
+        return self._json(response)
 
     def pdf(self, codigo: str) -> bytes:
         """
@@ -124,9 +184,19 @@ class BheEmitidas(ApiBase):
         self,
         codigo: str,
         email: str,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Envía por correo electrónico una BHE emitida.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "message": "La Boleta de Honorarios Electrónica s...",
+                "email": "ejemplo@ejemplo.com"
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str codigo: Código único de la BHE a enviar.
         :param str email: Dirección de correo a la cual enviar la BHE.
@@ -140,16 +210,33 @@ class BheEmitidas(ApiBase):
             'destinatario': {'email': email},
         }
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def anular(
         self,
         emisor: str,
         folio: str,
         causa: int = ANULACION_CAUSA_ERROR_DIGITACION,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Anula una BHE emitida.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "boleta_anulada": "S",
+                "dv_autentificado": "4",
+                "dv_receptor": "6",
+                "fecha_cgi": "16/09/2020",
+                "monto_maximo_anulacion": "100000000",
+                "nombre_contribuyente": "EMISOR",
+                "nombre_receptor": "NACIONALES SIN RUT   (USO EXCLUSIVO F...",
+                "nro_boleta_eliminar": "155",
+                "...": "..."
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor de la boleta.
         :param str folio: Número de folio de la boleta.
@@ -164,7 +251,7 @@ class BheEmitidas(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
 
 class BheRecibidas(ApiBase):
@@ -197,12 +284,32 @@ class BheRecibidas(ApiBase):
         receptor: str,
         periodo: str,
         pagina: int = 1,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Obtiene los documentos de BHE recibidos por un receptor en un periodo.
 
         La API exige `pagina`: parte en `1` y se avanza de a una,
         hasta `n_paginas`.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "n_paginas": 1,
+                "n_boletas": 1,
+                "boletas": [
+                  {
+                    "anulada": "",
+                    "codigo": "",
+                    "comuna": "13159",
+                    "dv": "9",
+                    "estado": "N",
+                    "...": "..."
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str receptor: RUT del receptor de las boletas.
         :param str periodo: Período de tiempo de las boletas recibidas.
@@ -218,7 +325,7 @@ class BheRecibidas(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def pdf(self, codigo: str) -> bytes:
         """
@@ -238,9 +345,22 @@ class BheRecibidas(ApiBase):
         emisor: str,
         numero: str,
         causa: int = 1,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Marca una observación en una BHE recibida.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "nombre_contribuyente": "API Gateway",
+                "rut_arrastre": "76192083",
+                "dv_arrastre": "9",
+                "fecha_cgi": "16/08/2020",
+                "nro_trx": "12345678"
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor de la boleta.
         :param str numero: Número de la boleta.
@@ -256,7 +376,7 @@ class BheRecibidas(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
 
 class ConsultasPorTerceros(ApiBase):
@@ -291,7 +411,7 @@ class ConsultasPorTerceros(ApiBase):
         receptor: str | None = None,
         periodo: str | None = None,
         folio: int | None = None,
-    ) -> Any:
+    ) -> bytes:
         """
         Verifica la autenticidad de una BHE ante el SII.
 

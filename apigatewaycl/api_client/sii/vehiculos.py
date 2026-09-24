@@ -28,7 +28,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase
+from .. import ApiBase, Respuesta
 
 
 class Vehiculos(ApiBase):
@@ -48,7 +48,7 @@ class Vehiculos(ApiBase):
         modelo: str | None = None,
         tipo: int | None = None,
         version: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[list[dict[str, Any]]]:
         """
         Busca la tasación fiscal de un vehículo y su permiso de circulación.
 
@@ -57,6 +57,25 @@ class Vehiculos(ApiBase):
         `Debe especificar el tipo de vehículo.`. Los IDs válidos se
         obtienen con `categorias_tipos()` y `categorias_marcas()`.
         Agregar `marca` y `anio` acota bastante el resultado.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "anio": "2017",
+                  "anioTasa": "2020",
+                  "cara": 5,
+                  "cateId": "6",
+                  "cateName": "Liviano",
+                  "code": "SU2290241",
+                  "equi": 0,
+                  "haveFeatures": false,
+                  "...": "..."
+                }
+              ],
+              "metadata": {"timestamp": "..."}
+            }
 
         :param int anio: Año del vehículo.
         :param int anio_tasa: Año fiscal de la búsqueda (por defecto
@@ -89,11 +108,20 @@ class Vehiculos(ApiBase):
             if valor is not None
         }
         response = self.client.post('/sii/vehiculos/tasacion/buscar', body)
-        return response.json()
+        return self._json(response)
 
-    def categorias_tipos(self, categoria: str) -> Any:
+    def categorias_tipos(
+        self, categoria: str
+    ) -> Respuesta[list[dict[str, Any]]]:
         """
         Tipos de vehículos disponibles para una categoría.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [{"id": 37, "name": "Cabriolet"}],
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str categoria: ID de categoría (`'1'` livianos, `'2'`
             pesados, `'3'` motos).
@@ -105,11 +133,20 @@ class Vehiculos(ApiBase):
             'categoria': categoria,
         }
         response = self.client.get(url)
-        return response.json()
+        return self._json(response)
 
-    def categorias_marcas(self, categoria: str) -> Any:
+    def categorias_marcas(
+        self, categoria: str
+    ) -> Respuesta[list[dict[str, Any]]]:
         """
         Marcas de vehículos disponibles para una categoría.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [{"id": "1", "name": "ACADIAN"}],
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str categoria: ID de categoría (`'1'` livianos, `'2'`
             pesados, `'3'` motos).
@@ -121,11 +158,26 @@ class Vehiculos(ApiBase):
             'categoria': categoria,
         }
         response = self.client.get(url)
-        return response.json()
+        return self._json(response)
 
-    def categorias_caracteristicas(self, categoria: str) -> Any:
+    def categorias_caracteristicas(
+        self, categoria: str
+    ) -> Respuesta[list[dict[str, Any]]]:
         """
         Características disponibles para una categoría de vehículo.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "id": 1,
+                  "name": "Combustible",
+                  "data": [{"id": "2", "name": "Bencina"}]
+                }
+              ],
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str categoria: ID de categoría (`'1'` livianos, `'2'`
             pesados, `'3'` motos).
@@ -137,4 +189,4 @@ class Vehiculos(ApiBase):
             'categoria': categoria,
         }
         response = self.client.get(url)
-        return response.json()
+        return self._json(response)

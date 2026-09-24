@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase
+from .. import ApiBase, Respuesta
 
 
 class Contribuyente(ApiBase):
@@ -53,9 +53,67 @@ class Contribuyente(ApiBase):
             **kwargs,  # type: ignore[arg-type]
         )
 
-    def datos(self) -> Any:
+    def datos(self) -> Respuesta[dict[str, Any]]:
         """
         Obtiene los datos de MiSii del contribuyente autenticado en el SII.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "datos": {
+                  "codigoError": 0,
+                  "descripcionError": "OK",
+                  "sysdate": "string",
+                  "contribuyente": {
+                    "codigoError": 0,
+                    "descripcionError": "Contribuyente existe",
+                    "sysdate": "string",
+                    "rut": "1111111",
+                    "dv": "4",
+                    "...": "..."
+                  },
+                  "direcciones": [
+                    {
+                      "codigoError": 0,
+                      "descripcionError": "Contribuyente posee dirección",
+                      "sysdate": "string",
+                      "codigo": "123456789",
+                      "comunaCodigo": "43231",
+                      "...": "..."
+                    }
+                  ],
+                  "atributos": [
+                    {
+                      "rut": 1111111,
+                      "dv": "4",
+                      "atrCodigo": "NOTI",
+                      "descAtrCodigo": "CONTRIBUYENTE ES NOTIFICADO POR...",
+                      "fechaInicio": "01-05-2025",
+                      "...": "..."
+                    }
+                  ],
+                  "alertas": [{}]
+                },
+                "actividades_economicas": [
+                  {
+                    "codigoError": 0,
+                    "descripcionError": "Contribuyente posee actividade...",
+                    "sysdate": "string",
+                    "codigo": "1111111",
+                    "descripcion": "ACTIVIDAD ECONOMICA GLOSA",
+                    "...": "..."
+                  }
+                ],
+                "alertas": {
+                  "codigoError": 0,
+                  "descripcionError": "string",
+                  "sysdate": "string",
+                  "alertas": [{}]
+                }
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos del contribuyente.
@@ -64,7 +122,7 @@ class Contribuyente(ApiBase):
         url = '/sii/misii/contribuyente/datos'
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
 
 class Representantes(ApiBase):
@@ -92,11 +150,34 @@ class Representantes(ApiBase):
             **kwargs,  # type: ignore[arg-type]
         )
 
-    def listado(self) -> Any:
+    def listado(self) -> Respuesta[dict[str, Any]]:
         """
         Listado de representantes del contribuyente autenticado.
 
         Incluye también el listado de permisos que se pueden asignar.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "representado": {
+                  "rut": 12345678,
+                  "dv": "4",
+                  "nombre": "Contribuyente"
+                },
+                "representantes": [
+                  {"rut": 111111111, "dv": "4", "nombre": "Representante"}
+                ],
+                "permisos": [
+                  {
+                    "codigo": "MISII",
+                    "descripcion": "Acceso a MiSII",
+                    "nivel": "B"
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos del representado, sus representantes y permisos.
@@ -105,7 +186,7 @@ class Representantes(ApiBase):
         url = '/sii/misii/representantes/listado'
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
 
 class Representados(ApiBase):
@@ -133,9 +214,24 @@ class Representados(ApiBase):
             **kwargs,  # type: ignore[arg-type]
         )
 
-    def listado(self) -> Any:
+    def listado(self) -> Respuesta[dict[str, Any]]:
         """
         Listado de contribuyentes que representa el usuario autenticado.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "representante": {
+                  "rut": 19550156,
+                  "dv": "4",
+                  "nombre": "NICOLAS BENJAMIN CONTRERAS BECERRA"
+                },
+                "representados": [],
+                "permisos": []
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos del representante, sus representados y permisos.
@@ -144,15 +240,28 @@ class Representados(ApiBase):
         url = '/sii/misii/representados/listado'
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def representar(
         self,
         rut: str,
         permisos: str,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Asigna qué contribuyente representar en las siguientes llamadas.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "representado": {
+                  "rut": 76192083,
+                  "dv": "9",
+                  "nombre": "EMPRESA SPA"
+                }
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str rut: RUT del contribuyente a representar.
         :param str permisos: Códigos APPL de MiSII separados por coma
@@ -167,4 +276,4 @@ class Representados(ApiBase):
         }
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)

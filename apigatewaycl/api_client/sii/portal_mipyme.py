@@ -29,7 +29,7 @@ from __future__ import annotations
 from abc import ABC
 from typing import Any, ClassVar
 
-from .. import ApiBase
+from .. import ApiBase, Respuesta
 
 
 class PortalMipyme(ApiBase, ABC):
@@ -69,9 +69,34 @@ class Contribuyentes(PortalMipyme):
         contribuyente: str,
         emisor: str,
         dte: int = 33,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Obtiene información de un contribuyente específico.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "rut": 76192083,
+                "dv": "9",
+                "razon_social": "API Gateway",
+                "direcciones": [
+                  {
+                    "direccion": "Daniel Barros Grez 191",
+                    "comuna": "SANTA CRUZ",
+                    "ciudad": "SANTA CRUZ",
+                    "telefono": null
+                  }
+                ],
+                "actividades": [
+                  {
+                    "codigo": "619090",
+                    "glosa": "OTRAS ACTIVIDADES DE TELECOMUNICACIONES"
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str contribuyente: RUT del contribuyente.
         :param str emisor: RUT del emisor del DTE.
@@ -87,7 +112,7 @@ class Contribuyentes(PortalMipyme):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
 
 class Dte(PortalMipyme):
@@ -159,7 +184,7 @@ class Borradores(Dte):
         self,
         emisor: str,
         filtros: dict[str, Any] | None = None,
-    ) -> Any:
+    ) -> Respuesta[list[dict[str, Any]]]:
         """
         Listado de documentos borradores del emisor.
 
@@ -174,6 +199,29 @@ class Borradores(Dte):
         de ella), `FEC_DESDE` y `FEC_HASTA` (AAAA-MM-DD) y `ORDEN`
         (`FecAsc` o `FecDesc`).
 
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "ehdr_codigo": "4728198",
+                  "ptdc_codigo": "33",
+                  "ptdc_codigo_desc": "Factura Electronica",
+                  "ptes_estado": null,
+                  "efxp_fch_emis": "2026-09-23 18:49:38",
+                  "efxp_rzn_soc": "EMPRESA EMISORA SPA",
+                  "efxp_rut_recep": "76192083",
+                  "efxp_dv_recep": "9",
+                  "...": "..."
+                }
+              ],
+              "metadata": {
+                "timestamp": "...",
+                "n_documentos": 1,
+                "n_paginas": 1
+              }
+            }
+
         :param str emisor: RUT del emisor de los documentos.
         :param dict filtros: Filtros de búsqueda (opcional).
         :return: Respuesta de la API, con `data` y `metadata`.
@@ -186,14 +234,31 @@ class Borradores(Dte):
         }
         body = {'auth': self._get_auth(), 'filtros': filtros or {}}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
-    def emitir(self, dte: dict[str, Any]) -> Any:
+    def emitir(self, dte: dict[str, Any]) -> Respuesta[dict[str, Any]]:
         """
         Crea un documento borrador en el Portal Mipyme.
 
         No emite un DTE real ante el SII — el borrador se confirma
         luego desde el propio Portal MIPYME.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "ehdr_codigo": "4728198",
+                "ptdc_codigo": "33",
+                "ptdc_codigo_desc": "Factura Electronica",
+                "ptes_estado": null,
+                "efxp_fch_emis": "2026-09-23 18:49:38",
+                "efxp_rzn_soc": "EMPRESA EMISORA SPA",
+                "efxp_rut_recep": "76192083",
+                "efxp_dv_recep": "9",
+                "...": "..."
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param dict dte: Datos del DTE a armar como borrador.
         :return: Respuesta de la API, con `data` y `metadata`.
@@ -202,15 +267,32 @@ class Borradores(Dte):
         """
         body = {'auth': self._get_auth(), 'dte': dte}
         response = self.client.post('/sii/mipyme/borradores/emitir', data=body)
-        return response.json()
+        return self._json(response)
 
     def eliminar(
         self,
         emisor: str,
         codigo: str,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Elimina un documento borrador del Portal Mipyme.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "ehdr_codigo": "4728198",
+                "ptdc_codigo": "33",
+                "ptdc_codigo_desc": "Factura Electronica",
+                "ptes_estado": null,
+                "efxp_fch_emis": "2026-09-23 18:49:38",
+                "efxp_rzn_soc": "EMPRESA EMISORA SPA",
+                "efxp_rut_recep": "76192083",
+                "efxp_dv_recep": "9",
+                "...": "..."
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor de los documentos.
         :param str codigo: Código del borrador (del listado de documentos).
@@ -224,7 +306,7 @@ class Borradores(Dte):
         }
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
 
 class DteEmitidos(Dte):
@@ -240,9 +322,32 @@ class DteEmitidos(Dte):
         self,
         emisor: str,
         filtros: dict[str, Any] | None = None,
-    ) -> Any:
+    ) -> Respuesta[list[dict[str, Any]]]:
         """
         Obtiene documentos de DTE emitidos por un emisor.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "codigo": 12345678,
+                  "rut": 76192083,
+                  "dv": "9",
+                  "razon_social": "CLIENTE EJEMPLO",
+                  "dte": 33,
+                  "dte_glosa": "Factura Electrónica",
+                  "folio": 123,
+                  "fecha": "15/11/2024",
+                  "...": "..."
+                }
+              ],
+              "metadata": {
+                "timestamp": "...",
+                "n_documentos": 1926,
+                "n_paginas": 20
+              }
+            }
 
         :param str emisor: RUT del emisor.
         :param dict filtros: Filtros adicionales para la consulta.
@@ -253,7 +358,7 @@ class DteEmitidos(Dte):
         url = '/sii/mipyme/emitidos/documentos/%(emisor)s' % {'emisor': emisor}
         body = {'auth': self._get_auth(), 'filtros': filtros or {}}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def pdf(self, emisor: str, codigo: str) -> bytes:
         """
@@ -320,9 +425,32 @@ class DteRecibidos(Dte):
         self,
         receptor: str,
         filtros: dict[str, Any] | None = None,
-    ) -> Any:
+    ) -> Respuesta[list[dict[str, Any]]]:
         """
         Obtiene documentos de DTE recibidos por un receptor.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "codigo": 12345678,
+                  "rut": 76192083,
+                  "dv": "9",
+                  "razon_social": "CLIENTE EJEMPLO",
+                  "dte": 33,
+                  "dte_glosa": "Factura Electrónica",
+                  "folio": 123,
+                  "fecha": "15/11/2024",
+                  "...": "..."
+                }
+              ],
+              "metadata": {
+                "timestamp": "...",
+                "n_documentos": 589,
+                "n_paginas": 6
+              }
+            }
 
         :param str receptor: RUT del receptor.
         :param dict filtros: Filtros adicionales para la consulta.
@@ -335,7 +463,7 @@ class DteRecibidos(Dte):
         }
         body = {'auth': self._get_auth(), 'filtros': filtros or {}}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def pdf(self, receptor: str, codigo: str) -> bytes:
         """

@@ -28,7 +28,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase
+import requests
+
+from .. import ApiBase, Respuesta
 
 
 class BienesRaices(ApiBase):
@@ -75,12 +77,14 @@ class BienesRaices(ApiBase):
         manzana: int,
         predio: int,
         eac: int,
-    ) -> Any:
+    ) -> requests.Response:
         """
         Consulta un certificado de un bien raíz, por su rol.
 
         Los seis certificados comparten la misma ruta: sólo cambian el
-        tipo de certificado y el formato de salida.
+        tipo de certificado y el formato de salida. Entrega la respuesta
+        sin procesar para que cada método público tome el JSON o el PDF
+        según corresponda.
 
         :param str certificado: `'avaluo_fiscal_simple'`,
             `'avaluo_fiscal_previo'` o `'antecedentes'`.
@@ -89,9 +93,8 @@ class BienesRaices(ApiBase):
         :param int manzana: Código de la manzana.
         :param int predio: Código del predio.
         :param int eac: Último EAC aplicado.
-        :return: Respuesta de la API, con `data` y `metadata`.
-            En `data`, datos del certificado, o el contenido del PDF.
-        :rtype: dict | bytes
+        :return: Respuesta HTTP de la API.
+        :rtype: requests.Response
         """
         url = (
             '/sii/bienes_raices/certificados/%(certificado)s/%(formato)s'
@@ -105,14 +108,27 @@ class BienesRaices(ApiBase):
                 'eac': eac,
             }
         )
-        response = self.client.get(url)
-        if formato == 'pdf':
-            return response.content
-        return response.json()
+        return self.client.get(url)
 
-    def comunas(self) -> Any:
+    def comunas(self) -> Respuesta[list[dict[str, Any]]]:
         """
         Listado de comunas de los bienes raíces.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "codigoConaraSii": 5406,
+                  "nombre": "ALGARROBO",
+                  "regional": 5,
+                  "codigo": 0,
+                  "descripcion": null,
+                  "descCorta": null
+                }
+              ],
+              "metadata": {"timestamp": "..."}
+            }
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, comunas con su código CONARA/SII, nombre, región, código
@@ -120,11 +136,25 @@ class BienesRaices(ApiBase):
         :rtype: dict
         """
         response = self.client.get('/sii/bienes_raices/comunas')
-        return response.json()
+        return self._json(response)
 
-    def comuna(self, comuna: str) -> Any:
+    def comuna(self, comuna: str) -> Respuesta[dict[str, Any]]:
         """
         Datos de una comuna de los bienes raíces, por nombre.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "codigoConaraSii": 6205,
+                "nombre": "SANTA CRUZ",
+                "regional": 6,
+                "codigo": 0,
+                "descripcion": null,
+                "descCorta": null
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str comuna: Nombre de la comuna a buscar.
         :return: Respuesta de la API, con `data` y `metadata`.
@@ -134,16 +164,35 @@ class BienesRaices(ApiBase):
         """
         body = {'filtros': {'comuna': comuna}}
         response = self.client.post('/sii/bienes_raices/comuna', data=body)
-        return response.json()
+        return self._json(response)
 
     def propiedades_rol(
         self,
         comuna: int,
         manzana: int,
         predio: int,
-    ) -> Any:
+    ) -> Respuesta[list[dict[str, Any]]]:
         """
         Propiedades de un bien raíz por su rol (comuna/manzana/predio).
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "comunaCnp": 6205,
+                  "manzanaCnp": 123,
+                  "predioCnp": 6,
+                  "idRol": 0,
+                  "comunaActual": 0,
+                  "manzanaActual": 0,
+                  "predioActual": 0,
+                  "ultimoEacAplicado": 14,
+                  "...": "..."
+                }
+              ],
+              "metadata": {"timestamp": "..."}
+            }
 
         :param int comuna: Código de la comuna.
         :param int manzana: Número de manzana.
@@ -159,14 +208,33 @@ class BienesRaices(ApiBase):
             % {'comuna': comuna, 'manzana': manzana, 'predio': predio}
         )
         response = self.client.get(url)
-        return response.json()
+        return self._json(response)
 
-    def propiedades_contribuyente(self) -> Any:
+    def propiedades_contribuyente(self) -> Respuesta[list[dict[str, Any]]]:
         """
         Propiedades del contribuyente autenticado.
 
         Requiere autenticación con certificado digital (no admite
         RUT y clave).
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "comunaCnp": 6205,
+                  "manzanaCnp": 123,
+                  "predioCnp": 6,
+                  "idRol": 0,
+                  "comunaActual": 0,
+                  "manzanaActual": 0,
+                  "predioActual": 0,
+                  "ultimoEacAplicado": 14,
+                  "...": "..."
+                }
+              ],
+              "metadata": {"timestamp": "..."}
+            }
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de propiedades con identificación del rol,
@@ -178,7 +246,7 @@ class BienesRaices(ApiBase):
             '/sii/bienes_raices/propiedades/contribuyente',
             data=body,
         )
-        return response.json()
+        return self._json(response)
 
     def certificado_avaluo_fiscal_simple_data(
         self,
@@ -186,9 +254,33 @@ class BienesRaices(ApiBase):
         manzana: int,
         predio: int,
         eac: int,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Datos del certificado de avalúo fiscal simple de un bien raíz.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "datos_generales": {
+                  "comuna": "SANTA CRUZ",
+                  "rol": "00133-00026",
+                  "direccion": "DANIEL BARROS GONZALEZ 121",
+                  "destino": "HABITACIONAL",
+                  "folio": "V189304624",
+                  "codigo_verificacion": "312dqsdf-4978-4b68-859f-5f743c9a03fb"
+                },
+                "avaluo": {
+                  "semestre": "segundo",
+                  "año": 2025,
+                  "total": 123456789.0
+                },
+                "fecha_emision": "12 de Diciembre de 2005",
+                "error": null,
+                "success": false
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param int comuna: Código de la comuna.
         :param int manzana: Código de la manzana.
@@ -198,7 +290,7 @@ class BienesRaices(ApiBase):
             resultado de la consulta.
         :rtype: dict
         """
-        return self._certificado(
+        response = self._certificado(
             'avaluo_fiscal_simple',
             'data',
             comuna,
@@ -206,6 +298,7 @@ class BienesRaices(ApiBase):
             predio,
             eac,
         )
+        return self._json(response)
 
     def certificado_avaluo_fiscal_previo_data(
         self,
@@ -213,9 +306,33 @@ class BienesRaices(ApiBase):
         manzana: int,
         predio: int,
         eac: int,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Datos del certificado de avalúo fiscal previo de un bien raíz.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "datos_generales": {
+                  "comuna": "SANTA CRUZ",
+                  "rol": "00133-00026",
+                  "direccion": "DANIEL BARROS GONZALEZ 121",
+                  "destino": "HABITACIONAL",
+                  "folio": "V189304624",
+                  "codigo_verificacion": "312dqsdf-4978-4b68-859f-5f743c9a03fb"
+                },
+                "avaluo": {
+                  "semestre": "segundo",
+                  "año": 2025,
+                  "total": 123456789.0
+                },
+                "fecha_emision": "12 de Diciembre de 2005",
+                "error": null,
+                "success": false
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param int comuna: Código de la comuna.
         :param int manzana: Código de la manzana.
@@ -225,7 +342,7 @@ class BienesRaices(ApiBase):
             resultado de la consulta.
         :rtype: dict
         """
-        return self._certificado(
+        response = self._certificado(
             'avaluo_fiscal_previo',
             'data',
             comuna,
@@ -233,6 +350,7 @@ class BienesRaices(ApiBase):
             predio,
             eac,
         )
+        return self._json(response)
 
     def certificado_antecedentes_data(
         self,
@@ -240,9 +358,44 @@ class BienesRaices(ApiBase):
         manzana: int,
         predio: int,
         eac: int,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Datos del certificado de antecedentes de un bien raíz.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "datos_generales": {
+                  "comuna": "CONCEPCIÓN",
+                  "rol": "00321-00001",
+                  "direccion": "AVENIDA ISLA DE MAIPO 3211",
+                  "ubicacion": "URBANA",
+                  "destino": "HABITACIONAL",
+                  "serie": "NO AGRÍCOLA",
+                  "semestre": null,
+                  "folio": "00000000000000000000",
+                  "...": "..."
+                },
+                "avaluos": {
+                  "total": 125352123.0,
+                  "exento": 125352123.0,
+                  "afecto": 0.0,
+                  "año_termino_exencion": 1988
+                },
+                "contribuciones": {
+                  "neta": 0.0,
+                  "sobretasa_sitios": 0.0,
+                  "adicional": 0.0,
+                  "sobretasa": 0.0,
+                  "cuota_aseo": 0.0,
+                  "total": 0.0
+                },
+                "avaluo_actualizado": 125352123.0,
+                "fecha_emision": "16 de Diciembre de 2025"
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param int comuna: Código de la comuna.
         :param int manzana: Código de la manzana.
@@ -252,7 +405,7 @@ class BienesRaices(ApiBase):
             actualizado y fecha de emisión.
         :rtype: dict
         """
-        return self._certificado(
+        response = self._certificado(
             'antecedentes',
             'data',
             comuna,
@@ -260,6 +413,7 @@ class BienesRaices(ApiBase):
             predio,
             eac,
         )
+        return self._json(response)
 
     def certificado_avaluo_fiscal_simple_pdf(
         self,
@@ -267,7 +421,7 @@ class BienesRaices(ApiBase):
         manzana: int,
         predio: int,
         eac: int,
-    ) -> Any:
+    ) -> bytes:
         """
         PDF del certificado de avalúo fiscal simple de un bien raíz.
 
@@ -278,7 +432,7 @@ class BienesRaices(ApiBase):
         :return: Contenido del PDF del certificado.
         :rtype: bytes
         """
-        return self._certificado(
+        response = self._certificado(
             'avaluo_fiscal_simple',
             'pdf',
             comuna,
@@ -286,6 +440,7 @@ class BienesRaices(ApiBase):
             predio,
             eac,
         )
+        return response.content
 
     def certificado_avaluo_fiscal_previo_pdf(
         self,
@@ -293,7 +448,7 @@ class BienesRaices(ApiBase):
         manzana: int,
         predio: int,
         eac: int,
-    ) -> Any:
+    ) -> bytes:
         """
         PDF del certificado de avalúo fiscal previo de un bien raíz.
 
@@ -304,7 +459,7 @@ class BienesRaices(ApiBase):
         :return: Contenido del PDF del certificado.
         :rtype: bytes
         """
-        return self._certificado(
+        response = self._certificado(
             'avaluo_fiscal_previo',
             'pdf',
             comuna,
@@ -312,6 +467,7 @@ class BienesRaices(ApiBase):
             predio,
             eac,
         )
+        return response.content
 
     def certificado_antecedentes_pdf(
         self,
@@ -319,7 +475,7 @@ class BienesRaices(ApiBase):
         manzana: int,
         predio: int,
         eac: int,
-    ) -> Any:
+    ) -> bytes:
         """
         PDF del certificado de antecedentes de un bien raíz.
 
@@ -330,7 +486,7 @@ class BienesRaices(ApiBase):
         :return: Contenido del PDF del certificado.
         :rtype: bytes
         """
-        return self._certificado(
+        response = self._certificado(
             'antecedentes',
             'pdf',
             comuna,
@@ -338,3 +494,4 @@ class BienesRaices(ApiBase):
             predio,
             eac,
         )
+        return response.content

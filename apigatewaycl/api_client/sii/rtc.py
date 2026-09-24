@@ -28,7 +28,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase
+from .. import ApiBase, Respuesta
 
 
 class Cesiones(ApiBase):
@@ -96,9 +96,19 @@ class Cesiones(ApiBase):
         self,
         track_id: str,
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Estado de envío de una cesión.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "estado": "Anotacion de Cesion Aceptada, Envio A...",
+                "track_id": 75312822
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str track_id: ID de la cesión.
         :param str certificacion: `'0'` producción, `'1'` certificación.
@@ -113,7 +123,7 @@ class Cesiones(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def estado(
         self,
@@ -121,9 +131,22 @@ class Cesiones(ApiBase):
         dte: str,
         folio: str,
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Estado de cesión de un DTE (si está o no cedido, tenedor vigente).
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "cedido": true,
+                "clave_acceso": "",
+                "declaracion_jurada": "Archivo Electrónico de Cesión in...",
+                "fecha_ultima_anotacion": "2019-07-06 19:56:58",
+                "tenedor_vigente": "1-9"
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor del documento.
         :param str dte: Código del tipo de documento.
@@ -140,7 +163,7 @@ class Cesiones(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def documentos(
         self,
@@ -149,12 +172,31 @@ class Cesiones(ApiBase):
         consulta: str,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[list[dict[str, Any]]] | bytes:
         """
         Listado de documentos cedidos en un período (máximo 1 mes).
 
         Requiere autenticación de un contribuyente relacionado con la
         cesión (deudor, cedente o cesionario) o su representante.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "CEDENTE": "76192083-9",
+                  "CESIONARIO": "2-7",
+                  "DEUDOR": "1-9",
+                  "ESTADO_CESION": "Cesion Vigente",
+                  "FCH_CESION": "2019-07-06 19:56",
+                  "FCH_EMIS_DTE": "2019-07-01",
+                  "FCH_VENCIMIENTO": "2019-07-01",
+                  "FOLIO_DOC": "123",
+                  "...": "..."
+                }
+              ],
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str desde: Fecha de inicio (AAAA-MM-DD).
         :param str hasta: Fecha de fin, máximo 30 días desde `desde`
@@ -179,4 +221,4 @@ class Cesiones(ApiBase):
         response = self.client.post(url, data=body)
         if formato in ('xml', 'csv', 'txt'):
             return response.content
-        return response.json()
+        return self._json(response)

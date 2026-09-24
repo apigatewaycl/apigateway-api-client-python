@@ -27,9 +27,9 @@ de los DTE
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
-from .. import ApiBase
+from .. import ApiBase, Respuesta
 
 
 class Contribuyentes(ApiBase):
@@ -70,9 +70,31 @@ class Contribuyentes(ApiBase):
         self,
         rut: str,
         certificacion: bool | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Verifica si un contribuyente está autorizado para emitir DTE.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "autorizado": true,
+                "direccion_regional": "VI",
+                "documentos": [
+                  {
+                    "autorizado": "2016-03-01",
+                    "codigo": 39,
+                    "desautorizado": null,
+                    "descripcion": "BOLETA ELECTRONICA"
+                  }
+                ],
+                "razon_social": "API Gateway",
+                "resolucion": {"fecha": "2014-08-22", "numero": 80},
+                "rut": "76192083-9",
+                "software": "mercado"
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str rut: RUT del contribuyente a verificar.
         :param bool certificacion: Indica si se consulta en ambiente
@@ -88,18 +110,36 @@ class Contribuyentes(ApiBase):
             % {'rut': rut, 'certificacion_flag': certificacion_flag}
         )
         response = self.client.get(url)
-        return response.json()
+        return self._json(response)
 
     def datos(
         self,
         contribuyente: str,
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Datos privados del contribuyente autenticado.
 
         Incluye resolución de autorización, correos y software de
         facturación declarado.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "rut": "12345678-9",
+                "autorizado": "2025-02-25",
+                "razon_social": "RAZON SOCIAL SPA",
+                "resolucion": {"numero": 99, "fecha": "2014-10-21"},
+                "emails": {
+                  "administrador": "admin@example.com",
+                  "sii": "sii@example.com",
+                  "intercambio": "intercambio@example.com"
+                },
+                "software": {"nombre": "SII", "url": "www.example.com"}
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str contribuyente: RUT del contribuyente.
         :param str certificacion: `'0'` producción, `'1'` certificación.
@@ -114,16 +154,36 @@ class Contribuyentes(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def set_datos(
         self,
         contribuyente: str,
         datos: dict[str, Any],
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Actualiza los datos privados del contribuyente (emails, software).
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "data": {
+                  "rut": "12345678-9",
+                  "autorizado": "2019-12-23",
+                  "razon_social": "RAZON SOCIAL SPA",
+                  "resolucion": {"numero": 0, "fecha": "2019-12-23"},
+                  "emails": {
+                    "administrador": "admin@example.com",
+                    "sii": "sii@example.com",
+                    "intercambio": "dte@example.com"
+                  },
+                  "software": {"nombre": "LIBREDTE", "url": "www.libredte.cl"}
+                }
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str contribuyente: RUT del contribuyente a actualizar.
         :param dict datos: Datos a actualizar (`emails`, `software`).
@@ -139,15 +199,35 @@ class Contribuyentes(ApiBase):
         )
         body = {'auth': self._get_auth(), 'datos': datos}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def usuarios(
         self,
         rut: str,
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[list[dict[str, Any]]]:
         """
         Listado de usuarios autorizados de un contribuyente.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "nombre": "Juan",
+                  "permisos": {
+                    "administrador": true,
+                    "anular_folios": true,
+                    "consultar": true,
+                    "enviar": true,
+                    "firmar": true,
+                    "...": "..."
+                  },
+                  "run": "1-9"
+                }
+              ],
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str rut: RUT del contribuyente a consultar.
         :param str certificacion: `'0'` producción, `'1'` certificación.
@@ -161,14 +241,14 @@ class Contribuyentes(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def set_usuario(
         self,
         contribuyente: str,
         usuario: dict[str, Any],
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[list[dict[str, Any]]]:
         """
         Asigna un usuario autorizado, o modifica sus permisos si ya existe.
 
@@ -177,6 +257,26 @@ class Contribuyentes(ApiBase):
         `enviar` y `consultar`; las que no vengan cuentan como `False`.
         Para eliminar un usuario se envían todos los permisos en `False`:
         no hay un recurso aparte para eliminar.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "run": "66666666-6",
+                  "nombre": "Juan",
+                  "permisos": {
+                    "administrador": true,
+                    "solicitar_folios": true,
+                    "anular_folios": true,
+                    "firmar": true,
+                    "enviar": true,
+                    "...": "..."
+                  }
+                }
+              ],
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str contribuyente: RUT del contribuyente a actualizar.
         :param dict usuario: Usuario a asignar (`run` y `permisos`).
@@ -193,19 +293,42 @@ class Contribuyentes(ApiBase):
         )
         body = {'auth': self._get_auth(), 'usuario': usuario}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def autorizacion_certificado(
         self,
         rut: str,
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Estado de autorización de un contribuyente, con certificado.
 
         A diferencia de `autorizacion()` (`GET`, pública), esta
         variante requiere certificado digital y agrega el correo
         electrónico de intercambio del contribuyente a la respuesta.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "autorizado": true,
+                "direccion_regional": "VI",
+                "documentos": [
+                  {
+                    "autorizado": "2015-09-01",
+                    "codigo": 33,
+                    "desautorizado": null,
+                    "descripcion": "FACTURA ELECTRONICA"
+                  }
+                ],
+                "emails": {"intercambio": {"email": "dte@example.com"}},
+                "razon_social": "API Gateway",
+                "resolucion": {"fecha": "2014-08-22", "numero": 80},
+                "rut": "76192083-9",
+                "software": "mercado"
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str rut: RUT del contribuyente a consultar.
         :param str certificacion: `'0'` producción, `'1'` certificación.
@@ -220,14 +343,14 @@ class Contribuyentes(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def autorizados(
         self,
         certificacion: str | None = None,
         dia: str | None = None,
         formato: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[list[dict[str, Any]]] | bytes:
         """
         Descarga masiva de contribuyentes autorizados a emitir DTE.
 
@@ -235,6 +358,22 @@ class Contribuyentes(ApiBase):
         registros, cientos de MB, hasta 15 minutos). No es para
         consultas puntuales de un RUT — para eso usar `autorizacion()`
         o `autorizacion_certificado()`.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "rut": "76192083-9",
+                  "razon_social": "API Gateway",
+                  "resolucion_numero": "80",
+                  "resolucion_fecha": "2014-08-22",
+                  "email": "dte@example.com",
+                  "url": "www.example.com"
+                }
+              ],
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :param str dia: Fecha de corte (AAAAMMDD o AAAA-MM-DD).
@@ -261,7 +400,7 @@ class Contribuyentes(ApiBase):
         # `csv_sii`, el que aplica la API si no se pide otro) vienen
         # como texto plano y decodificarlos fallaría.
         if formato == 'json':
-            return response.json()
+            return self._json(response)
         return response.content
 
 
@@ -299,9 +438,21 @@ class Emitidos(ApiBase):
         total: int,
         firma: str | None = None,
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Verifica la validez de un DTE emitido.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "status": "DOK",
+                "detalle": "Documento recibido por el SII. Datos ...",
+                "track_id": 321421421521,
+                "razon_social": "SASCO SPA"
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor del DTE.
         :param str receptor: RUT del receptor del DTE.
@@ -334,7 +485,7 @@ class Emitidos(ApiBase):
             },
         }
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def estado_envio(
         self,
@@ -342,12 +493,33 @@ class Emitidos(ApiBase):
         track_id: int,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]] | str:
         """
         Estado del envío de un XML de DTE al SII.
 
         Solo consulta envíos de empresas a las que el usuario
         autenticado con certificado digital tenga acceso.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "documentos": {
+                  "33": {
+                    "aceptados": 1,
+                    "dte": 33,
+                    "informados": 1,
+                    "rechazados": 0,
+                    "reparos": 0,
+                    "...": "..."
+                  }
+                },
+                "emisor": "76192083-9",
+                "estado": "Envio Procesado [EPR].",
+                "track_id": "1234"
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor de los documentos.
         :param int track_id: Identificador del envío.
@@ -355,8 +527,9 @@ class Emitidos(ApiBase):
         :param str formato: `'json'` o `'html'`.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, estado del envío y resumen de documentos por tipo de
-            DTE.
-        :rtype: dict
+            DTE. Con `formato='html'` se entrega el HTML del SII como
+            `str`, sin `data` ni `metadata`.
+        :rtype: dict | str
         """
         url = self._build_url(
             '/sii/dte/emitidos/estado_envio/%(emisor)s/%(track_id)s'
@@ -366,9 +539,11 @@ class Emitidos(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        # Con `formato='html'` la API igual responde JSON: el HTML
-        # viene como una cadena dentro del cuerpo.
-        return response.json()
+        # Con `formato='html'` la API responde el HTML como una cadena
+        # JSON, sin `data` ni `metadata`.
+        if formato == 'html':
+            return cast(str, response.json())
+        return self._json(response)
 
 
 class Iecv(ApiBase):
@@ -401,11 +576,18 @@ class Iecv(ApiBase):
         tipo: str,
         track_id: int,
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Código de reemplazo de un libro IECV, para poder rectificarlo.
 
         Solo para períodos de 201707 hacia atrás.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {"codigo_reemplazo": "1234567890"},
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor de los documentos.
         :param str periodo: Período del registro (AAAAMM).
@@ -432,4 +614,4 @@ class Iecv(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)

@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase
+from .. import ApiBase, Respuesta
 
 
 class Rcv(ApiBase):
@@ -64,9 +64,32 @@ class Rcv(ApiBase):
         estado: str = 'REGISTRO',
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Obtiene un resumen de las compras de un receptor en un periodo.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "respEstado": {
+                  "codRespuesta": 0,
+                  "msgeRespuesta": null,
+                  "codError": null
+                },
+                "data": [
+                  {
+                    "dcvCodigo": 1234,
+                    "dcvNombreTipoDoc": "Factura Electrónica",
+                    "dcvOperacion": null,
+                    "dcvTipoIngresoDoc": "DET_ELE",
+                    "rsmnCodigo": 1234,
+                    "...": "..."
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str receptor: RUT del receptor de las compras.
         :param str periodo: Período de tiempo de las compras.
@@ -86,7 +109,7 @@ class Rcv(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def compras_detalle(
         self,
@@ -97,9 +120,51 @@ class Rcv(ApiBase):
         tipo: str | None = None,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[list[dict[str, Any]] | dict[str, Any]] | bytes:
         """
         Obtiene detalles de las compras para un receptor en un periodo.
+
+        Respuesta (ejemplo, dte=0 y estado 'REGISTRO')::
+
+            {
+              "data": [
+                {
+                  "dte": "33",
+                  "tipo_transaccion": "Del Giro",
+                  "rut": "76192083-9",
+                  "razon_social": "EMPRESA PROVEEDORA SPA",
+                  "folio": "123",
+                  "fecha": "2026-08-23",
+                  "fecha_recepcion": "2026-08-23 11:37:20",
+                  "fecha_acuse": null,
+                  "...": "..."
+                }
+              ],
+              "metadata": {"timestamp": "..."}
+            }
+
+        Respuesta (ejemplo, un dte específico)::
+
+            {
+              "data": {
+                "respEstado": {
+                  "codRespuesta": 0,
+                  "msgeRespuesta": null,
+                  "codError": null
+                },
+                "data": [
+                  {
+                    "cambiarTipoTran": true,
+                    "dcvCodigo": 1234,
+                    "dcvEstadoContab": null,
+                    "descTipoTransaccion": "Del Giro",
+                    "detAnulado": null,
+                    "...": "..."
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str receptor: RUT del receptor de las compras.
         :param str periodo: Período de tiempo de las compras.
@@ -111,8 +176,11 @@ class Rcv(ApiBase):
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :param str formato: `'json'` o `'csv'`.
         :return: Respuesta de la API, con `data` y `metadata`.
-            En `data`, detalles de las compras. Con `formato` `'csv'` se
-            entrega el archivo crudo, sin decodificar.
+            En `data`, detalles de las compras: con `dte=0` y estado
+            `'REGISTRO'` una lista de documentos; en otro caso un dict
+            con `respEstado` y, en `data`, la lista de documentos. Con
+            `formato` `'csv'` se entrega el archivo crudo, sin
+            decodificar.
         :rtype: dict | bytes
         """
         es_registro = dte == 0 and estado == 'REGISTRO'
@@ -135,7 +203,7 @@ class Rcv(ApiBase):
         # Con `csv` la API responde el archivo tal cual, no JSON.
         if formato == 'csv':
             return response.content
-        return response.json()
+        return self._json(response)
 
     def compras_set_tipo_transaccion(
         self,
@@ -143,7 +211,7 @@ class Rcv(ApiBase):
         periodo: str,
         documento: dict[str, Any],
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Asigna el tipo de transacción y código de IVA a una compra del RCV.
 
@@ -152,6 +220,19 @@ class Rcv(ApiBase):
         Lleva `emisor`, `dte` (33, 34, 43, 46, 56 o 61), `folio`,
         `tipo_transaccion` (1 a 7) y `codigo_iva`, que debe ser uno de
         los permitidos para ese `tipo_transaccion`.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "codigo": 0,
+                "mensaje": "Carga de cambios de tipo de compra re...",
+                "estado": "ok",
+                "reparos": [],
+                "errores": []
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str receptor: RUT del receptor del documento.
         :param str periodo: Período del registro (AAAAMM).
@@ -173,7 +254,7 @@ class Rcv(ApiBase):
             'documento': documento,
         }
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def ventas_set_resumen(
         self,
@@ -181,22 +262,44 @@ class Rcv(ApiBase):
         periodo: str,
         documentos: list[dict[str, Any]],
         certificacion: str | None = None,
-    ) -> Any:
+        graba_con_reparos: bool | None = None,
+    ) -> Respuesta[dict[str, Any]]:
         """
         Asigna un resumen de documentos emitidos al registro de ventas.
 
         Útil para agregar mensualmente el resumen de boletas emitidas.
         Cada elemento de `documentos` lleva `det_tipo_doc`,
         `det_nro_doc`, `det_mnt_neto`, `det_mnt_iva`, `det_mnt_exe` y
-        `det_mnt_total`.
+        `det_mnt_total`. Los comprobantes de pago electrónico (48)
+        llevan además `canalTransacc` y, si corresponde,
+        `codRznModifica` y `txtRznModifica`.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "contribuyente": "76192083-9",
+                "periodo": 202608,
+                "resumenes": [
+                  {"tipo_doc": 48, "canal": 0, "registros_modificados": 1}
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor de los documentos.
         :param str periodo: Período de emisión de los documentos
             (AAAAMM).
         :param list documentos: Resumen de documentos a asignar.
         :param str certificacion: `'0'` producción, `'1'` certificación.
+        :param bool graba_con_reparos: Con `False` el SII rechaza el
+            resumen si encuentra reparos (la API responde con error). Sin
+            indicarlo se aplica el valor por defecto de la API (`True`):
+            el resumen se graba aunque tenga reparos.
         :return: Respuesta de la API, con `data` y `metadata`.
-            En `data`, `True` si el resumen fue asignado.
+            En `data`, el `contribuyente`, el `periodo` y en `resumenes`
+            cada resumen grabado (tipo de documento, canal de venta y
+            registros modificados por el SII).
         :rtype: dict
         """
         url = self._build_url(
@@ -204,12 +307,14 @@ class Rcv(ApiBase):
             % {'emisor': emisor, 'periodo': periodo},
             certificacion=certificacion,
         )
-        body = {
+        body: dict[str, Any] = {
             'auth': self._get_auth(),
             'documentos': documentos,
         }
+        if graba_con_reparos is not None:
+            body['graba_con_reparos'] = graba_con_reparos
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def ventas_resumen(
         self,
@@ -217,16 +322,40 @@ class Rcv(ApiBase):
         periodo: str,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Obtiene un resumen de las ventas de un emisor en un periodo.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "respEstado": {
+                  "codRespuesta": 0,
+                  "msgeRespuesta": null,
+                  "codError": null
+                },
+                "data": [
+                  {
+                    "dcvCodigo": 1234,
+                    "dcvNombreTipoDoc": "Factura Electrónica",
+                    "dcvOperacion": null,
+                    "dcvTipoIngresoDoc": "DET_ELE",
+                    "rsmnCodigo": 1234,
+                    "...": "..."
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor de las ventas.
         :param str periodo: Período de tiempo de las ventas.
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :param str formato: `'json'`.
         :return: Respuesta de la API, con `data` y `metadata`.
-            En `data`, resumen de ventas.
+            En `data`, `respEstado` con el estado de la consulta al SII
+            y, en `data`, el resumen por tipo de documento.
         :rtype: dict
         """
         url = self._build_url(
@@ -237,7 +366,7 @@ class Rcv(ApiBase):
         )
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def ventas_detalle(
         self,
@@ -247,9 +376,51 @@ class Rcv(ApiBase):
         tipo: str | None = None,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[list[dict[str, Any]] | dict[str, Any]] | bytes:
         """
         Obtiene detalles de las ventas para un emisor en un periodo.
+
+        Respuesta (ejemplo, dte=0)::
+
+            {
+              "data": [
+                {
+                  "dte": "33",
+                  "tipo_transaccion": "Del Giro",
+                  "rut": "12345678-9",
+                  "razon_social": "CLIENTE EJEMPLO",
+                  "folio": "123",
+                  "fecha": "2026-09-20",
+                  "fecha_recepcion": "2026-09-20 22:47:31",
+                  "fecha_acuse": null,
+                  "...": "..."
+                }
+              ],
+              "metadata": {"timestamp": "..."}
+            }
+
+        Respuesta (ejemplo, un dte específico)::
+
+            {
+              "data": {
+                "respEstado": {
+                  "codRespuesta": 0,
+                  "msgeRespuesta": null,
+                  "codError": null
+                },
+                "data": [
+                  {
+                    "cambiarTipoTran": false,
+                    "dcvCodigo": 1234,
+                    "dcvEstadoContab": null,
+                    "descTipoTransaccion": "Del Giro",
+                    "detAnulado": null,
+                    "...": "..."
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor de las ventas.
         :param str periodo: Período de tiempo de las ventas.
@@ -259,8 +430,10 @@ class Rcv(ApiBase):
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :param str formato: `'json'` o `'csv'`.
         :return: Respuesta de la API, con `data` y `metadata`.
-            En `data`, detalles de las ventas. Con `formato` `'csv'` se
-            entrega el archivo crudo, sin decodificar.
+            En `data`, detalles de las ventas: con `dte=0` una lista de
+            documentos; con un `dte` específico un dict con `respEstado`
+            y, en `data`, la lista de documentos. Con `formato` `'csv'`
+            se entrega el archivo crudo, sin decodificar.
         :rtype: dict | bytes
         """
         tipo = 'rcv_csv' if dte == 0 else tipo or 'rcv'
@@ -276,7 +449,7 @@ class Rcv(ApiBase):
         # Con `csv` la API responde el archivo tal cual, no JSON.
         if formato == 'csv':
             return response.content
-        return response.json()
+        return self._json(response)
 
     def compras_async_solicitar(
         self,
@@ -285,9 +458,25 @@ class Rcv(ApiBase):
         dte: int = 0,
         estado: str = 'REGISTRO',
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Solicita el envío de los detalles de las compras de un receptor.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "id": 1234,
+                "uuid": "1234567890",
+                "dte": 33,
+                "estado": "REGISTRO",
+                "creada": "2025-01-01 12:00:00",
+                "terminada": "2025-01-01 12:00:00",
+                "seccion": "COMPRA",
+                "registros": 100
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param receptor: RUT del receptor de las compras formato
             12345678-9.
@@ -321,7 +510,7 @@ class Rcv(ApiBase):
         url = self._build_url(url, certificacion=certificacion)
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def compras_async_estado(
         self,
@@ -331,9 +520,25 @@ class Rcv(ApiBase):
         dte: int = 0,
         estado: str = 'REGISTRO',
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Obtiene el estado de la solicitud de los detalles de las compras.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "id": "1234567890",
+                "uuid": "1234567890",
+                "dte": 33,
+                "estado": "REGISTRO",
+                "creada": "2025-01-01 12:00:00",
+                "terminada": "2025-01-01 12:00:00",
+                "seccion": "COMPRA",
+                "registros": 100
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param receptor: RUT del receptor de las compras formato
             12345678-9.
@@ -373,7 +578,7 @@ class Rcv(ApiBase):
         url = self._build_url(url, certificacion=certificacion)
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def compras_async_detalle(
         self,
@@ -383,9 +588,28 @@ class Rcv(ApiBase):
         dte: int = 0,
         estado: str = 'REGISTRO',
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[list[dict[str, Any]]]:
         """
         Obtiene los detalles de las compras de un receptor en un periodo.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "dte": 33,
+                  "tipo_transaccion": "Del Giro",
+                  "rut": "12345-0",
+                  "razon_social": "RAZON SOCIAL DE LA EMPRESA",
+                  "folio": "10518",
+                  "fecha": "2025-09-01",
+                  "fecha_recepcion": "2025-09-01 10:52:28",
+                  "fecha_acuse": "2025-09-01 13:39:33",
+                  "...": "..."
+                }
+              ],
+              "metadata": {"timestamp": "..."}
+            }
 
         :param receptor: RUT del receptor de las compras formato
             12345678-9.
@@ -425,7 +649,7 @@ class Rcv(ApiBase):
         url = self._build_url(url, certificacion=certificacion)
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def ventas_async_solicitar(
         self,
@@ -433,9 +657,25 @@ class Rcv(ApiBase):
         periodo: str,
         dte: int = 0,
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Solicita el envío de los detalles de las ventas de un emisor.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "id": 1234,
+                "uuid": "1234567890",
+                "dte": 33,
+                "estado": "REGISTRO",
+                "creada": "2025-01-01 12:00:00",
+                "terminada": "2025-01-01 12:00:00",
+                "seccion": "VENTA",
+                "registros": 100
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param emisor: RUT del emisor de las ventas formato 12345678-9.
         :type emisor: str
@@ -463,7 +703,7 @@ class Rcv(ApiBase):
         url = self._build_url(url, certificacion=certificacion)
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def ventas_async_estado(
         self,
@@ -472,9 +712,25 @@ class Rcv(ApiBase):
         id_solicitud: str,
         dte: int = 0,
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[dict[str, Any]]:
         """
         Obtiene el estado de la solicitud de los detalles de las ventas.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "id": "1234567890",
+                "uuid": "1234567890",
+                "dte": 33,
+                "estado": "REGISTRO",
+                "creada": "2025-01-01 12:00:00",
+                "terminada": "2025-01-01 12:00:00",
+                "seccion": "VENTA",
+                "registros": 100
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param emisor: RUT del emisor de las ventas formato 12345678-9.
         :type emisor: str
@@ -508,7 +764,7 @@ class Rcv(ApiBase):
         url = self._build_url(url, certificacion=certificacion)
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
     def ventas_async_detalle(
         self,
@@ -517,9 +773,28 @@ class Rcv(ApiBase):
         id_solicitud: str,
         dte: int = 0,
         certificacion: str | None = None,
-    ) -> Any:
+    ) -> Respuesta[list[dict[str, Any]]]:
         """
         Obtiene los detalles de las ventas de un emisor.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "dte": 33,
+                  "tipo_transaccion": "Del Giro",
+                  "rut": "1234-0",
+                  "razon_social": "RAZON SOCIAL DE LA EMPRESA",
+                  "folio": "12414",
+                  "fecha": "2025-09-01",
+                  "fecha_vencimiento": null,
+                  "fecha_recepcion": "2025-09-01 08:01:43",
+                  "...": "..."
+                }
+              ],
+              "metadata": {"timestamp": "..."}
+            }
 
         :param emisor: RUT del emisor de las ventas formato 12345678-9.
         :type emisor: str
@@ -553,4 +828,4 @@ class Rcv(ApiBase):
         url = self._build_url(url, certificacion=certificacion)
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)

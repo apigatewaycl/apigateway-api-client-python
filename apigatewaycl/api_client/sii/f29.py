@@ -28,7 +28,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase
+from .. import ApiBase, Respuesta
 
 
 class F29(ApiBase):
@@ -53,13 +53,26 @@ class F29(ApiBase):
             **kwargs,  # type: ignore[arg-type]
         )
 
-    def obtener_estados(self) -> Any:
+    def obtener_estados(self) -> Respuesta[list[dict[str, Any]]]:
         """
         Consulta integral de fiscalización del Formulario 29.
 
         Para cada período, indica si fue declarado y su estado (sin
         observaciones, con observaciones, con observaciones
         justificadas, o sin declaración presentada).
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "periodo": 202304,
+                  "declarado": false,
+                  "estado": "Periodo sin declaración."
+                }
+              ],
+              "metadata": {"timestamp": "..."}
+            }
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de períodos con su estado de declaración.
@@ -68,11 +81,29 @@ class F29(ApiBase):
         url = '/sii/f29/obtener_estados'
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
-    def detalles_declaracion(self, folio: str) -> Any:
+    def detalles_declaracion(self, folio: str) -> Respuesta[dict[str, Any]]:
         """
         Detalles de una declaración del Formulario 29 por folio.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "folio": "3341234111",
+                "periodo": 202104,
+                "fecha_hora": "11/12/2025 21:16:33",
+                "estado": "Vigente",
+                "historial": [
+                  {
+                    "fecha": "26-05-2021 23:25:43",
+                    "descripcion": "Selección de opción de pago PEL."
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str folio: Folio del formulario 29.
         :return: Respuesta de la API, con `data` y `metadata`.
@@ -83,11 +114,28 @@ class F29(ApiBase):
         url = '/sii/f29/detalles_declaracion/%(folio)s' % {'folio': folio}
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
-    def declaraciones_listado(self, periodo: str) -> Any:
+    def declaraciones_listado(
+        self, periodo: str
+    ) -> Respuesta[list[dict[str, Any]]]:
         """
         Listado de declaraciones del Formulario 29 por período.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "periodo": 202501,
+                  "folio": "8107267196",
+                  "rut": "76192083-9",
+                  "fecha": "20/02/2025",
+                  "estado": "Vigente"
+                }
+              ],
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str periodo: Período a consultar (AAAA o AAAA-MM).
         :return: Respuesta de la API, con `data` y `metadata`.
@@ -100,9 +148,9 @@ class F29(ApiBase):
         }
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
-    def certificado_solemne_pdf(self, folio: str) -> Any:
+    def certificado_solemne_pdf(self, folio: str) -> bytes:
         """
         Descarga el PDF del Certificado Solemne del Formulario 29.
 
@@ -115,7 +163,7 @@ class F29(ApiBase):
         response = self.client.post(url, data=body)
         return response.content
 
-    def formulario_compacto_pdf(self, folio: str) -> Any:
+    def formulario_compacto_pdf(self, folio: str) -> bytes:
         """
         Descarga el PDF del formulario compacto del Formulario 29.
 

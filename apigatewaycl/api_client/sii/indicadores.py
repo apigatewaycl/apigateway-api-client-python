@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase
+from .. import ApiBase, Respuesta
 
 
 class Uf(ApiBase):
@@ -40,9 +40,43 @@ class Uf(ApiBase):
     diarios.
     """
 
-    def anual(self, anio: int) -> Any:
+    def anual(self, anio: int) -> Respuesta[dict[str, Any]]:
         """
         Obtiene los valores de la UF para un año específico.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "2026": {
+                  "1": {
+                    "1": 39731.79,
+                    "2": 39735.63,
+                    "3": 39739.47,
+                    "4": 39743.31,
+                    "5": 39747.15,
+                    "...": "..."
+                  },
+                  "2": {
+                    "1": 39703.5,
+                    "2": 39700.94,
+                    "3": 39698.37,
+                    "4": 39695.81,
+                    "5": 39693.25,
+                    "...": "..."
+                  },
+                  "3": {
+                    "1": 39796.31,
+                    "2": 39801.98,
+                    "3": 39807.65,
+                    "4": 39813.33,
+                    "5": 39819.01,
+                    "...": "..."
+                  }
+                }
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param int anio: Año para el cual se quieren los valores de UF.
         :return: Respuesta de la API, con `data` y `metadata`. En
@@ -52,11 +86,30 @@ class Uf(ApiBase):
         """
         url = '/sii/indicadores/uf/anual/%(anio)s' % {'anio': anio}
         response = self.client.get(url)
-        return response.json()
+        return self._json(response)
 
-    def mensual(self, periodo: str) -> Any:
+    def mensual(self, periodo: str) -> Respuesta[dict[str, Any]]:
         """
         Obtiene los valores de la UF para un mes específico.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "202603": {
+                  "1": 39796.31,
+                  "2": 39801.98,
+                  "3": 39807.65,
+                  "4": 39813.33,
+                  "5": 39819.01,
+                  "6": 39824.68,
+                  "7": 39830.36,
+                  "8": 39836.04,
+                  "...": "..."
+                }
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str periodo: Período en formato AAAAMM (año y mes).
         :return: Respuesta de la API, con `data` y `metadata`. En
@@ -68,11 +121,15 @@ class Uf(ApiBase):
             'periodo': periodo,
         }
         response = self.client.get(url)
-        return response.json()
+        return self._json(response)
 
-    def diario(self, dia: str) -> Any:
+    def diario(self, dia: str) -> Respuesta[dict[str, Any]]:
         """
         Obtiene el valor de la UF para un día específico.
+
+        Respuesta (ejemplo)::
+
+            {"data": {"20241015": 37987.65}, "metadata": {"timestamp": "..."}}
 
         :param str dia: Fecha en formato AAAA-MM-DD o AAAAMMDD.
         :return: Respuesta de la API, con `data` y `metadata`. En
@@ -83,7 +140,7 @@ class Uf(ApiBase):
         """
         url = '/sii/indicadores/uf/diario/%(dia)s' % {'dia': dia}
         response = self.client.get(url)
-        return response.json()
+        return self._json(response)
 
 
 class CorreccionMonetaria(ApiBase):
@@ -94,9 +151,27 @@ class CorreccionMonetaria(ApiBase):
     credenciales de un contribuyente.
     """
 
-    def anual(self, anio: int) -> Any:
+    def anual(self, anio: int) -> Respuesta[dict[str, Any]]:
         """
         Factores de corrección monetaria de un año.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "2024": [
+                  {
+                    "1": 0.2,
+                    "2": 0.5,
+                    "3": 0.8,
+                    "4": 1.0,
+                    "5": 1.2,
+                    "...": "..."
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param int anio: Año a consultar.
         :return: Respuesta de la API, con `data` y `metadata`. En
@@ -108,7 +183,7 @@ class CorreccionMonetaria(ApiBase):
             'anio': anio,
         }
         response = self.client.get(url)
-        return response.json()
+        return self._json(response)
 
 
 class ImpuestoSegundaCategoria(ApiBase):
@@ -119,9 +194,26 @@ class ImpuestoSegundaCategoria(ApiBase):
     credenciales de un contribuyente.
     """
 
-    def anual(self, anio: int) -> Any:
+    def anual(self, anio: int) -> Respuesta[dict[str, Any]]:
         """
         Tramos del impuesto de segunda categoría de un año.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "2024": [
+                  {
+                    "desde": 0,
+                    "hasta": 866310,
+                    "tasa": 0,
+                    "rebaja": 0,
+                    "maximo": null
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param int anio: Año a consultar.
         :return: Respuesta de la API, con `data` y `metadata`. En
@@ -133,11 +225,28 @@ class ImpuestoSegundaCategoria(ApiBase):
             'anio': anio
         }
         response = self.client.get(url)
-        return response.json()
+        return self._json(response)
 
-    def mensual(self, periodo: str) -> Any:
+    def mensual(self, periodo: str) -> Respuesta[dict[str, Any]]:
         """
         Tramos del impuesto de segunda categoría de un mes.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "202410": [
+                  {
+                    "desde": 0,
+                    "hasta": 866310,
+                    "tasa": 0,
+                    "rebaja": 0,
+                    "maximo": null
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str periodo: Período en formato AAAAMM (año y mes).
         :return: Respuesta de la API, con `data` y `metadata`. En
@@ -151,4 +260,4 @@ class ImpuestoSegundaCategoria(ApiBase):
             % {'periodo': periodo}
         )
         response = self.client.get(url)
-        return response.json()
+        return self._json(response)

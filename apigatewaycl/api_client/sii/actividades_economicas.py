@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase
+from .. import ApiBase, Respuesta
 
 
 class ActividadesEconomicas(ApiBase):
@@ -40,9 +40,39 @@ class ActividadesEconomicas(ApiBase):
     tanto de primera como de segunda categoría.
     """
 
-    def listado(self, categoria: int | None = None) -> Any:
+    def listado(
+        self, categoria: int | None = None
+    ) -> Respuesta[dict[str, Any]]:
         """
         Obtiene un listado de actividades económicas, filtrando por categoría.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "Explotación de minas y canteras": {
+                  "Actividades de apoyo para la extracción de petróleo y...": [
+                    {
+                      "codigo": "091002",
+                      "actividad_economica": "Actividades de apoyo para...",
+                      "afecta_iva": false,
+                      "categoria": "G",
+                      "internet": true
+                    }
+                  ],
+                  "Actividades de apoyo para la explotación de otras min...": [
+                    {
+                      "codigo": "099002",
+                      "actividad_economica": "Actividades de apoyo para...",
+                      "afecta_iva": false,
+                      "categoria": "G",
+                      "internet": true
+                    }
+                  ]
+                }
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param int categoria: Categoría de las actividades económicas
             (opcional).
@@ -55,11 +85,39 @@ class ActividadesEconomicas(ApiBase):
             categoria=categoria,
         )
         response = self.client.get(url)
-        return response.json()
+        return self._json(response)
 
-    def listado_primera_categoria(self) -> Any:
+    def listado_primera_categoria(self) -> Respuesta[dict[str, Any]]:
         """
         Obtiene un listado de actividades económicas de primera categoría.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "Explotación de minas y canteras": {
+                  "Actividades de apoyo para la extracción de petróleo y...": [
+                    {
+                      "codigo": "091002",
+                      "actividad_economica": "Actividades de apoyo para...",
+                      "afecta_iva": false,
+                      "categoria": "G",
+                      "internet": true
+                    }
+                  ],
+                  "Actividades de apoyo para la explotación de otras min...": [
+                    {
+                      "codigo": "099002",
+                      "actividad_economica": "Actividades de apoyo para...",
+                      "afecta_iva": false,
+                      "categoria": "G",
+                      "internet": true
+                    }
+                  ]
+                }
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :return: Respuesta de la API, con `data` y `metadata`. En `data`, el
             listado de primera categoría.
@@ -67,9 +125,37 @@ class ActividadesEconomicas(ApiBase):
         """
         return self.listado(1)
 
-    def listado_segunda_categoria(self) -> Any:
+    def listado_segunda_categoria(self) -> Respuesta[dict[str, Any]]:
         """
         Obtiene un listado de actividades económicas de segunda categoría.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "Explotación de minas y canteras": {
+                  "Actividades de apoyo para la extracción de petróleo y...": [
+                    {
+                      "codigo": "091002",
+                      "actividad_economica": "Actividades de apoyo para...",
+                      "afecta_iva": false,
+                      "categoria": "G",
+                      "internet": true
+                    }
+                  ],
+                  "Actividades de apoyo para la explotación de otras min...": [
+                    {
+                      "codigo": "099002",
+                      "actividad_economica": "Actividades de apoyo para...",
+                      "afecta_iva": false,
+                      "categoria": "G",
+                      "internet": true
+                    }
+                  ]
+                }
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :return: Respuesta de la API, con `data` y `metadata`. En `data`, el
             listado de segunda categoría.
