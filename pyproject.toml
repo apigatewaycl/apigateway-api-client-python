@@ -34,6 +34,7 @@ dev = [
   "types-requests",
   "python-dotenv",
   "build",
+  "twine",
 ]
 docs = ["sphinx", "sphinx-rtd-theme"]
 
