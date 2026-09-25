@@ -33,6 +33,7 @@ dev = [
   "pytest-cov",
   "types-requests",
   "python-dotenv",
+  "build",
 ]
 docs = ["sphinx", "sphinx-rtd-theme"]
 
