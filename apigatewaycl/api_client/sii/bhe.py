@@ -17,26 +17,32 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-'''
-Módulo para interactuar con Boletas de Honorarios Electrónicas, tanto
-emitidas como recibidas, del SII.
+"""
+Módulo para Boletas de Honorarios Electrónicas, emitidas y recibidas.
 
-Para más información sobre la API, consulte la `documentación completa de las
-BHE <https://developers.apigateway.cl/#4df9775f-2cd3-4b35-80a5-373f2501230c>`_.
-'''
+Para más información sobre la API, consulte la `documentación completa
+de las BHE
+<https://www.apigateway.cl/docs>`_.
+"""
 
-from .. import ApiBase
+from __future__ import annotations
+
+from typing import Any
+
+from .. import ApiBase, ApiResponse
+
 
 class BheEmitidas(ApiBase):
-    '''
-    Cliente específico para gestionar Boletas de Honorarios Electrónicas (BHE) emitidas.
+    """
+    Cliente para Boletas de Honorarios Electrónicas (BHE) emitidas.
 
-    Provee métodos para emitir, anular, y consultar información relacionada con BHEs.
+    Provee métodos para emitir, anular, y consultar información
+    relacionada con BHEs.
 
     :param str identificador: Identificador del contribuyente.
     :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
-    '''
+    """
 
     # Quién debe hacer la retención asociada al honorario para pagar al SII
     RETENCION_RECEPTOR = 1
@@ -47,168 +53,398 @@ class BheEmitidas(ApiBase):
     ANULACION_CAUSA_SIN_PRESTACION = 2
     ANULACION_CAUSA_ERROR_DIGITACION = 3
 
-    def __init__(self, identificador, clave, **kwargs):
-        super().__init__(identificador = identificador, clave = clave, **kwargs)
+    def __init__(
+        self,
+        identificador: str,
+        clave: str,
+        **kwargs: str,
+    ) -> None:
+        """Autentica con `identificador`/`clave` del contribuyente."""
+        super().__init__(
+            identificador=identificador,
+            clave=clave,
+            **kwargs,  # type: ignore[arg-type]
+        )
 
-    def documentos(self, emisor, periodo, pagina = None, pagina_sig_codigo = None):
-        '''
-        Obtiene los documentos de BHE emitidos por un emisor en un periodo específico.
+    def documentos(
+        self,
+        emisor: str,
+        periodo: str,
+        pagina: int = 1,
+    ) -> ApiResponse[dict[str, Any]]:
+        """
+        Obtiene los documentos de BHE emitidos por un emisor en un periodo.
+
+        La API exige `pagina`: parte en `1` y se avanza de a una,
+        hasta `n_paginas`.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "boletas": [
+                  {
+                    "numero": 144,
+                    "rut": 0,
+                    "dv": "0",
+                    "nombre": "",
+                    "fecha": "2025-08-18",
+                    "...": "..."
+                  }
+                ],
+                "n_paginas": 1,
+                "n_boletas": 1
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor de las boletas.
         :param str periodo: Período de tiempo de las boletas emitidas.
-        :return: Respuesta JSON con los documentos de BHE.
-        :rtype: list[dict]
-        '''
-        url = '/sii/bhe/emitidas/documentos/%(emisor)s/%(periodo)s' % {'emisor': emisor, 'periodo': periodo}
-        if pagina is not None:
-            url += '?pagina=%(pagina)s' % {
-                'pagina': pagina,
-            }
-            if pagina_sig_codigo:
-                url += '&pagina_sig_codigo=%(pagina_sig_codigo)s' % {
-                    'pagina_sig_codigo': pagina_sig_codigo or '0'
-                }
-        body = {
-            'auth': self._get_auth_pass()
-        }
-        response = self.client.post(url, data = body)
-        return response.json()
+        :param int pagina: Página a consultar, partiendo desde `1`.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, documentos de BHE.
+        :rtype: ApiResponse[dict[str, Any]]
+        """
+        url = self._build_url(
+            '/sii/bhe/emitidas/documentos/%(emisor)s/%(periodo)s'
+            % {'emisor': emisor, 'periodo': periodo},
+            pagina=pagina,
+        )
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
+        return self._json(response)
 
-    def emitir(self, boleta):
-        '''
+    def emitir(self, boleta: dict[str, Any]) -> ApiResponse[dict[str, Any]]:
+        """
         Emite una nueva Boleta de Honorarios Electrónica.
 
-        :param dict boleta: Información detallada de la boleta a emitir.
-        :return: Respuesta JSON con la confirmación de la emisión de la BHE.
-        :rtype: dict
-        '''
-        body = {
-            'auth': self._get_auth_pass(),
-            'boleta': boleta
-        }
-        response = self.client.post('/sii/bhe/emitidas/emitir', data = body)
-        return response.json()
+        Respuesta (ejemplo)::
 
-    def pdf(self, codigo):
-        '''
+            {
+              "data": {
+                "Encabezado": {
+                  "Emisor": {
+                    "CmnaOrigen": "Región",
+                    "CodigoDirOrigen": "065722046",
+                    "DirOrigen": "Dirección",
+                    "GiroEmis": "Giro",
+                    "RUTEmisor": "12345678-9",
+                    "...": "..."
+                  },
+                  "IdDoc": {
+                    "CodigoBarras": "Código de barras",
+                    "CodigoInferior": "Código inferior",
+                    "FchEmis": "2020-09-16",
+                    "Folio": 155,
+                    "TipoDTE": 66,
+                    "...": "..."
+                  },
+                  "Receptor": {
+                    "CmnaRecep": "Región",
+                    "CodigoCmnaRecep": 6205,
+                    "CodigoRegionRecep": 6,
+                    "DirRecep": "Dirección",
+                    "RUTRecep": "0-0",
+                    "...": "..."
+                  }
+                },
+                "Detalle": [
+                  {
+                    "MontoItem": 50,
+                    "NmbItem": "Prueba integracion API Gateway 1"
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
+
+        :param dict boleta: Información detallada de la boleta a emitir.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, confirmación de la emisión.
+        :rtype: ApiResponse[dict[str, Any]]
+        """
+        body = {'auth': self._get_auth(), 'boleta': boleta}
+        response = self.client.post('/sii/bhe/emitidas/emitir', data=body)
+        return self._json(response)
+
+    def pdf(self, codigo: str) -> bytes:
+        """
         Obtiene el PDF de una BHE emitida.
 
         :param str codigo: Código único de la BHE.
         :return: Contenido del PDF de la BHE.
         :rtype: bytes
-        '''
+        """
         url = '/sii/bhe/emitidas/pdf/%(codigo)s' % {'codigo': codigo}
-        body = {
-            'auth': self._get_auth_pass()
-        }
-        response = self.client.post(url, data = body)
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
         return response.content
 
-    def email(self, codigo, email):
-        '''
+    def email(
+        self,
+        codigo: str,
+        email: str,
+    ) -> ApiResponse[dict[str, Any]]:
+        """
         Envía por correo electrónico una BHE emitida.
 
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "message": "La Boleta de Honorarios Electrónica s...",
+                "email": "ejemplo@ejemplo.com"
+              },
+              "metadata": {"timestamp": "..."}
+            }
+
         :param str codigo: Código único de la BHE a enviar.
-        :param str email: Dirección de correo electrónico a la cual enviar la BHE.
-        :return: Respuesta JSON con la confirmación del envío del email.
-        :rtype: dict
-        '''
+        :param str email: Dirección de correo a la cual enviar la BHE.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, confirmación del envío.
+        :rtype: ApiResponse[dict[str, Any]]
+        """
         url = '/sii/bhe/emitidas/email/%(codigo)s' % {'codigo': codigo}
         body = {
-            'auth': self._get_auth_pass(),
-            'destinatario': {'email': email}
+            'auth': self._get_auth(),
+            'destinatario': {'email': email},
         }
-        response = self.client.post(url, data = body)
-        return response.json()
+        response = self.client.post(url, data=body)
+        return self._json(response)
 
-    def anular(self, emisor, folio, causa = ANULACION_CAUSA_ERROR_DIGITACION):
-        '''
+    def anular(
+        self,
+        emisor: str,
+        folio: str,
+        causa: int = ANULACION_CAUSA_ERROR_DIGITACION,
+    ) -> ApiResponse[dict[str, Any]]:
+        """
         Anula una BHE emitida.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "boleta_anulada": "S",
+                "dv_autentificado": "4",
+                "dv_receptor": "6",
+                "fecha_cgi": "16/09/2020",
+                "monto_maximo_anulacion": "100000000",
+                "nombre_contribuyente": "EMISOR",
+                "nombre_receptor": "NACIONALES SIN RUT   (USO EXCLUSIVO F...",
+                "nro_boleta_eliminar": "155",
+                "...": "..."
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor de la boleta.
         :param str folio: Número de folio de la boleta.
         :param int causa: Motivo de anulación de la boleta.
-        :return: Respuesta JSON con la confirmación de la anulación de la BHE.
-        :rtype: dict
-        '''
-        url = '/sii/bhe/emitidas/anular/%(emisor)s/%(folio)s?causa=%(causa)s' % {
-            'emisor': emisor, 'folio': folio, 'causa': causa
-        }
-        body = {
-            'auth': self._get_auth_pass()
-        }
-        response = self.client.post(url, data = body)
-        return response.json()
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, confirmación de la anulación.
+        :rtype: ApiResponse[dict[str, Any]]
+        """
+        url = (
+            '/sii/bhe/emitidas/anular/%(emisor)s/%(folio)s?causa=%(causa)s'
+            % {'emisor': emisor, 'folio': folio, 'causa': causa}
+        )
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
+        return self._json(response)
+
 
 class BheRecibidas(ApiBase):
-    '''
-    Cliente específico para gestionar Boletas de Honorarios Electrónicas (BHE) recibidas.
+    """
+    Cliente para Boletas de Honorarios Electrónicas (BHE) recibidas.
 
-    Provee métodos para obtener documentos, obtener PDF y observar BHE recibidas.
+    Provee métodos para obtener documentos, obtener PDF y observar
+    BHE recibidas.
 
     :param str identificador: Identificador del contribuyente.
     :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
-    '''
+    """
 
-    def __init__(self, identificador, clave, **kwargs):
-        super().__init__(identificador = identificador, clave = clave, **kwargs)
+    def __init__(
+        self,
+        identificador: str,
+        clave: str,
+        **kwargs: str,
+    ) -> None:
+        """Autentica con `identificador`/`clave` del contribuyente."""
+        super().__init__(
+            identificador=identificador,
+            clave=clave,
+            **kwargs,  # type: ignore[arg-type]
+        )
 
-    def documentos(self, receptor, periodo, pagina = None, pagina_sig_codigo = None):
-        '''
-        Obtiene los documentos de BHE recibidos por un receptor en un periodo específico.
+    def documentos(
+        self,
+        receptor: str,
+        periodo: str,
+        pagina: int = 1,
+    ) -> ApiResponse[dict[str, Any]]:
+        """
+        Obtiene los documentos de BHE recibidos por un receptor en un periodo.
+
+        La API exige `pagina`: parte en `1` y se avanza de a una,
+        hasta `n_paginas`.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "n_paginas": 1,
+                "n_boletas": 1,
+                "boletas": [
+                  {
+                    "anulada": "",
+                    "codigo": "",
+                    "comuna": "13159",
+                    "dv": "9",
+                    "estado": "N",
+                    "...": "..."
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str receptor: RUT del receptor de las boletas.
         :param str periodo: Período de tiempo de las boletas recibidas.
-        :param int pagina: Número de página para paginación (opcional).
-        :param str pagina_sig_codigo: Código para la siguiente página (opcional).
-        :return: Respuesta JSON con los documentos de BHE.
-        :rtype: list[dict]
-        '''
-        url = '/sii/bhe/recibidas/documentos/%(receptor)s/%(periodo)s' % {
-            'receptor': receptor, 'periodo': periodo
-        }
-        body = {
-            'auth': self._get_auth_pass()
-        }
-        if pagina is not None:
-            url += '?pagina=%(pagina)s&pagina_sig_codigo=%(pagina_sig_codigo)s' % {
-                'pagina': pagina,
-                'pagina_sig_codigo': pagina_sig_codigo or '00000000000000'
-            }
-        response = self.client.post(url, data = body)
-        return response.json()
+        :param int pagina: Página a consultar, partiendo desde `1`.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, documentos de BHE.
+        :rtype: ApiResponse[dict[str, Any]]
+        """
+        url = self._build_url(
+            '/sii/bhe/recibidas/documentos/%(receptor)s/%(periodo)s'
+            % {'receptor': receptor, 'periodo': periodo},
+            pagina=pagina,
+        )
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
+        return self._json(response)
 
-    def pdf(self, codigo):
-        '''
+    def pdf(self, codigo: str) -> bytes:
+        """
         Obtiene el PDF de una BHE recibida.
 
         :param str codigo: Código único de la BHE.
         :return: Contenido del PDF de la BHE.
         :rtype: bytes
-        '''
+        """
         url = '/sii/bhe/recibidas/pdf/%(codigo)s' % {'codigo': codigo}
-        body = {
-            'auth': self._get_auth_pass()
-        }
-        response = self.client.post(url, data = body)
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
         return response.content
 
-    def observar(self, emisor, numero, causa = 1):
-        '''
+    def observar(
+        self,
+        emisor: str,
+        numero: str,
+        causa: int = 1,
+    ) -> ApiResponse[dict[str, Any]]:
+        """
         Marca una observación en una BHE recibida.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "nombre_contribuyente": "API Gateway",
+                "rut_arrastre": "76192083",
+                "dv_arrastre": "9",
+                "fecha_cgi": "16/08/2020",
+                "nro_trx": "12345678"
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor de la boleta.
         :param str numero: Número de la boleta.
         :param int causa: Motivo de la observación.
-        :return: Respuesta JSON con la confirmación de la observación.
-        :rtype: dict
-        '''
-        url = '/sii/bhe/recibidas/observar/%(emisor)s/%(numero)s?causa=%(causa)s' % {
-            'emisor': emisor, 'numero': numero, 'causa': causa
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, confirmación de la observación.
+        :rtype: ApiResponse[dict[str, Any]]
+        """
+        url = (
+            '/sii/bhe/recibidas/observar/%(emisor)s/%(numero)s'
+            '?causa=%(causa)s'
+            % {'emisor': emisor, 'numero': numero, 'causa': causa}
+        )
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
+        return self._json(response)
+
+
+class ConsultasPorTerceros(ApiBase):
+    """
+    Cliente para que un tercero verifique la autenticidad de una BHE.
+
+    A diferencia de `BheEmitidas`/`BheRecibidas`, la autenticación es
+    de quien CONSULTA, no del emisor ni del receptor de la boleta.
+
+    :param str identificador: Identificador de quien consulta.
+    :param str clave: Clave del identificador.
+    :param kwargs: Argumentos adicionales.
+    """
+
+    def __init__(
+        self,
+        identificador: str,
+        clave: str,
+        **kwargs: str,
+    ) -> None:
+        """Autentica con `identificador`/`clave` de quien consulta."""
+        super().__init__(
+            identificador=identificador,
+            clave=clave,
+            **kwargs,  # type: ignore[arg-type]
+        )
+
+    def verificar(
+        self,
+        codigo_barras: str | None = None,
+        emisor: str | None = None,
+        receptor: str | None = None,
+        periodo: str | None = None,
+        folio: int | None = None,
+    ) -> bytes:
+        """
+        Verifica la autenticidad de una BHE ante el SII.
+
+        Modos excluyentes: enviar solo `codigo_barras`, o todos de
+        `emisor`/`receptor`/`periodo`/`folio`.
+
+        :param str codigo_barras: Código de barras de la boleta.
+        :param str emisor: RUT del emisor de la boleta.
+        :param str receptor: RUT del receptor de la boleta.
+        :param str periodo: Fecha de la boleta (AAAA-MM-DD).
+        :param int folio: Folio de la boleta.
+        :return: PDF oficial de la boleta emitido por el SII.
+        :rtype: bytes
+        """
+        # Los dos modos son excluyentes: la API rechaza el cuerpo si
+        # llegan mezclados, así que sólo se envía lo que se indicó.
+        criterios = {
+            'codigo_barras': codigo_barras,
+            'emisor': emisor,
+            'receptor': receptor,
+            'periodo': periodo,
+            'folio': folio,
         }
-        body = {
-            'auth': self._get_auth_pass()
-        }
-        response = self.client.post(url, data = body)
-        return response.json()
+        body: dict[str, Any] = {'auth': self._get_auth()}
+        body.update(
+            {
+                clave: valor
+                for clave, valor in criterios.items()
+                if valor is not None
+            }
+        )
+        response = self.client.post(
+            '/sii/bhe/consultas_por_terceros',
+            data=body,
+        )
+        return response.content

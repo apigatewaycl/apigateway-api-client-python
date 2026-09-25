@@ -17,23 +17,35 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-import unittest
 import os
-from os import getenv
+import unittest
 from datetime import datetime
+from os import getenv
+from zoneinfo import ZoneInfo
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.portal_mipyme import DteRecibidos
 
-class TestDescargarXmlDteRecibido(unittest.TestCase):
+pytestmark = pytest.mark.readonly
 
+
+class TestDescargarXmlDteRecibido(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
         clave = getenv('TEST_USUARIO_CLAVE', '').strip()
         cls.client = DteRecibidos(cls.identificador, clave)
-        cls.contribuyente_rut = getenv('TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT', '').strip()
-        anio = getenv('TEST_ANIO', datetime.now().strftime("%Y")).strip()
+        cls.contribuyente_rut = getenv(
+            'TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT',
+            '',
+        ).strip()
+        anio = getenv(
+            'TEST_ANIO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y'),
+        ).strip()
         cls.fecha_desde = '%(anio)s-01-01' % {'anio': anio}
         cls.fecha_hasta = '%(anio)s-01-31' % {'anio': anio}
 
@@ -45,33 +57,53 @@ class TestDescargarXmlDteRecibido(unittest.TestCase):
                 {
                     'FEC_DESDE': self.fecha_desde,
                     'FEC_HASTA': self.fecha_hasta,
-                }
-            )
+                    'NUM_PAG': 1,
+                },
+            )['data']
             if len(documentos) == 0:
-                print('test_xml(): no probó funcionalidad.')
-                return
+                self.skipTest(
+                    'la API no devolvió documentos con los cuales probar.',
+                )
             emisor = str(documentos[0]['rut']) + '-' + documentos[0]['dv']
             dte = documentos[0]['dte']
             folio = documentos[0]['folio']
-            xml = self.client.xml(self.contribuyente_rut, emisor, dte, folio)
+            # Sin la fecha de emisión el Portal MIPYME no ubica el
+            # documento y la API responde que no era el XML del DTE.
+            xml = self.client.xml(
+                self.contribuyente_rut,
+                emisor,
+                dte,
+                folio,
+                documentos[0]['fecha'],
+            )
 
-            # Retrocede dos niveles para salir de 'dte_facturacion' y entrar en 'tests'
-            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            # Retrocede dos niveles para salir de 'dte_facturacion'
+            # y entrar en 'tests'
+            base_dir = os.path.dirname(
+                os.path.dirname(os.path.dirname(__file__)),
+            )
 
             # Define la carpeta de destino correcta
-            output_dir = os.path.join(base_dir, 'archivos', 'sii', 'mipyme_dte_recibido_xml')
+            output_dir = os.path.join(
+                base_dir,
+                'archivos',
+                'sii',
+                'mipyme_dte_recibido_xml',
+            )
 
             # Crear la carpeta si no existe
             os.makedirs(output_dir, exist_ok=True)
 
             filename = os.path.join(
                 output_dir,
-                'MIPYME_DTE_RECIBIDO_%(contribuyente_rut)s_%(emisor)s_T%(dte)sF%(folio)s.xml' % {
+                'MIPYME_DTE_RECIBIDO_%(contribuyente_rut)s_%(emisor)s'
+                '_T%(dte)sF%(folio)s.xml'
+                % {
                     'contribuyente_rut': self.contribuyente_rut,
                     'emisor': emisor,
                     'dte': dte,
-                    'folio': folio
-                }
+                    'folio': folio,
+                },
             )
 
             with open(filename, 'wb') as f:
@@ -82,4 +114,4 @@ class TestDescargarXmlDteRecibido(unittest.TestCase):
             if self.verbose:
                 print('test_xml(): filename', filename)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

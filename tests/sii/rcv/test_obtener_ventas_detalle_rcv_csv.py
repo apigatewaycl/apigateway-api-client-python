@@ -18,20 +18,32 @@
 #
 
 import unittest
-from os import getenv
 from datetime import datetime
+from os import getenv
+from zoneinfo import ZoneInfo
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.rcv import Rcv
 
-class TestObtemerVentasDetalleRcvCsv(unittest.TestCase):
+pytestmark = pytest.mark.readonly
 
+
+class TestObtemerVentasDetalleRcvCsv(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
+        cls.contribuyente_rut = getenv(
+            'TEST_CONTRIBUYENTE_IDENTIFICADOR',
+            '',
+        ).strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
         cls.client = Rcv(cls.contribuyente_rut, contribuyente_clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
 
     # CASO 4: detalle de ventas con tipo "rcv_csv"
     # En este caso se trae el detalle de los documentos en una llamada
@@ -39,11 +51,14 @@ class TestObtemerVentasDetalleRcvCsv(unittest.TestCase):
         try:
             ventas_detalle = self.client.ventas_detalle(
                 self.contribuyente_rut,
-                self.periodo
-            )
+                self.periodo,
+            )['data']
             if self.verbose:
-                print('test_ventas_detalle_rcv_csv(): ventas_detalle', ventas_detalle)
+                print(
+                    'test_ventas_detalle_rcv_csv(): ventas_detalle',
+                    ventas_detalle,
+                )
 
             self.assertIsNotNone(ventas_detalle)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

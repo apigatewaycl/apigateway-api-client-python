@@ -19,49 +19,72 @@
 
 import os
 import unittest
-from os import getenv
 from datetime import datetime
+from os import getenv
+from zoneinfo import ZoneInfo
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.bhe import BheEmitidas
+
+pytestmark = pytest.mark.readonly
+
 
 class TestDescargarPdfBheEmitida(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
         clave = getenv('TEST_USUARIO_CLAVE', '').strip()
         cls.client = BheEmitidas(cls.identificador, clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
         cls.contribuyente_rut = getenv('TEST_USUARIO_RUT', '').strip()
 
     # CASO 4: bajar PDF de una boleta
     def test_descargar_pdf_bhe_emitida(self):
         try:
             documentos = self.client.documentos(
-                self.contribuyente_rut, self.periodo
-            )
-            if len(documentos) == 0:
-                print('test_pdf(): no probó funcionalidad.')
-                return
-            boleta_codigo = documentos[0]['codigo']
+                self.contribuyente_rut,
+                self.periodo,
+            )['data']
+            boletas = documentos.get('boletas') if documentos else None
+            if not boletas:
+                self.skipTest(
+                    'la API no devolvió documentos con los cuales probar.',
+                )
+            boleta_codigo = boletas[0]['codigo']
             pdf = self.client.pdf(boleta_codigo)
 
-            # Retrocede dos niveles para salir de 'dte_facturacion' y entrar en 'tests'
-            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            # Retrocede dos niveles para salir de 'dte_facturacion'
+            # y entrar en 'tests'
+            base_dir = os.path.dirname(
+                os.path.dirname(os.path.dirname(__file__)),
+            )
 
             # Define la carpeta de destino correcta
-            output_dir = os.path.join(base_dir, 'archivos', 'sii', 'bhe_emitidas_pdf')
+            output_dir = os.path.join(
+                base_dir,
+                'archivos',
+                'sii',
+                'bhe_emitidas_pdf',
+            )
 
             # Crear la carpeta si no existe
             os.makedirs(output_dir, exist_ok=True)
 
             filename = os.path.join(
                 output_dir,
-                'APIGATEWAY_BHE_EMITIDA_%(contribuyente_rut)s_%(periodo)s_%(boleta_codigo)s.pdf' % {
+                'APIGATEWAY_BHE_EMITIDA_%(contribuyente_rut)s'
+                '_%(periodo)s_%(boleta_codigo)s.pdf'
+                % {
                     'contribuyente_rut': self.contribuyente_rut,
                     'periodo': self.periodo,
-                    'boleta_codigo': boleta_codigo
-                }
+                    'boleta_codigo': boleta_codigo,
+                },
             )
 
             with open(filename, 'wb') as f:
@@ -72,4 +95,4 @@ class TestDescargarPdfBheEmitida(unittest.TestCase):
             if self.verbose:
                 print('test_pdf(): filename', filename)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

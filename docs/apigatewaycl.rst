@@ -14,5 +14,5 @@ Module contents
 
 .. automodule:: apigatewaycl
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

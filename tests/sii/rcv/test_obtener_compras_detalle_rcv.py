@@ -18,55 +18,91 @@
 #
 
 import unittest
-from os import getenv
 from datetime import datetime
+from os import getenv
+from typing import ClassVar
+from zoneinfo import ZoneInfo
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.rcv import Rcv
 
-class TestObtenerComprasDetalleRcv(unittest.TestCase):
+pytestmark = pytest.mark.readonly
 
-    estados = ['REGISTRO', 'PENDIENTE', 'NO_INCLUIR', 'RECLAMADO']
+
+class TestObtenerComprasDetalleRcv(unittest.TestCase):
+    estados: ClassVar[list[str]] = [
+        'REGISTRO',
+        'PENDIENTE',
+        'NO_INCLUIR',
+        'RECLAMADO',
+    ]
 
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
+        cls.contribuyente_rut = getenv(
+            'TEST_CONTRIBUYENTE_IDENTIFICADOR',
+            '',
+        ).strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
         cls.client = Rcv(cls.contribuyente_rut, contribuyente_clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
 
     # CASO 1: resumen de compras y detalle de compras con tipo "rcv"
     # En este caso el detalle de los documentos se trae por tipo
     def test_obtener_compras_detalle_rcv(self):
         try:
+            # El detalle sólo se puede pedir para un tipo de documento que
+            # aparezca en el resumen; si ninguno califica, no hay qué probar.
+            probados = 0
             for estado in self.estados:
                 compras_resumen = self.client.compras_resumen(
                     self.contribuyente_rut,
                     self.periodo,
-                    estado
-                )
+                    estado,
+                )['data']
                 if self.verbose:
-                    print('test_compras_detalle_rcv(): compras_resumen',
-                        compras_resumen
+                    print(
+                        'test_compras_detalle_rcv(): compras_resumen',
+                        compras_resumen,
                     )
                 if compras_resumen['data'] is not None:
                     for resumen in compras_resumen['data']:
-                        if resumen['dcvTipoIngresoDoc'] != 'DET_ELE' or resumen['rsmnTotDoc'] == 0:
+                        if (
+                            resumen['dcvTipoIngresoDoc'] != 'DET_ELE'
+                            or resumen['rsmnTotDoc'] == 0
+                        ):
                             continue
                         compras_detalle = self.client.compras_detalle(
                             self.contribuyente_rut,
                             self.periodo,
                             resumen['rsmnTipoDocInteger'],
-                            estado
-                        )
+                            estado,
+                        )['data']
                         if self.verbose:
-                            print('test_compras_detalle_rcv(): compras_detalle',
-                                compras_detalle
+                            print(
+                                'test_compras_detalle_rcv(): compras_detalle',
+                                compras_detalle,
                             )
-                        break # sólo se obtiene un detalle para probar la API más rápido
-
-                    self.assertIsNotNone(compras_detalle)
+                        self.assertIsNotNone(compras_detalle)
+                        probados += 1
+                        # sólo se obtiene un detalle para probar la API
+                        # más rápido
+                        break
                 else:
-                    print('test_compras_detalle_rcv(): compras_resumen: Libro compras RCV vacío.')
+                    print(
+                        'test_compras_detalle_rcv(): compras_resumen: '
+                        'Libro compras RCV vacío.',
+                    )
+            if not probados:
+                self.skipTest(
+                    'el RCV de compras no tiene documentos electrónicos con '
+                    'los cuales probar el detalle.',
+                )
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

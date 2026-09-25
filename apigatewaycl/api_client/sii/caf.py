@@ -1,0 +1,375 @@
+#
+# API Gateway: Cliente de API en Python.
+# Copyright (C) API Gateway <https://www.apigateway.cl>
+#
+# Este programa es software libre: usted puede redistribuirlo y/o modificarlo
+# bajo los términos de la GNU Lesser General Public License (LGPL) publicada
+# por la Fundación para el Software Libre, ya sea la versión 3 de la Licencia,
+# o (a su elección) cualquier versión posterior de la misma.
+#
+# Este programa se distribuye con la esperanza de que sea útil, pero SIN
+# GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD
+# PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de la GNU Lesser General
+# Public License (LGPL) para obtener una información más detallada.
+#
+# Debería haber recibido una copia de la GNU Lesser General Public License
+# (LGPL) junto a este programa. En caso contrario, consulte
+# <http://www.gnu.org/licenses/lgpl.html>.
+#
+
+"""
+Módulo para el Código de Asignación de Folios (CAF) del SII.
+
+Para más información sobre la API, consulte la `documentación completa
+del CAF <https://www.apigateway.cl/docs>`_.
+"""
+
+from __future__ import annotations
+
+from typing import Any, cast
+
+from .. import ApiBase, ApiResponse
+
+
+class Caf(ApiBase):
+    """
+    Cliente para el Código de Asignación de Folios (CAF) de la API.
+
+    Provee métodos para consultar, solicitar y anular folios.
+
+    :param str identificador: Identificador del contribuyente.
+    :param str clave: Clave del identificador.
+    :param kwargs: Argumentos adicionales.
+    """
+
+    def __init__(
+        self,
+        identificador: str,
+        clave: str,
+        **kwargs: str,
+    ) -> None:
+        """Autentica con `identificador`/`clave` del contribuyente."""
+        super().__init__(
+            identificador=identificador,
+            clave=clave,
+            **kwargs,  # type: ignore[arg-type]
+        )
+
+    def estado_timbraje(
+        self,
+        emisor: str,
+        dte: int,
+        certificacion: str | None = None,
+    ) -> ApiResponse[dict[str, Any]]:
+        """
+        Estado de timbraje de un tipo de DTE.
+
+        Folios timbrables y observaciones del SII sobre el
+        contribuyente. Solo consulta, no solicita folios.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "dte": {
+                  "codigo": 33,
+                  "limitado": true,
+                  "maximo_autorizado": 100,
+                  "folios_disponibles": 20,
+                  "timbraje_permitido": 80
+                },
+                "contribuyente": {
+                  "observado": false,
+                  "glosa": null,
+                  "observaciones": []
+                }
+              },
+              "metadata": {"timestamp": "..."}
+            }
+
+        :param str emisor: RUT del emisor.
+        :param int dte: Código del tipo de documento.
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, datos del tipo de DTE y situación del contribuyente.
+        :rtype: ApiResponse[dict[str, Any]]
+        """
+        url = self._build_url(
+            '/sii/dte/caf/estado_timbraje/%(emisor)s/%(dte)s'
+            % {'emisor': emisor, 'dte': dte},
+            certificacion=certificacion,
+        )
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
+        return self._json(response)
+
+    def solicitar(
+        self,
+        emisor: str,
+        dte: int,
+        cantidad: int,
+        certificacion: str | None = None,
+    ) -> bytes:
+        """
+        Solicita un nuevo CAF (folios) al SII.
+
+        La respuesta es el XML del CAF, no un objeto JSON.
+
+        :param str emisor: RUT del emisor del CAF.
+        :param int dte: Código del tipo de documento.
+        :param int cantidad: Cantidad de folios a solicitar.
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+        :return: Contenido del XML del CAF.
+        :rtype: bytes
+        """
+        url = self._build_url(
+            '/sii/dte/caf/solicitar/%(emisor)s/%(dte)s/%(cantidad)s'
+            % {'emisor': emisor, 'dte': dte, 'cantidad': cantidad},
+            certificacion=certificacion,
+        )
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
+        return response.content
+
+    def xml(
+        self,
+        emisor: str,
+        dte: int,
+        folio_inicial: int,
+        folio_final: int,
+        fecha_autorizacion: str,
+        certificacion: str | None = None,
+    ) -> bytes:
+        """
+        Obtiene el XML de un CAF ya solicitado.
+
+        :param str emisor: RUT del emisor del CAF.
+        :param int dte: Código del tipo de documento.
+        :param int folio_inicial: Folio inicial del CAF.
+        :param int folio_final: Folio final del CAF.
+        :param str fecha_autorizacion: Fecha de autorización del CAF.
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+        :return: Contenido del XML del CAF.
+        :rtype: bytes
+        """
+        url = self._build_url(
+            '/sii/dte/caf/xml/%(emisor)s/%(dte)s/%(folio_inicial)s'
+            '/%(folio_final)s/%(fecha_autorizacion)s'
+            % {
+                'emisor': emisor,
+                'dte': dte,
+                'folio_inicial': folio_inicial,
+                'folio_final': folio_final,
+                'fecha_autorizacion': fecha_autorizacion,
+            },
+            certificacion=certificacion,
+        )
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
+        return response.content
+
+    def estado(
+        self,
+        emisor: str,
+        dte: int,
+        folio: int,
+        certificacion: str | None = None,
+        formato: str | None = None,
+    ) -> ApiResponse[dict[str, Any]] | str:
+        """
+        Estado de un folio en el SII (estado, glosa, track id de envío).
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "estado": "recibido",
+                "estado_glosa": "Documento recibido por el SII",
+                "track_id": "231986674"
+              },
+              "metadata": {"timestamp": "..."}
+            }
+
+        :param str emisor: RUT del emisor del folio.
+        :param int dte: Código del tipo de documento.
+        :param int folio: Folio a consultar.
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+        :param str formato: `'json'` o `'html'`.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, estado del folio. Con `formato='html'` se entrega
+            el HTML del SII como `str`, sin `data` ni `metadata`.
+        :rtype: ApiResponse[dict[str, Any]] | str
+        """
+        url = self._build_url(
+            '/sii/dte/caf/estado/%(emisor)s/%(dte)s/%(folio)s'
+            % {'emisor': emisor, 'dte': dte, 'folio': folio},
+            certificacion=certificacion,
+            formato=formato,
+        )
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
+        # Con `formato='html'` la API responde el HTML como una cadena
+        # JSON, sin `data` ni `metadata`.
+        if formato == 'html':
+            return cast(str, response.json())
+        return self._json(response)
+
+    def anular(
+        self,
+        emisor: str,
+        dte: int,
+        folio_inicial: int,
+        folio_final: int,
+        certificacion: str | None = None,
+        formato: str | None = None,
+    ) -> ApiResponse[dict[str, Any]] | str:
+        """
+        Anula un rango de folios ya solicitados al SII.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "emisor": "76192083-9",
+                "fecha_anulacion": "2024-01-15",
+                "dte": 39,
+                "folio_inicial": 707,
+                "folio_final": 707,
+                "usuario": "12345678-9"
+              },
+              "metadata": {"timestamp": "..."}
+            }
+
+        :param str emisor: RUT del emisor.
+        :param int dte: Código del tipo de documento.
+        :param int folio_inicial: Primer folio a anular.
+        :param int folio_final: Último folio a anular.
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+        :param str formato: `'json'` o `'html'`.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, datos de la anulación (fecha, usuario, rango). Con
+            `formato='html'` se entrega el HTML del SII como `str`, sin
+            `data` ni `metadata`.
+        :rtype: ApiResponse[dict[str, Any]] | str
+        """
+        url = self._build_url(
+            '/sii/dte/caf/anular/%(emisor)s/%(dte)s/%(folio_inicial)s'
+            '/%(folio_final)s'
+            % {
+                'emisor': emisor,
+                'dte': dte,
+                'folio_inicial': folio_inicial,
+                'folio_final': folio_final,
+            },
+            certificacion=certificacion,
+            formato=formato,
+        )
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
+        # Con `formato='html'` la API responde el HTML como una cadena
+        # JSON, sin `data` ni `metadata`.
+        if formato == 'html':
+            return cast(str, response.json())
+        return self._json(response)
+
+    def solicitudes(
+        self,
+        emisor: str,
+        dte: int,
+        pagina: int,
+        certificacion: str | None = None,
+        formato: str | None = None,
+    ) -> ApiResponse[list[dict[str, Any]]] | str:
+        """
+        Listado paginado de solicitudes de CAF de un emisor.
+
+        `pagina` parte en `1` — usar `metadata.siguiente_pagina` de la
+        respuesta (`None` si es la última) para paginar.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "inicial": 1022,
+                  "final": 1022,
+                  "cantidad": 1,
+                  "fecha": "2025-09-24",
+                  "mandatario": "NOMBRE MANDATARIO 1"
+                }
+              ],
+              "metadata": {"timestamp": "...", "siguiente_pagina": 2}
+            }
+
+        :param str emisor: RUT del emisor del CAF.
+        :param int dte: Código del tipo de documento.
+        :param int pagina: Página a consultar, partiendo desde `1`.
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+        :param str formato: `'json'` o `'html'`.
+        :return: Respuesta de la API, con `data` y `metadata`. En
+            `data`, el listado de solicitudes; en `metadata`,
+            `siguiente_pagina` (`None` si es la última). Con
+            `formato='html'` se entrega el HTML del SII como `str`, sin
+            `data` ni `metadata`.
+        :rtype: ApiResponse[list[dict[str, Any]]] | str
+        """
+        url = self._build_url(
+            '/sii/dte/caf/solicitudes/%(emisor)s/%(dte)s'
+            % {'emisor': emisor, 'dte': dte},
+            pagina=pagina,
+            certificacion=certificacion,
+            formato=formato,
+        )
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
+        # Con `formato='html'` la API responde el HTML como una cadena
+        # JSON, sin `data` ni `metadata`.
+        if formato == 'html':
+            return cast(str, response.json())
+        return self._json(response)
+
+    def estados(
+        self,
+        emisor: str,
+        dte: int,
+        folio_inicial: int,
+        folio_final: int,
+        estado: str,
+        certificacion: str | None = None,
+    ) -> ApiResponse[list[dict[str, Any]]]:
+        """
+        Estados de un rango de folios en el SII, agrupados por tramos.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [{"inicial": 1002, "final": 1004, "cantidad": 3}],
+              "metadata": {"timestamp": "..."}
+            }
+
+        :param str emisor: RUT del emisor.
+        :param int dte: Código del tipo de documento.
+        :param int folio_inicial: Primer folio del rango.
+        :param int folio_final: Último folio del rango.
+        :param str estado: Estado de los folios a consultar: `recibidos`,
+            `anulados` o `pendientes`.
+        :param str certificacion: `'0'` producción, `'1'` certificación.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, listado de tramos (inicial/final/cantidad).
+        :rtype: ApiResponse[list[dict[str, Any]]]
+        """
+        url = self._build_url(
+            '/sii/dte/caf/estados/%(emisor)s/%(dte)s/%(folio_inicial)s'
+            '/%(folio_final)s/%(estado)s'
+            % {
+                'emisor': emisor,
+                'dte': dte,
+                'folio_inicial': folio_inicial,
+                'folio_final': folio_final,
+                'estado': estado,
+            },
+            certificacion=certificacion,
+        )
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
+        return self._json(response)

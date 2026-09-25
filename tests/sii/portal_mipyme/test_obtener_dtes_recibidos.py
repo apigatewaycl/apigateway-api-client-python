@@ -18,31 +18,49 @@
 #
 
 import unittest
-from os import getenv
 from datetime import datetime
+from os import getenv
+from zoneinfo import ZoneInfo
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
-from apigatewaycl.api_client.sii.portal_mipyme import Contribuyentes, DteRecibidos
+from apigatewaycl.api_client.sii.portal_mipyme import (
+    Contribuyentes,
+    DteRecibidos,
+)
+
+pytestmark = pytest.mark.readonly
+
 
 class TestSiiPortalMipymeContribuyentes(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
         clave = getenv('TEST_USUARIO_CLAVE', '').strip()
         cls.client = Contribuyentes(cls.identificador, clave)
-        cls.contribuyente_rut = getenv('TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT', '').strip()
+        cls.contribuyente_rut = getenv(
+            'TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT',
+            '',
+        ).strip()
+
 
 class TestObtenerDtesRecibidos(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
         clave = getenv('TEST_USUARIO_CLAVE', '').strip()
         cls.client = DteRecibidos(cls.identificador, clave)
-        cls.contribuyente_rut = getenv('TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT', '').strip()
-        anio = getenv('TEST_ANIO', datetime.now().strftime("%Y")).strip()
+        cls.contribuyente_rut = getenv(
+            'TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT',
+            '',
+        ).strip()
+        anio = getenv(
+            'TEST_ANIO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y'),
+        ).strip()
         cls.fecha_desde = '%(anio)s-01-01' % {'anio': anio}
         cls.fecha_hasta = '%(anio)s-01-31' % {'anio': anio}
 
@@ -54,12 +72,13 @@ class TestObtenerDtesRecibidos(unittest.TestCase):
                 {
                     'FEC_DESDE': self.fecha_desde,
                     'FEC_HASTA': self.fecha_hasta,
-                }
-            )
+                    'NUM_PAG': 1,
+                },
+            )['data']
 
             self.assertTrue(True)
 
             if self.verbose:
                 print('test_documentos(): documentos', documentos)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

@@ -19,18 +19,26 @@
 
 import unittest
 from os import getenv
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.portal_mipyme import Contribuyentes
 
-class TestObtenerContribuyenteDte(unittest.TestCase):
+pytestmark = pytest.mark.readonly
 
+
+class TestObtenerContribuyenteDte(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
         clave = getenv('TEST_USUARIO_CLAVE', '').strip()
         cls.client = Contribuyentes(cls.identificador, clave)
-        cls.contribuyente_rut = getenv('TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT', '').strip()
+        cls.contribuyente_rut = getenv(
+            'TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT',
+            '',
+        ).strip()
 
     # CASO 1: datos de un contribuyente
     def test_obtener_contribuyente_dte(self):
@@ -39,12 +47,12 @@ class TestObtenerContribuyenteDte(unittest.TestCase):
             info = self.client.info(
                 self.identificador,
                 self.contribuyente_rut,
-                int(dte)
-            )
+                int(dte),
+            )['data']
 
             self.assertIsNotNone(info)
 
             if self.verbose:
                 print('test_info(): info', info)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

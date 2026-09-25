@@ -18,35 +18,49 @@
 #
 
 import unittest
-from os import getenv
 from datetime import datetime
+from os import getenv
+from zoneinfo import ZoneInfo
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.bte import BteEmitidas
 
-class TestObtenerReceptorTasaBteEmitida(unittest.TestCase):
+pytestmark = pytest.mark.readonly
 
+
+class TestObtenerReceptorTasaBteEmitida(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
+        cls.contribuyente_rut = getenv(
+            'TEST_CONTRIBUYENTE_IDENTIFICADOR',
+            '',
+        ).strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
         cls.client = BteEmitidas(cls.contribuyente_rut, contribuyente_clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
         cls.receptor_rut = getenv('TEST_BTE_EMITIDAS_RECEPTOR_RUT', '').strip()
 
     # CASO 5: tasa de receptor
     def test_obtener_receptor_tasa_bte_emitida(self):
         if self.receptor_rut == '':
-            print('test_receptor_tasa(): no probó funcionalidad.')
-            return
+            self.skipTest(
+                'falta TEST_BTE_EMITIDAS_RECEPTOR_RUT en test.env.',
+            )
         try:
             receptor_tasa = self.client.receptor_tasa(
-                self.contribuyente_rut, self.receptor_rut
-            )
+                self.contribuyente_rut,
+                self.receptor_rut,
+            )['data']
 
             self.assertIsNotNone(receptor_tasa)
 
             if self.verbose:
-                    print('test_receptor_tasa(): receptor_tasa', receptor_tasa)
+                print('test_receptor_tasa(): receptor_tasa', receptor_tasa)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

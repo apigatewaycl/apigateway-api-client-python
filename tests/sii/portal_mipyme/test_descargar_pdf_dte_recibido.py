@@ -17,23 +17,35 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-import unittest
 import os
-from os import getenv
+import unittest
 from datetime import datetime
+from os import getenv
+from zoneinfo import ZoneInfo
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.portal_mipyme import DteRecibidos
 
-class TestDescargarPdfDteRecibido(unittest.TestCase):
+pytestmark = pytest.mark.readonly
 
+
+class TestDescargarPdfDteRecibido(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
         clave = getenv('TEST_USUARIO_CLAVE', '').strip()
         cls.client = DteRecibidos(cls.identificador, clave)
-        cls.contribuyente_rut = getenv('TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT', '').strip()
-        anio = getenv('TEST_ANIO', datetime.now().strftime("%Y")).strip()
+        cls.contribuyente_rut = getenv(
+            'TEST_PORTAL_MIPYME_CONTRIBUYENTE_RUT',
+            '',
+        ).strip()
+        anio = getenv(
+            'TEST_ANIO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y'),
+        ).strip()
         cls.fecha_desde = '%(anio)s-01-01' % {'anio': anio}
         cls.fecha_hasta = '%(anio)s-01-31' % {'anio': anio}
 
@@ -45,40 +57,48 @@ class TestDescargarPdfDteRecibido(unittest.TestCase):
                 {
                     'FEC_DESDE': self.fecha_desde,
                     'FEC_HASTA': self.fecha_hasta,
-                }
-            )
+                    'NUM_PAG': 1,
+                },
+            )['data']
             if len(documentos) == 0:
-                print('test_pdf(): no probó funcionalidad.')
-                return
+                self.skipTest(
+                    'la API no devolvió documentos con los cuales probar.',
+                )
             emisor = str(documentos[0]['rut']) + '-' + documentos[0]['dv']
             dte = documentos[0]['dte']
             folio = documentos[0]['folio']
             pdf = self.client.pdf(
                 self.contribuyente_rut,
-                emisor,
-                documentos[0]['codigo']
+                documentos[0]['codigo'],
             )
 
-            # Retrocede dos niveles para salir de 'dte_facturacion' y entrar en 'tests'
-            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            # Retrocede dos niveles para salir de 'dte_facturacion'
+            # y entrar en 'tests'
+            base_dir = os.path.dirname(
+                os.path.dirname(os.path.dirname(__file__)),
+            )
 
             # Define la carpeta de destino correcta
-            output_dir = os.path.join(base_dir, 'archivos', 'sii', 'mipyme_dte_recibido_pdf')
+            output_dir = os.path.join(
+                base_dir,
+                'archivos',
+                'sii',
+                'mipyme_dte_recibido_pdf',
+            )
 
             # Crear la carpeta si no existe
             os.makedirs(output_dir, exist_ok=True)
 
-            # usar el folio también funciona, pero es más lento porque se debe
-            # buscar en el portal mipyme el código del DTE a partir del folio
-            # pdf = self.client.pdf(self.contribuyente_rut, emisor, dte, folio)
             filename = os.path.join(
                 output_dir,
-                'MIPYME_DTE_RECIBIDO_%(contribuyente_rut)s_%(emisor)s_T%(dte)sF%(folio)s.pdf' % {
+                'MIPYME_DTE_RECIBIDO_%(contribuyente_rut)s_%(emisor)s'
+                '_T%(dte)sF%(folio)s.pdf'
+                % {
                     'contribuyente_rut': self.contribuyente_rut,
                     'emisor': emisor,
                     'dte': dte,
-                    'folio': folio
-                }
+                    'folio': folio,
+                },
             )
 
             with open(filename, 'wb') as f:
@@ -89,4 +109,4 @@ class TestDescargarPdfDteRecibido(unittest.TestCase):
             if self.verbose:
                 print('test_pdf(): filename', filename)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})
