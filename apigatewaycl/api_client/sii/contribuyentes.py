@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase
+from .. import ApiBase, ApiResponse
 
 
 class Contribuyentes(ApiBase):
@@ -40,38 +40,71 @@ class Contribuyentes(ApiBase):
     solicitudes a la API.
     """
 
-    def situacion_tributaria(self, rut: str) -> Any:
+    def situacion_tributaria(self, rut: str) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene la situación tributaria de un contribuyente.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "rut": 76192083,
+                "dv": "9",
+                "razon_social": "EMPRESA EJEMPLO SPA",
+                "inicio_actividades": true,
+                "fecha_inicio_actividades": "2012-06-08",
+                "fecha_consulta": "18-05-2026 12:32:03",
+                "pro_pyme": true,
+                "moneda_extranjera": false,
+                "...": "..."
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str rut: RUT del contribuyente.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, situación tributaria.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/contribuyentes/situacion_tributaria/tercero/%(rut)s' % {
             'rut': rut
         }
         response = self.client.get(url)
-        return response.json()
+        return self._json(response)
 
     def verificar_rut(
         self,
         rut: str,
         serie: str,
-    ) -> Any:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Verifica la cédula RUT de un contribuyente por su número de serie.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "rut": "78.580.345-6",
+                "nombre_o_razon_social": "NOMBRE O RAZÓN SOCIAL",
+                "direccion_principal_casa_matriz": "DANIEL BARROS GREZ 191...",
+                "n_de_serie": "22389021489",
+                "fecha_de_emision": "11/11/2024",
+                "rut_usuario_cedula": "12.345.678-9",
+                "usuario_cedula": "USUARIO CÉDULA",
+                "tipo": "Cédula"
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str rut: RUT del contribuyente (ej. `76192083-9`).
         :param str serie: Número de serie de la cédula a verificar.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, verificación del RUT.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/contribuyentes/rut/verificar/%(rut)s/%(serie)s' % {
             'rut': rut,
             'serie': serie,
         }
         response = self.client.get(url)
-        return response.json()
+        return self._json(response)

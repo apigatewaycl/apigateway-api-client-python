@@ -41,11 +41,15 @@ import json
 import re
 import urllib.parse
 from os import getenv
-from typing import Any
+from typing import Any, cast
 
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
 from requests.exceptions import HTTPError, RequestException, Timeout
+
+from .tipos import ApiResponse
+
+__all__ = ['ApiBase', 'ApiClient', 'ApiException', 'ApiResponse']
 
 _HTTP_OK = 200
 
@@ -146,7 +150,7 @@ class ApiClient:
         Genera y retorna las cabeceras por defecto para las solicitudes.
 
         :return: Cabeceras por defecto.
-        :rtype: dict
+        :rtype: dict[str, str]
         """
         return {
             'User-Agent': 'API Gateway: Cliente de API en Python.',
@@ -240,9 +244,8 @@ class ApiClient:
         Verifica la respuesta de la solicitud HTTP y maneja los errores.
 
         :param requests.Response response: Objeto de respuesta de requests.
-        :return: Respuesta de la API, con `data` y `metadata`.
-            En `data`, respuesta validada.
-        :rtype: dict
+        :return: La misma respuesta HTTP, ya validada.
+        :rtype: requests.Response
         :raises ApiException: Si la respuesta contiene un error HTTP.
         """
         if response.status_code != _HTTP_OK and self.raise_for_status:
@@ -604,6 +607,22 @@ class ApiBase:
             'query': urllib.parse.urlencode(query),
         }
 
+    @staticmethod
+    def _json(response: requests.Response) -> ApiResponse[Any]:
+        """
+        Entrega el cuerpo JSON de la respuesta, tipado como `ApiResponse`.
+
+        `requests` tipa `json()` como `Any`; el `cast` se hace acá una
+        sola vez en vez de repetirlo en cada método. `ApiResponse[Any]`
+        se asigna a cualquier `ApiResponse[T]`, así que cada método
+        declara la forma de `data` en su anotación sin otro `cast`.
+
+        :param requests.Response response: Respuesta de la API.
+        :return: Respuesta de la API, con `data` y `metadata`.
+        :rtype: ApiResponse[Any]
+        """
+        return cast(ApiResponse[Any], response.json())
+
     def _get_auth(self) -> dict[str, Any]:
         """
         Obtiene la autenticación configurada, validando sus datos.
@@ -614,7 +633,7 @@ class ApiBase:
 
         :return: Información de autenticación, con la clave 'pass' o
             'cert' según el tipo configurado.
-        :rtype: dict
+        :rtype: dict[str, Any]
         :raises ApiException: Si falta información de autenticación o
             viene vacía.
         """

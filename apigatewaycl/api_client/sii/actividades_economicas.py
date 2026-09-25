@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase
+from .. import ApiBase, ApiResponse
 
 
 class ActividadesEconomicas(ApiBase):
@@ -40,39 +40,125 @@ class ActividadesEconomicas(ApiBase):
     tanto de primera como de segunda categoría.
     """
 
-    def listado(self, categoria: int | None = None) -> Any:
+    def listado(
+        self, categoria: int | None = None
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene un listado de actividades económicas, filtrando por categoría.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "Explotación de minas y canteras": {
+                  "Actividades de apoyo para la extracción de petróleo y...": [
+                    {
+                      "codigo": "091002",
+                      "actividad_economica": "Actividades de apoyo para...",
+                      "afecta_iva": false,
+                      "categoria": "G",
+                      "internet": true
+                    }
+                  ],
+                  "Actividades de apoyo para la explotación de otras min...": [
+                    {
+                      "codigo": "099002",
+                      "actividad_economica": "Actividades de apoyo para...",
+                      "afecta_iva": false,
+                      "categoria": "G",
+                      "internet": true
+                    }
+                  ]
+                }
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param int categoria: Categoría de las actividades económicas
             (opcional).
         :return: Respuesta de la API, con `data` y `metadata`. En `data`, el
             listado de actividades económicas.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/contribuyentes/actividades_economicas',
             categoria=categoria,
         )
         response = self.client.get(url)
-        return response.json()
+        return self._json(response)
 
-    def listado_primera_categoria(self) -> Any:
+    def listado_primera_categoria(self) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene un listado de actividades económicas de primera categoría.
 
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "Explotación de minas y canteras": {
+                  "Actividades de apoyo para la extracción de petróleo y...": [
+                    {
+                      "codigo": "091002",
+                      "actividad_economica": "Actividades de apoyo para...",
+                      "afecta_iva": false,
+                      "categoria": "G",
+                      "internet": true
+                    }
+                  ],
+                  "Actividades de apoyo para la explotación de otras min...": [
+                    {
+                      "codigo": "099002",
+                      "actividad_economica": "Actividades de apoyo para...",
+                      "afecta_iva": false,
+                      "categoria": "G",
+                      "internet": true
+                    }
+                  ]
+                }
+              },
+              "metadata": {"timestamp": "..."}
+            }
+
         :return: Respuesta de la API, con `data` y `metadata`. En `data`, el
             listado de primera categoría.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         return self.listado(1)
 
-    def listado_segunda_categoria(self) -> Any:
+    def listado_segunda_categoria(self) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene un listado de actividades económicas de segunda categoría.
 
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "Explotación de minas y canteras": {
+                  "Actividades de apoyo para la extracción de petróleo y...": [
+                    {
+                      "codigo": "091002",
+                      "actividad_economica": "Actividades de apoyo para...",
+                      "afecta_iva": false,
+                      "categoria": "G",
+                      "internet": true
+                    }
+                  ],
+                  "Actividades de apoyo para la explotación de otras min...": [
+                    {
+                      "codigo": "099002",
+                      "actividad_economica": "Actividades de apoyo para...",
+                      "afecta_iva": false,
+                      "categoria": "G",
+                      "internet": true
+                    }
+                  ]
+                }
+              },
+              "metadata": {"timestamp": "..."}
+            }
+
         :return: Respuesta de la API, con `data` y `metadata`. En `data`, el
             listado de segunda categoría.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         return self.listado(2)

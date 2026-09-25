@@ -28,7 +28,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase
+from .. import ApiBase, ApiResponse
 
 
 class EboletaContribuyente(ApiBase):
@@ -53,36 +53,89 @@ class EboletaContribuyente(ApiBase):
             **kwargs,  # type: ignore[arg-type]
         )
 
-    def emisor(self, emisor: str) -> Any:
+    def emisor(self, emisor: str) -> ApiResponse[dict[str, Any]]:
         """
         Información del emisor de la boleta electrónica.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "contribuyente": {
+                  "rut": 12345678,
+                  "razon_social": "RAZON SOCIAL DEL EMISOR",
+                  "dv": "9",
+                  "giro": "GIRO DEL EMISOR",
+                  "actividad_economica": "Actividad económica del emisor",
+                  "telefono": "1234567890",
+                  "email": "emisor@example.com",
+                  "direccion": "Dirección del emisor",
+                  "...": "..."
+                },
+                "sucursales": [
+                  {
+                    "rut": 12345678,
+                    "codigo": 12345678,
+                    "sucursal": null,
+                    "direccion": "ERRAZURIZ 827 ",
+                    "comuna": "Santa Cruz",
+                    "...": "..."
+                  }
+                ],
+                "usuarios": [
+                  {
+                    "user": "12345678-9",
+                    "nombre": "NOMBRE DEL USUARIO 1",
+                    "es_representante": true,
+                    "permisos": 0,
+                    "total_records": 2
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str emisor: RUT del emisor (formato 11222333-K).
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos del contribuyente, sus sucursales y usuarios.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/eboleta/contribuyente/emisor/%(emisor)s' % {
             'emisor': emisor,
         }
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
-        return response.json()
+        return self._json(response)
 
-    def emisores_autorizados(self) -> Any:
+    def emisores_autorizados(self) -> ApiResponse[dict[str, Any]]:
         """
         Lista de emisores autorizados de la boleta electrónica.
 
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "emisores": [
+                  {
+                    "rut": 12345678,
+                    "dv": "9",
+                    "razon_social": "RAZON SOCIAL DEL EMISOR"
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
+
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de contribuyentes (RUT, DV y razón social).
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         body = {'auth': self._get_auth()}
         response = self.client.post(
             '/sii/eboleta/contribuyente/emisores_autorizados',
             data=body,
         )
-        return response.json()
+        return self._json(response)
 
 
 class EboletaEmitidas(ApiBase):
@@ -125,7 +178,7 @@ class EboletaEmitidas(ApiBase):
         :param int dte: Tipo de documento.
         :param str fecha: Fecha de emisión del documento (AAAA-MM-DD).
         :return: Cuerpo de la solicitud, con la autenticación incluida.
-        :rtype: dict
+        :rtype: dict[str, Any]
         """
         return {
             'auth': self._get_auth(),
@@ -143,9 +196,32 @@ class EboletaEmitidas(ApiBase):
         page: int | None = None,
         items_per_page: int | None = None,
         estado: str | None = None,
-    ) -> Any:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Listado de documentos emitidos de la boleta electrónica.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "folio": 35,
+                  "neto": 4202,
+                  "iva": 798,
+                  "total": 5000,
+                  "exento": 0,
+                  "dte": 39,
+                  "revision_estado": "pendiente",
+                  "anulado": false,
+                  "...": "..."
+                }
+              ],
+              "metadata": {
+                "timestamp": "...",
+                "total": "23390",
+                "cantidad_emitida": "5"
+              }
+            }
 
         :param str contribuyente: RUT del contribuyente, sin puntos ni
             dígito verificador.
@@ -159,7 +235,7 @@ class EboletaEmitidas(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`. En
             `data`, el listado de documentos emitidos; en `metadata`,
             los datos de la consulta.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         # Todos los parámetros de esta API van en el cuerpo, no en la
         # ruta ni en la query string. Los opcionales no se envían si
@@ -186,25 +262,37 @@ class EboletaEmitidas(ApiBase):
             '/sii/eboleta/emitidas/documentos',
             data=body,
         )
-        return response.json()
+        return self._json(response)
 
-    def emitir(self, dte: dict[str, Any]) -> Any:
+    def emitir(self, dte: dict[str, Any]) -> ApiResponse[dict[str, Any]]:
         """
         Emite una Boleta Electrónica Afecta (39) o Exenta (41).
 
         Solo admite un ítem por documento. `dte['vendedor']` debe ser
         el mismo RUT usado para autenticar (`auth.pass.rut`).
 
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "pdf": "url del pdf",
+                "pdf_base64": "data:application/pdf;base64,...",
+                "dte": 39,
+                "folio": 40
+              },
+              "metadata": {"timestamp": "..."}
+            }
+
         :param dict dte: Datos de la boleta a emitir (`vendedor`,
             `Encabezado`, `Detalle`).
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, folio y tipo de documento emitido, URL del PDF y PDF en
             base64.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         body = {'auth': self._get_auth(), 'dte': dte}
         response = self.client.post('/sii/eboleta/emitidas/emitir', data=body)
-        return response.json()
+        return self._json(response)
 
     def documento(
         self,
@@ -212,9 +300,26 @@ class EboletaEmitidas(ApiBase):
         folio: int,
         dte: int,
         fecha: str,
-    ) -> Any:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Detalle de un documento de la boleta electrónica.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "folio": 35,
+                "neto": 4202,
+                "iva": 798,
+                "total": 5000,
+                "exento": 0,
+                "dte": 39,
+                "revision_estado": "pendiente",
+                "anulado": false,
+                "...": "..."
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str contribuyente: RUT del contribuyente.
         :param int folio: Folio del documento.
@@ -222,13 +327,13 @@ class EboletaEmitidas(ApiBase):
         :param str fecha: Fecha de emisión del documento (AAAA-MM-DD).
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos del documento (montos, estado, revisión, PDF).
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         response = self.client.post(
             '/sii/eboleta/emitidas/documento',
             data=self._body_documento(contribuyente, folio, dte, fecha),
         )
-        return response.json()
+        return self._json(response)
 
     def pdf(
         self,
@@ -236,7 +341,7 @@ class EboletaEmitidas(ApiBase):
         folio: int,
         dte: int,
         fecha: str,
-    ) -> Any:
+    ) -> bytes:
         """
         PDF de un documento de la boleta electrónica.
 
@@ -260,9 +365,16 @@ class EboletaEmitidas(ApiBase):
         dte: int,
         fecha: str,
         to: str,
-    ) -> Any:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Envía por correo electrónico un documento de la boleta.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {"mensaje": "Email enviado con éxito"},
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str contribuyente: RUT del contribuyente.
         :param int folio: Folio del documento.
@@ -271,9 +383,9 @@ class EboletaEmitidas(ApiBase):
         :param str to: Dirección de correo de destino.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, mensaje de confirmación del envío.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         body = self._body_documento(contribuyente, folio, dte, fecha)
         body['to'] = to
         response = self.client.post('/sii/eboleta/emitidas/email', data=body)
-        return response.json()
+        return self._json(response)
