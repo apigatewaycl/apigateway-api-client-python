@@ -1,0 +1,763 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apigatewaycl.api_client.sii.dte &mdash; documentación de API Gateway: Cliente de API en Python - 6.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a9071d65"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            API Gateway: Cliente de API en Python
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../gettingstarted.index.html">Empezando</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dev.index.html">Desarrollo</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">apigatewaycl</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">API Gateway: Cliente de API en Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Código de módulo</a></li>
+          <li class="breadcrumb-item"><a href="../../api_client.html">apigatewaycl.api_client</a></li>
+      <li class="breadcrumb-item active">apigatewaycl.api_client.sii.dte</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Código fuente para apigatewaycl.api_client.sii.dte</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># API Gateway: Cliente de API en Python.</span>
+<span class="c1"># Copyright (C) API Gateway &lt;https://www.apigateway.cl&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Este programa es software libre: usted puede redistribuirlo y/o modificarlo</span>
+<span class="c1"># bajo los términos de la GNU Lesser General Public License (LGPL) publicada</span>
+<span class="c1"># por la Fundación para el Software Libre, ya sea la versión 3 de la Licencia,</span>
+<span class="c1"># o (a su elección) cualquier versión posterior de la misma.</span>
+<span class="c1">#</span>
+<span class="c1"># Este programa se distribuye con la esperanza de que sea útil, pero SIN</span>
+<span class="c1"># GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD</span>
+<span class="c1"># PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de la GNU Lesser General</span>
+<span class="c1"># Public License (LGPL) para obtener una información más detallada.</span>
+<span class="c1">#</span>
+<span class="c1"># Debería haber recibido una copia de la GNU Lesser General Public License</span>
+<span class="c1"># (LGPL) junto a este programa. En caso contrario, consulte</span>
+<span class="c1"># &lt;http://www.gnu.org/licenses/lgpl.html&gt;.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""</span>
+<span class="sd">Módulo para Documentos Tributarios Electrónicos (DTE) del SII.</span>
+
+<span class="sd">Para más información sobre la API, consulte la `documentación completa</span>
+<span class="sd">de los DTE</span>
+<span class="sd">&lt;https://www.apigateway.cl/docs&gt;`_.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">cast</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApiBase</span><span class="p">,</span> <span class="n">ApiResponse</span>
+
+
+<div class="viewcode-block" id="Contribuyentes">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.dte.Contribuyentes">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Contribuyentes</span><span class="p">(</span><span class="n">ApiBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Cliente para los endpoints de contribuyentes de la API de API Gateway.</span>
+
+<span class="sd">    Proporciona métodos para consultar la autorización de emisión de</span>
+<span class="sd">    DTE de un contribuyente, sus datos privados y sus usuarios</span>
+<span class="sd">    autorizados.</span>
+
+<span class="sd">    :param str identificador: Identificador del contribuyente</span>
+<span class="sd">        (opcional, sólo para los recursos que requieren autenticación).</span>
+<span class="sd">    :param str clave: Clave del identificador (opcional).</span>
+<span class="sd">    :param kwargs: Argumentos adicionales.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">identificador</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">clave</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Autentica con `identificador`/`clave` del contribuyente.</span>
+
+<span class="sd">        Ambos son opcionales porque `autorizacion()` es un recurso</span>
+<span class="sd">        público: no requiere credenciales del contribuyente.</span>
+<span class="sd">        """</span>
+        <span class="n">argumentos</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">identificador</span> <span class="ow">and</span> <span class="n">clave</span><span class="p">:</span>
+            <span class="n">argumentos</span><span class="p">[</span><span class="s1">'identificador'</span><span class="p">]</span> <span class="o">=</span> <span class="n">identificador</span>
+            <span class="n">argumentos</span><span class="p">[</span><span class="s1">'clave'</span><span class="p">]</span> <span class="o">=</span> <span class="n">clave</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">argumentos</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Contribuyentes.autorizacion">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.dte.Contribuyentes.autorizacion">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">autorizacion</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">rut</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Verifica si un contribuyente está autorizado para emitir DTE.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "autorizado": true,</span>
+<span class="sd">                "direccion_regional": "VI",</span>
+<span class="sd">                "documentos": [</span>
+<span class="sd">                  {</span>
+<span class="sd">                    "autorizado": "2016-03-01",</span>
+<span class="sd">                    "codigo": 39,</span>
+<span class="sd">                    "desautorizado": null,</span>
+<span class="sd">                    "descripcion": "BOLETA ELECTRONICA"</span>
+<span class="sd">                  }</span>
+<span class="sd">                ],</span>
+<span class="sd">                "razon_social": "API Gateway",</span>
+<span class="sd">                "resolucion": {"fecha": "2014-08-22", "numero": 80},</span>
+<span class="sd">                "rut": "76192083-9",</span>
+<span class="sd">                "software": "mercado"</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str rut: RUT del contribuyente a verificar.</span>
+<span class="sd">        :param bool certificacion: Indica si se consulta en ambiente</span>
+<span class="sd">            de certificación (opcional).</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, estado de autorización.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">certificacion_flag</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">certificacion</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">'/sii/dte/contribuyentes/autorizado/</span><span class="si">%(rut)s</span><span class="s1">'</span>
+            <span class="s1">'?certificacion=</span><span class="si">%(certificacion_flag)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'rut'</span><span class="p">:</span> <span class="n">rut</span><span class="p">,</span> <span class="s1">'certificacion_flag'</span><span class="p">:</span> <span class="n">certificacion_flag</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Contribuyentes.datos">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.dte.Contribuyentes.datos">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">datos</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">contribuyente</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Datos privados del contribuyente autenticado.</span>
+
+<span class="sd">        Incluye resolución de autorización, correos y software de</span>
+<span class="sd">        facturación declarado.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "rut": "12345678-9",</span>
+<span class="sd">                "autorizado": "2025-02-25",</span>
+<span class="sd">                "razon_social": "RAZON SOCIAL SPA",</span>
+<span class="sd">                "resolucion": {"numero": 99, "fecha": "2014-10-21"},</span>
+<span class="sd">                "emails": {</span>
+<span class="sd">                  "administrador": "admin@example.com",</span>
+<span class="sd">                  "sii": "sii@example.com",</span>
+<span class="sd">                  "intercambio": "intercambio@example.com"</span>
+<span class="sd">                },</span>
+<span class="sd">                "software": {"nombre": "SII", "url": "www.example.com"}</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str contribuyente: RUT del contribuyente.</span>
+<span class="sd">        :param str certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, datos privados del contribuyente.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/dte/contribuyentes/datos/</span><span class="si">%(contribuyente)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'contribuyente'</span><span class="p">:</span> <span class="n">contribuyente</span><span class="p">},</span>
+            <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Contribuyentes.set_datos">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.dte.Contribuyentes.set_datos">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_datos</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">contribuyente</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">datos</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Actualiza los datos privados del contribuyente (emails, software).</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "data": {</span>
+<span class="sd">                  "rut": "12345678-9",</span>
+<span class="sd">                  "autorizado": "2019-12-23",</span>
+<span class="sd">                  "razon_social": "RAZON SOCIAL SPA",</span>
+<span class="sd">                  "resolucion": {"numero": 0, "fecha": "2019-12-23"},</span>
+<span class="sd">                  "emails": {</span>
+<span class="sd">                    "administrador": "admin@example.com",</span>
+<span class="sd">                    "sii": "sii@example.com",</span>
+<span class="sd">                    "intercambio": "dte@example.com"</span>
+<span class="sd">                  },</span>
+<span class="sd">                  "software": {"nombre": "LIBREDTE", "url": "www.libredte.cl"}</span>
+<span class="sd">                }</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str contribuyente: RUT del contribuyente a actualizar.</span>
+<span class="sd">        :param dict datos: Datos a actualizar (`emails`, `software`).</span>
+<span class="sd">        :param str certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, datos privados del contribuyente, ya actualizados.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/dte/contribuyentes/set_datos/</span><span class="si">%(contribuyente)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'contribuyente'</span><span class="p">:</span> <span class="n">contribuyente</span><span class="p">},</span>
+            <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">(),</span> <span class="s1">'datos'</span><span class="p">:</span> <span class="n">datos</span><span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Contribuyentes.usuarios">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.dte.Contribuyentes.usuarios">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">usuarios</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">rut</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Listado de usuarios autorizados de un contribuyente.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": [</span>
+<span class="sd">                {</span>
+<span class="sd">                  "nombre": "Juan",</span>
+<span class="sd">                  "permisos": {</span>
+<span class="sd">                    "administrador": true,</span>
+<span class="sd">                    "anular_folios": true,</span>
+<span class="sd">                    "consultar": true,</span>
+<span class="sd">                    "enviar": true,</span>
+<span class="sd">                    "firmar": true,</span>
+<span class="sd">                    "...": "..."</span>
+<span class="sd">                  },</span>
+<span class="sd">                  "run": "1-9"</span>
+<span class="sd">                }</span>
+<span class="sd">              ],</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str rut: RUT del contribuyente a consultar.</span>
+<span class="sd">        :param str certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, listado de usuarios, con nombre, RUN y permisos.</span>
+<span class="sd">        :rtype: ApiResponse[list[dict[str, Any]]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/dte/contribuyentes/usuarios/</span><span class="si">%(rut)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span><span class="s1">'rut'</span><span class="p">:</span> <span class="n">rut</span><span class="p">},</span>
+            <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Contribuyentes.set_usuario">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.dte.Contribuyentes.set_usuario">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_usuario</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">contribuyente</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">usuario</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Asigna un usuario autorizado, o modifica sus permisos si ya existe.</span>
+
+<span class="sd">        `usuario` lleva `run` y `permisos`, con las claves booleanas</span>
+<span class="sd">        `administrador`, `solicitar_folios`, `anular_folios`, `firmar`,</span>
+<span class="sd">        `enviar` y `consultar`; las que no vengan cuentan como `False`.</span>
+<span class="sd">        Para eliminar un usuario se envían todos los permisos en `False`:</span>
+<span class="sd">        no hay un recurso aparte para eliminar.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": [</span>
+<span class="sd">                {</span>
+<span class="sd">                  "run": "66666666-6",</span>
+<span class="sd">                  "nombre": "Juan",</span>
+<span class="sd">                  "permisos": {</span>
+<span class="sd">                    "administrador": true,</span>
+<span class="sd">                    "solicitar_folios": true,</span>
+<span class="sd">                    "anular_folios": true,</span>
+<span class="sd">                    "firmar": true,</span>
+<span class="sd">                    "enviar": true,</span>
+<span class="sd">                    "...": "..."</span>
+<span class="sd">                  }</span>
+<span class="sd">                }</span>
+<span class="sd">              ],</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str contribuyente: RUT del contribuyente a actualizar.</span>
+<span class="sd">        :param dict usuario: Usuario a asignar (`run` y `permisos`).</span>
+<span class="sd">        :param str certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`. En `data`,</span>
+<span class="sd">            la lista completa de usuarios autorizados después del cambio</span>
+<span class="sd">            (no solo el enviado), con sus permisos.</span>
+<span class="sd">        :rtype: ApiResponse[list[dict[str, Any]]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/dte/contribuyentes/set_usuario/</span><span class="si">%(contribuyente)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'contribuyente'</span><span class="p">:</span> <span class="n">contribuyente</span><span class="p">},</span>
+            <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">(),</span> <span class="s1">'usuario'</span><span class="p">:</span> <span class="n">usuario</span><span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Contribuyentes.autorizacion_certificado">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.dte.Contribuyentes.autorizacion_certificado">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">autorizacion_certificado</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">rut</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Estado de autorización de un contribuyente, con certificado.</span>
+
+<span class="sd">        A diferencia de `autorizacion()` (`GET`, pública), esta</span>
+<span class="sd">        variante requiere certificado digital y agrega el correo</span>
+<span class="sd">        electrónico de intercambio del contribuyente a la respuesta.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "autorizado": true,</span>
+<span class="sd">                "direccion_regional": "VI",</span>
+<span class="sd">                "documentos": [</span>
+<span class="sd">                  {</span>
+<span class="sd">                    "autorizado": "2015-09-01",</span>
+<span class="sd">                    "codigo": 33,</span>
+<span class="sd">                    "desautorizado": null,</span>
+<span class="sd">                    "descripcion": "FACTURA ELECTRONICA"</span>
+<span class="sd">                  }</span>
+<span class="sd">                ],</span>
+<span class="sd">                "emails": {"intercambio": {"email": "dte@example.com"}},</span>
+<span class="sd">                "razon_social": "API Gateway",</span>
+<span class="sd">                "resolucion": {"fecha": "2014-08-22", "numero": 80},</span>
+<span class="sd">                "rut": "76192083-9",</span>
+<span class="sd">                "software": "mercado"</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str rut: RUT del contribuyente a consultar.</span>
+<span class="sd">        :param str certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, autorización, resolución, dirección regional, software</span>
+<span class="sd">            declarado, email de intercambio y documentos autorizados.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/dte/contribuyentes/autorizado/</span><span class="si">%(rut)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span><span class="s1">'rut'</span><span class="p">:</span> <span class="n">rut</span><span class="p">},</span>
+            <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Contribuyentes.autorizados">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.dte.Contribuyentes.autorizados">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">autorizados</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dia</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">formato</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Descarga masiva de contribuyentes autorizados a emitir DTE.</span>
+
+<span class="sd">        Descarga la base completa del SII (cercana a un millón de</span>
+<span class="sd">        registros, cientos de MB, hasta 15 minutos). No es para</span>
+<span class="sd">        consultas puntuales de un RUT — para eso usar `autorizacion()`</span>
+<span class="sd">        o `autorizacion_certificado()`.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": [</span>
+<span class="sd">                {</span>
+<span class="sd">                  "rut": "76192083-9",</span>
+<span class="sd">                  "razon_social": "API Gateway",</span>
+<span class="sd">                  "resolucion_numero": "80",</span>
+<span class="sd">                  "resolucion_fecha": "2014-08-22",</span>
+<span class="sd">                  "email": "dte@example.com",</span>
+<span class="sd">                  "url": "www.example.com"</span>
+<span class="sd">                }</span>
+<span class="sd">              ],</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :param str dia: Fecha de corte (AAAAMMDD o AAAA-MM-DD).</span>
+<span class="sd">        :param str formato: `'json'`, `'csv'` o `'csv_sii'` (oficial</span>
+<span class="sd">            del SII, sin transformar — recomendado y valor por defecto</span>
+<span class="sd">            de la API).</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, listado de contribuyentes autorizados (RUT, razón</span>
+<span class="sd">            social, resolución, email de intercambio, URL). Con</span>
+<span class="sd">            `formato='json'` se entrega ya decodificado; con los dos formatos</span>
+<span class="sd">            CSV se entrega el archivo crudo, sin decodificar (`csv_sii` viene</span>
+<span class="sd">            en ISO-8859-1).</span>
+<span class="sd">        :rtype: ApiResponse[list[dict[str, Any]]] | bytes</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/dte/contribuyentes/autorizados'</span><span class="p">,</span>
+            <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">,</span>
+            <span class="n">dia</span><span class="o">=</span><span class="n">dia</span><span class="p">,</span>
+            <span class="n">formato</span><span class="o">=</span><span class="n">formato</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="c1"># Sólo `json` responde JSON. Los dos formatos CSV (incluído</span>
+        <span class="c1"># `csv_sii`, el que aplica la API si no se pide otro) vienen</span>
+        <span class="c1"># como texto plano y decodificarlos fallaría.</span>
+        <span class="k">if</span> <span class="n">formato</span> <span class="o">==</span> <span class="s1">'json'</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Emitidos">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.dte.Emitidos">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Emitidos</span><span class="p">(</span><span class="n">ApiBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Cliente específico para gestionar DTE emitidos.</span>
+
+<span class="sd">    Permite verificar la validez y autenticidad de un DTE emitido.</span>
+
+<span class="sd">    :param str identificador: Identificador del contribuyente.</span>
+<span class="sd">    :param str clave: Clave del identificador.</span>
+<span class="sd">    :param kwargs: Argumentos adicionales.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">identificador</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">clave</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Autentica con `identificador`/`clave` del contribuyente."""</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">identificador</span><span class="o">=</span><span class="n">identificador</span><span class="p">,</span>
+            <span class="n">clave</span><span class="o">=</span><span class="n">clave</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Emitidos.verificar">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.dte.Emitidos.verificar">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">verificar</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">receptor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">folio</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">fecha</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">total</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">firma</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Verifica la validez de un DTE emitido.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "status": "DOK",</span>
+<span class="sd">                "detalle": "Documento recibido por el SII. Datos ...",</span>
+<span class="sd">                "track_id": 321421421521,</span>
+<span class="sd">                "razon_social": "SASCO SPA"</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str emisor: RUT del emisor del DTE.</span>
+<span class="sd">        :param str receptor: RUT del receptor del DTE.</span>
+<span class="sd">        :param int dte: Tipo de DTE.</span>
+<span class="sd">        :param int folio: Número de folio del DTE.</span>
+<span class="sd">        :param str fecha: Fecha de emisión del DTE.</span>
+<span class="sd">        :param int total: Monto total del DTE.</span>
+<span class="sd">        :param str firma: Firma electrónica del DTE (opcional).</span>
+<span class="sd">        :param str certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">            Sólo aplica a documentos que no son boletas: las boletas (39</span>
+<span class="sd">            y 41) se verifican siempre en producción.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, resultado de la verificación del DTE.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/dte/emitidos/verificar'</span><span class="p">,</span>
+            <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">(),</span>
+            <span class="s1">'dte'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span>
+                <span class="s1">'receptor'</span><span class="p">:</span> <span class="n">receptor</span><span class="p">,</span>
+                <span class="s1">'dte'</span><span class="p">:</span> <span class="n">dte</span><span class="p">,</span>
+                <span class="s1">'folio'</span><span class="p">:</span> <span class="n">folio</span><span class="p">,</span>
+                <span class="s1">'fecha'</span><span class="p">:</span> <span class="n">fecha</span><span class="p">,</span>
+                <span class="s1">'total'</span><span class="p">:</span> <span class="n">total</span><span class="p">,</span>
+                <span class="s1">'firma'</span><span class="p">:</span> <span class="n">firma</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Emitidos.estado_envio">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.dte.Emitidos.estado_envio">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">estado_envio</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">track_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">formato</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Estado del envío de un XML de DTE al SII.</span>
+
+<span class="sd">        Solo consulta envíos de empresas a las que el usuario</span>
+<span class="sd">        autenticado con certificado digital tenga acceso.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "documentos": {</span>
+<span class="sd">                  "33": {</span>
+<span class="sd">                    "aceptados": 1,</span>
+<span class="sd">                    "dte": 33,</span>
+<span class="sd">                    "informados": 1,</span>
+<span class="sd">                    "rechazados": 0,</span>
+<span class="sd">                    "reparos": 0,</span>
+<span class="sd">                    "...": "..."</span>
+<span class="sd">                  }</span>
+<span class="sd">                },</span>
+<span class="sd">                "emisor": "76192083-9",</span>
+<span class="sd">                "estado": "Envio Procesado [EPR].",</span>
+<span class="sd">                "track_id": "1234"</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str emisor: RUT del emisor de los documentos.</span>
+<span class="sd">        :param int track_id: Identificador del envío.</span>
+<span class="sd">        :param str certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :param str formato: `'json'` o `'html'`.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, estado del envío y resumen de documentos por tipo de</span>
+<span class="sd">            DTE. Con `formato='html'` se entrega el HTML del SII como</span>
+<span class="sd">            `str`, sin `data` ni `metadata`.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]] | str</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/dte/emitidos/estado_envio/</span><span class="si">%(emisor)s</span><span class="s1">/</span><span class="si">%(track_id)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span> <span class="s1">'track_id'</span><span class="p">:</span> <span class="n">track_id</span><span class="p">},</span>
+            <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">,</span>
+            <span class="n">formato</span><span class="o">=</span><span class="n">formato</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="c1"># Con `formato='html'` la API responde el HTML como una cadena</span>
+        <span class="c1"># JSON, sin `data` ni `metadata`.</span>
+        <span class="k">if</span> <span class="n">formato</span> <span class="o">==</span> <span class="s1">'html'</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Iecv">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.dte.Iecv">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Iecv</span><span class="p">(</span><span class="n">ApiBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Cliente para la Información Electrónica de Compras y Ventas (IECV).</span>
+
+<span class="sd">    :param str identificador: Identificador del contribuyente.</span>
+<span class="sd">    :param str clave: Clave del identificador.</span>
+<span class="sd">    :param kwargs: Argumentos adicionales.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">identificador</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">clave</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Autentica con `identificador`/`clave` del contribuyente."""</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">identificador</span><span class="o">=</span><span class="n">identificador</span><span class="p">,</span>
+            <span class="n">clave</span><span class="o">=</span><span class="n">clave</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Iecv.codigo_reemplazo">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.dte.Iecv.codigo_reemplazo">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">codigo_reemplazo</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">operacion</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">tipo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">track_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Código de reemplazo de un libro IECV, para poder rectificarlo.</span>
+
+<span class="sd">        Solo para períodos de 201707 hacia atrás.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {"codigo_reemplazo": "1234567890"},</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str emisor: RUT del emisor de los documentos.</span>
+<span class="sd">        :param str periodo: Período del registro (AAAAMM).</span>
+<span class="sd">        :param str operacion: `'VENTA'` o `'COMPRA'`.</span>
+<span class="sd">        :param str tipo: `'MENSUAL'` o `'RECTIFICA'`.</span>
+<span class="sd">        :param int track_id: Identificador del envío del libro a</span>
+<span class="sd">            reemplazar.</span>
+<span class="sd">        :param str certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, código de reemplazo del libro.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/dte/iecv/codigo_reemplazo/</span><span class="si">%(emisor)s</span><span class="s1">/</span><span class="si">%(periodo)s</span><span class="s1">'</span>
+            <span class="s1">'/</span><span class="si">%(operacion)s</span><span class="s1">/</span><span class="si">%(tipo)s</span><span class="s1">/</span><span class="si">%(track_id)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span>
+                <span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span>
+                <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">,</span>
+                <span class="s1">'operacion'</span><span class="p">:</span> <span class="n">operacion</span><span class="p">,</span>
+                <span class="s1">'tipo'</span><span class="p">:</span> <span class="n">tipo</span><span class="p">,</span>
+                <span class="s1">'track_id'</span><span class="p">:</span> <span class="n">track_id</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2026, API Gateway.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

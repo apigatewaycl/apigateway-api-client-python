@@ -6,21 +6,21 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Configuración &mdash; documentación de API Gateway: Cliente de API en Python - 3</title>
+  <title>Configuración &mdash; documentación de API Gateway: Cliente de API en Python - 6.0.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=01b451dc"></script>
+      <script src="_static/documentation_options.js?v=a9071d65"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=f85f4cfb"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Índice" href="genindex.html" />
     <link rel="search" title="Búsqueda" href="search.html" />
-    <link rel="next" title="Ejemplo" href="gettingstarted.example.html" />
+    <link rel="next" title="Ejemplos" href="gettingstarted.example.html" />
     <link rel="prev" title="Instalación y actualización" href="gettingstarted.install.html" /> 
 </head>
 
@@ -48,7 +48,7 @@
 <li class="toctree-l2"><a class="reference internal" href="gettingstarted.legal.html">Términos y Condiciones de Uso</a></li>
 <li class="toctree-l2"><a class="reference internal" href="gettingstarted.install.html">Instalación y actualización</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Configuración</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.example.html">Ejemplo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.example.html">Ejemplos</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="dev.index.html">Desarrollo</a></li>
@@ -109,32 +109,62 @@ datos ya «listos» para ser usados en vez de tener que preocuparse de qué mét
 cliente genérico usar para obtenerlos en el formato requerido.</p></li>
 </ol>
 </section>
+<section id="version-de-la-api">
+<h2>Versión de la API<a class="headerlink" href="#version-de-la-api" title="Link to this heading"></a></h2>
+<p>Este cliente habla únicamente con la <strong>versión 2</strong> de la API, en
+<code class="docutils literal notranslate"><span class="pre">https://app.apigateway.cl/api/v2</span></code>. La versión 1 (legacy) no está
+soportada.</p>
+</section>
+<section id="estructura-de-las-respuestas">
+<h2>Estructura de las respuestas<a class="headerlink" href="#estructura-de-las-respuestas" title="Link to this heading"></a></h2>
+<p>Los recursos que responden JSON entregan el cuerpo tal cual lo envía la
+API, sin transformarlo:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">"data"</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span>       <span class="c1"># el resultado de la consulta</span>
+    <span class="s2">"metadata"</span><span class="p">:</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>  <span class="c1"># marca de tiempo, paginación, etc.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Es decir, el dato que se busca está en la clave <code class="docutils literal notranslate"><span class="pre">data</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">respuesta</span> <span class="o">=</span> <span class="n">uf_client</span><span class="o">.</span><span class="n">anual</span><span class="p">(</span><span class="mi">2025</span><span class="p">)</span>
+<span class="n">valores</span> <span class="o">=</span> <span class="n">respuesta</span><span class="p">[</span><span class="s1">'data'</span><span class="p">]</span>
+<span class="n">consultado_en</span> <span class="o">=</span> <span class="n">respuesta</span><span class="p">[</span><span class="s1">'metadata'</span><span class="p">][</span><span class="s1">'timestamp'</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Algunos recursos usan <code class="docutils literal notranslate"><span class="pre">metadata</span></code> para paginar. Por ejemplo, el listado
+de solicitudes de CAF entrega ahí <code class="docutils literal notranslate"><span class="pre">siguiente_pagina</span></code>, que vale
+<code class="docutils literal notranslate"><span class="pre">None</span></code> en la última página.</p>
+<p>Los recursos que responden un archivo (PDF, XML, CSV o HTML) entregan su
+contenido sin decodificar, como <code class="docutils literal notranslate"><span class="pre">bytes</span></code>.</p>
+</section>
 <section id="autenticacion-en-api-gateway">
 <h2>Autenticación en API Gateway<a class="headerlink" href="#autenticacion-en-api-gateway" title="Link to this heading"></a></h2>
 <p>Lo más simple, y recomendado, es usar una variable de entorno con el
-<a class="reference external" href="https://legacy.apigateway.cl/dashboard#api-auth">token del usuario</a>, la cual será
+<a class="reference external" href="https://app.apigateway.cl/dashboard#api-auth">token del usuario</a>, la cual será
 reconocida automáticamente por el cliente:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">APIGATEWAY_API_TOKEN</span><span class="o">=</span><span class="s2">&quot;aquí-tu-token-de-usuario&quot;</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">APIGATEWAY_API_TOKEN</span><span class="o">=</span><span class="s2">"aquí-tu-token-de-usuario"</span>
 </pre></div>
 </div>
 <p>Si no se desea usar una variable de entorno, al instanciar los objetos se
 deberá indicar el token del usuario. Ejemplo con el cliente genérico:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">apigatewaycl</span>
-<span class="n">APIGATEWAY_API_TOKEN</span> <span class="o">=</span> <span class="s2">&quot;aquí-tu-token-de-usuario&quot;</span>
-<span class="n">client</span> <span class="o">=</span> <span class="n">apigatewaycl</span><span class="o">.</span><span class="n">api_client</span><span class="o">.</span><span class="n">ApiClient</span><span class="p">(</span><span class="n">APIGATEWAY_API_TOKEN</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">apigatewaycl.api_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApiClient</span>
+
+<span class="n">APIGATEWAY_API_TOKEN</span> <span class="o">=</span> <span class="s2">"aquí-tu-token-de-usuario"</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">ApiClient</span><span class="p">(</span><span class="n">APIGATEWAY_API_TOKEN</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>El siguiente es un ejemplo con el cliente específico de Rcv. Primero se pasan
 los datos obligatorios de RUT y clave del usuario. Luego además se pasa el token
 del usuario de la API.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">apigatewaycl</span>
-<span class="n">APIGATEWAY_API_TOKEN</span> <span class="o">=</span> <span class="s2">&quot;aquí-tu-token-de-usuario&quot;</span>
-<span class="n">SII_USUARIO_RUT</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-<span class="n">SII_USUARIO_CLAVE</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-<span class="n">rcv_client</span> <span class="o">=</span> <span class="n">Rcv</span><span class="p">(</span><span class="n">SII_USUARIO_RUT</span><span class="p">,</span> <span class="n">SII_USUARIO_CLAVE</span><span class="p">,</span> <span class="n">api_token</span> <span class="o">=</span> <span class="n">APIGATEWAY_API_TOKEN</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">apigatewaycl.api_client.sii.rcv</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rcv</span>
+
+<span class="n">APIGATEWAY_API_TOKEN</span> <span class="o">=</span> <span class="s2">"aquí-tu-token-de-usuario"</span>
+<span class="n">SII_USUARIO_RUT</span> <span class="o">=</span> <span class="s2">""</span>
+<span class="n">SII_USUARIO_CLAVE</span> <span class="o">=</span> <span class="s2">""</span>
+<span class="n">rcv_client</span> <span class="o">=</span> <span class="n">Rcv</span><span class="p">(</span><span class="n">SII_USUARIO_RUT</span><span class="p">,</span> <span class="n">SII_USUARIO_CLAVE</span><span class="p">,</span> <span class="n">api_token</span><span class="o">=</span><span class="n">APIGATEWAY_API_TOKEN</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Si se usan variables de entorno, en ambos ejemplos se puede omitir el argumento <cite>api_token</cite>.</p>
+<p>Si se usa la variable de entorno, en ambos ejemplos se puede omitir el token.</p>
 </section>
 </section>
 
@@ -143,13 +173,13 @@ del usuario de la API.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
         <a href="gettingstarted.install.html" class="btn btn-neutral float-left" title="Instalación y actualización" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
-        <a href="gettingstarted.example.html" class="btn btn-neutral float-right" title="Ejemplo" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="gettingstarted.example.html" class="btn btn-neutral float-right" title="Ejemplos" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Derechos de autor 2024, API Gateway.</p>
+    <p>&#169; Derechos de autor 2026, API Gateway.</p>
   </div>
 
   Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un

@@ -1,0 +1,226 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apigatewaycl.api_client.sii.contribuyentes &mdash; documentación de API Gateway: Cliente de API en Python - 6.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a9071d65"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            API Gateway: Cliente de API en Python
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../gettingstarted.index.html">Empezando</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dev.index.html">Desarrollo</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">apigatewaycl</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">API Gateway: Cliente de API en Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Código de módulo</a></li>
+          <li class="breadcrumb-item"><a href="../../api_client.html">apigatewaycl.api_client</a></li>
+      <li class="breadcrumb-item active">apigatewaycl.api_client.sii.contribuyentes</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Código fuente para apigatewaycl.api_client.sii.contribuyentes</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># API Gateway: Cliente de API en Python.</span>
+<span class="c1"># Copyright (C) API Gateway &lt;https://www.apigateway.cl&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Este programa es software libre: usted puede redistribuirlo y/o modificarlo</span>
+<span class="c1"># bajo los términos de la GNU Lesser General Public License (LGPL) publicada</span>
+<span class="c1"># por la Fundación para el Software Libre, ya sea la versión 3 de la Licencia,</span>
+<span class="c1"># o (a su elección) cualquier versión posterior de la misma.</span>
+<span class="c1">#</span>
+<span class="c1"># Este programa se distribuye con la esperanza de que sea útil, pero SIN</span>
+<span class="c1"># GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD</span>
+<span class="c1"># PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de la GNU Lesser General</span>
+<span class="c1"># Public License (LGPL) para obtener una información más detallada.</span>
+<span class="c1">#</span>
+<span class="c1"># Debería haber recibido una copia de la GNU Lesser General Public License</span>
+<span class="c1"># (LGPL) junto a este programa. En caso contrario, consulte</span>
+<span class="c1"># &lt;http://www.gnu.org/licenses/lgpl.html&gt;.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""</span>
+<span class="sd">Módulo para obtener datos de los contribuyentes a través del SII.</span>
+
+<span class="sd">Para más información sobre la API, consulte la `documentación completa</span>
+<span class="sd">de Contribuyentes</span>
+<span class="sd">&lt;https://www.apigateway.cl/docs&gt;`_.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApiBase</span><span class="p">,</span> <span class="n">ApiResponse</span>
+
+
+<div class="viewcode-block" id="Contribuyentes">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.contribuyentes.Contribuyentes">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Contribuyentes</span><span class="p">(</span><span class="n">ApiBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Cliente para los endpoints de contribuyentes de la API de API Gateway.</span>
+
+<span class="sd">    Hereda de ApiBase y utiliza su funcionalidad para realizar</span>
+<span class="sd">    solicitudes a la API.</span>
+<span class="sd">    """</span>
+
+<div class="viewcode-block" id="Contribuyentes.situacion_tributaria">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.contribuyentes.Contribuyentes.situacion_tributaria">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">situacion_tributaria</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rut</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene la situación tributaria de un contribuyente.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "rut": 76192083,</span>
+<span class="sd">                "dv": "9",</span>
+<span class="sd">                "razon_social": "EMPRESA EJEMPLO SPA",</span>
+<span class="sd">                "inicio_actividades": true,</span>
+<span class="sd">                "fecha_inicio_actividades": "2012-06-08",</span>
+<span class="sd">                "fecha_consulta": "18-05-2026 12:32:03",</span>
+<span class="sd">                "pro_pyme": true,</span>
+<span class="sd">                "moneda_extranjera": false,</span>
+<span class="sd">                "...": "..."</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str rut: RUT del contribuyente.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, situación tributaria.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/contribuyentes/situacion_tributaria/tercero/</span><span class="si">%(rut)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s1">'rut'</span><span class="p">:</span> <span class="n">rut</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Contribuyentes.verificar_rut">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.contribuyentes.Contribuyentes.verificar_rut">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">verificar_rut</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">rut</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">serie</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Verifica la cédula RUT de un contribuyente por su número de serie.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "rut": "78.580.345-6",</span>
+<span class="sd">                "nombre_o_razon_social": "NOMBRE O RAZÓN SOCIAL",</span>
+<span class="sd">                "direccion_principal_casa_matriz": "DANIEL BARROS GREZ 191...",</span>
+<span class="sd">                "n_de_serie": "22389021489",</span>
+<span class="sd">                "fecha_de_emision": "11/11/2024",</span>
+<span class="sd">                "rut_usuario_cedula": "12.345.678-9",</span>
+<span class="sd">                "usuario_cedula": "USUARIO CÉDULA",</span>
+<span class="sd">                "tipo": "Cédula"</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str rut: RUT del contribuyente (ej. `76192083-9`).</span>
+<span class="sd">        :param str serie: Número de serie de la cédula a verificar.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, verificación del RUT.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/contribuyentes/rut/verificar/</span><span class="si">%(rut)s</span><span class="s1">/</span><span class="si">%(serie)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s1">'rut'</span><span class="p">:</span> <span class="n">rut</span><span class="p">,</span>
+            <span class="s1">'serie'</span><span class="p">:</span> <span class="n">serie</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2026, API Gateway.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

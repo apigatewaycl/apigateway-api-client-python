@@ -1,0 +1,525 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apigatewaycl.api_client.sii.eboleta &mdash; documentación de API Gateway: Cliente de API en Python - 6.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a9071d65"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            API Gateway: Cliente de API en Python
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../gettingstarted.index.html">Empezando</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dev.index.html">Desarrollo</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">apigatewaycl</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">API Gateway: Cliente de API en Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Código de módulo</a></li>
+          <li class="breadcrumb-item"><a href="../../api_client.html">apigatewaycl.api_client</a></li>
+      <li class="breadcrumb-item active">apigatewaycl.api_client.sii.eboleta</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Código fuente para apigatewaycl.api_client.sii.eboleta</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># API Gateway: Cliente de API en Python.</span>
+<span class="c1"># Copyright (C) API Gateway &lt;https://www.apigateway.cl&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Este programa es software libre: usted puede redistribuirlo y/o modificarlo</span>
+<span class="c1"># bajo los términos de la GNU Lesser General Public License (LGPL) publicada</span>
+<span class="c1"># por la Fundación para el Software Libre, ya sea la versión 3 de la Licencia,</span>
+<span class="c1"># o (a su elección) cualquier versión posterior de la misma.</span>
+<span class="c1">#</span>
+<span class="c1"># Este programa se distribuye con la esperanza de que sea útil, pero SIN</span>
+<span class="c1"># GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD</span>
+<span class="c1"># PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de la GNU Lesser General</span>
+<span class="c1"># Public License (LGPL) para obtener una información más detallada.</span>
+<span class="c1">#</span>
+<span class="c1"># Debería haber recibido una copia de la GNU Lesser General Public License</span>
+<span class="c1"># (LGPL) junto a este programa. En caso contrario, consulte</span>
+<span class="c1"># &lt;http://www.gnu.org/licenses/lgpl.html&gt;.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""</span>
+<span class="sd">Módulo para eBoleta (Boletas Electrónicas del SII, sistema propio).</span>
+
+<span class="sd">Para más información sobre la API, consulte la `documentación completa</span>
+<span class="sd">de eBoleta &lt;https://www.apigateway.cl/docs&gt;`_.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApiBase</span><span class="p">,</span> <span class="n">ApiResponse</span>
+
+
+<div class="viewcode-block" id="EboletaContribuyente">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.eboleta.EboletaContribuyente">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EboletaContribuyente</span><span class="p">(</span><span class="n">ApiBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Cliente para información de contribuyentes emisores de eBoleta.</span>
+
+<span class="sd">    :param str identificador: Identificador del contribuyente.</span>
+<span class="sd">    :param str clave: Clave del identificador.</span>
+<span class="sd">    :param kwargs: Argumentos adicionales.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">identificador</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">clave</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Autentica con `identificador`/`clave` del contribuyente."""</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">identificador</span><span class="o">=</span><span class="n">identificador</span><span class="p">,</span>
+            <span class="n">clave</span><span class="o">=</span><span class="n">clave</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="EboletaContribuyente.emisor">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.eboleta.EboletaContribuyente.emisor">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emisor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Información del emisor de la boleta electrónica.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "contribuyente": {</span>
+<span class="sd">                  "rut": 12345678,</span>
+<span class="sd">                  "razon_social": "RAZON SOCIAL DEL EMISOR",</span>
+<span class="sd">                  "dv": "9",</span>
+<span class="sd">                  "giro": "GIRO DEL EMISOR",</span>
+<span class="sd">                  "actividad_economica": "Actividad económica del emisor",</span>
+<span class="sd">                  "telefono": "1234567890",</span>
+<span class="sd">                  "email": "emisor@example.com",</span>
+<span class="sd">                  "direccion": "Dirección del emisor",</span>
+<span class="sd">                  "...": "..."</span>
+<span class="sd">                },</span>
+<span class="sd">                "sucursales": [</span>
+<span class="sd">                  {</span>
+<span class="sd">                    "rut": 12345678,</span>
+<span class="sd">                    "codigo": 12345678,</span>
+<span class="sd">                    "sucursal": null,</span>
+<span class="sd">                    "direccion": "ERRAZURIZ 827 ",</span>
+<span class="sd">                    "comuna": "Santa Cruz",</span>
+<span class="sd">                    "...": "..."</span>
+<span class="sd">                  }</span>
+<span class="sd">                ],</span>
+<span class="sd">                "usuarios": [</span>
+<span class="sd">                  {</span>
+<span class="sd">                    "user": "12345678-9",</span>
+<span class="sd">                    "nombre": "NOMBRE DEL USUARIO 1",</span>
+<span class="sd">                    "es_representante": true,</span>
+<span class="sd">                    "permisos": 0,</span>
+<span class="sd">                    "total_records": 2</span>
+<span class="sd">                  }</span>
+<span class="sd">                ]</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str emisor: RUT del emisor (formato 11222333-K).</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, datos del contribuyente, sus sucursales y usuarios.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/eboleta/contribuyente/emisor/</span><span class="si">%(emisor)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EboletaContribuyente.emisores_autorizados">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.eboleta.EboletaContribuyente.emisores_autorizados">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emisores_autorizados</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Lista de emisores autorizados de la boleta electrónica.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "emisores": [</span>
+<span class="sd">                  {</span>
+<span class="sd">                    "rut": 12345678,</span>
+<span class="sd">                    "dv": "9",</span>
+<span class="sd">                    "razon_social": "RAZON SOCIAL DEL EMISOR"</span>
+<span class="sd">                  }</span>
+<span class="sd">                ]</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, listado de contribuyentes (RUT, DV y razón social).</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s1">'/sii/eboleta/contribuyente/emisores_autorizados'</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EboletaEmitidas">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.eboleta.EboletaEmitidas">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EboletaEmitidas</span><span class="p">(</span><span class="n">ApiBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Cliente para boletas electrónicas emitidas de eBoleta.</span>
+
+<span class="sd">    :param str identificador: Identificador del contribuyente.</span>
+<span class="sd">    :param str clave: Clave del identificador.</span>
+<span class="sd">    :param kwargs: Argumentos adicionales.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">identificador</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">clave</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Autentica con `identificador`/`clave` del contribuyente."""</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">identificador</span><span class="o">=</span><span class="n">identificador</span><span class="p">,</span>
+            <span class="n">clave</span><span class="o">=</span><span class="n">clave</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_body_documento</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">contribuyente</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">folio</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">fecha</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Cuerpo que identifica un documento ya emitido.</span>
+
+<span class="sd">        `documento()`, `pdf()` y `email()` apuntan al mismo documento</span>
+<span class="sd">        con estos cuatro campos, todos en el cuerpo.</span>
+
+<span class="sd">        :param str contribuyente: RUT del contribuyente.</span>
+<span class="sd">        :param int folio: Folio del documento.</span>
+<span class="sd">        :param int dte: Tipo de documento.</span>
+<span class="sd">        :param str fecha: Fecha de emisión del documento (AAAA-MM-DD).</span>
+<span class="sd">        :return: Cuerpo de la solicitud, con la autenticación incluida.</span>
+<span class="sd">        :rtype: dict[str, Any]</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">(),</span>
+            <span class="s1">'contribuyente'</span><span class="p">:</span> <span class="n">contribuyente</span><span class="p">,</span>
+            <span class="s1">'folio'</span><span class="p">:</span> <span class="n">folio</span><span class="p">,</span>
+            <span class="s1">'dte'</span><span class="p">:</span> <span class="n">dte</span><span class="p">,</span>
+            <span class="s1">'fecha'</span><span class="p">:</span> <span class="n">fecha</span><span class="p">,</span>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="EboletaEmitidas.documentos">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.eboleta.EboletaEmitidas.documentos">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">documentos</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">contribuyente</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">date_from</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">date_to</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">items_per_page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">estado</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Listado de documentos emitidos de la boleta electrónica.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": [</span>
+<span class="sd">                {</span>
+<span class="sd">                  "folio": 35,</span>
+<span class="sd">                  "neto": 4202,</span>
+<span class="sd">                  "iva": 798,</span>
+<span class="sd">                  "total": 5000,</span>
+<span class="sd">                  "exento": 0,</span>
+<span class="sd">                  "dte": 39,</span>
+<span class="sd">                  "revision_estado": "pendiente",</span>
+<span class="sd">                  "anulado": false,</span>
+<span class="sd">                  "...": "..."</span>
+<span class="sd">                }</span>
+<span class="sd">              ],</span>
+<span class="sd">              "metadata": {</span>
+<span class="sd">                "timestamp": "...",</span>
+<span class="sd">                "total": "23390",</span>
+<span class="sd">                "cantidad_emitida": "5"</span>
+<span class="sd">              }</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str contribuyente: RUT del contribuyente, sin puntos ni</span>
+<span class="sd">            dígito verificador.</span>
+<span class="sd">        :param str date_from: Fecha de inicio (AAAA-MM-DD).</span>
+<span class="sd">        :param str date_to: Fecha de fin (AAAA-MM-DD).</span>
+<span class="sd">        :param int page: Página a obtener (por defecto `1`).</span>
+<span class="sd">        :param int items_per_page: Ítems por página (por defecto</span>
+<span class="sd">            `10`).</span>
+<span class="sd">        :param str estado: Estado del documento (por defecto</span>
+<span class="sd">            `emitido`).</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`. En</span>
+<span class="sd">            `data`, el listado de documentos emitidos; en `metadata`,</span>
+<span class="sd">            los datos de la consulta.</span>
+<span class="sd">        :rtype: ApiResponse[list[dict[str, Any]]]</span>
+<span class="sd">        """</span>
+        <span class="c1"># Todos los parámetros de esta API van en el cuerpo, no en la</span>
+        <span class="c1"># ruta ni en la query string. Los opcionales no se envían si</span>
+        <span class="c1"># no se indican, para que aplique el valor por defecto.</span>
+        <span class="n">opcionales</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'page'</span><span class="p">:</span> <span class="n">page</span><span class="p">,</span>
+            <span class="s1">'items_per_page'</span><span class="p">:</span> <span class="n">items_per_page</span><span class="p">,</span>
+            <span class="s1">'estado'</span><span class="p">:</span> <span class="n">estado</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">body</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">(),</span>
+            <span class="s1">'contribuyente'</span><span class="p">:</span> <span class="n">contribuyente</span><span class="p">,</span>
+            <span class="s1">'date_from'</span><span class="p">:</span> <span class="n">date_from</span><span class="p">,</span>
+            <span class="s1">'date_to'</span><span class="p">:</span> <span class="n">date_to</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="n">clave</span><span class="p">:</span> <span class="n">valor</span>
+                <span class="k">for</span> <span class="n">clave</span><span class="p">,</span> <span class="n">valor</span> <span class="ow">in</span> <span class="n">opcionales</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">valor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s1">'/sii/eboleta/emitidas/documentos'</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EboletaEmitidas.emitir">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.eboleta.EboletaEmitidas.emitir">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emitir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dte</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Emite una Boleta Electrónica Afecta (39) o Exenta (41).</span>
+
+<span class="sd">        Solo admite un ítem por documento. `dte['vendedor']` debe ser</span>
+<span class="sd">        el mismo RUT usado para autenticar (`auth.pass.rut`).</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "pdf": "url del pdf",</span>
+<span class="sd">                "pdf_base64": "data:application/pdf;base64,...",</span>
+<span class="sd">                "dte": 39,</span>
+<span class="sd">                "folio": 40</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param dict dte: Datos de la boleta a emitir (`vendedor`,</span>
+<span class="sd">            `Encabezado`, `Detalle`).</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, folio y tipo de documento emitido, URL del PDF y PDF en</span>
+<span class="sd">            base64.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">(),</span> <span class="s1">'dte'</span><span class="p">:</span> <span class="n">dte</span><span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">'/sii/eboleta/emitidas/emitir'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EboletaEmitidas.documento">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.eboleta.EboletaEmitidas.documento">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">documento</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">contribuyente</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">folio</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">fecha</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Detalle de un documento de la boleta electrónica.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "folio": 35,</span>
+<span class="sd">                "neto": 4202,</span>
+<span class="sd">                "iva": 798,</span>
+<span class="sd">                "total": 5000,</span>
+<span class="sd">                "exento": 0,</span>
+<span class="sd">                "dte": 39,</span>
+<span class="sd">                "revision_estado": "pendiente",</span>
+<span class="sd">                "anulado": false,</span>
+<span class="sd">                "...": "..."</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str contribuyente: RUT del contribuyente.</span>
+<span class="sd">        :param int folio: Folio del documento.</span>
+<span class="sd">        :param int dte: Tipo de documento.</span>
+<span class="sd">        :param str fecha: Fecha de emisión del documento (AAAA-MM-DD).</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, datos del documento (montos, estado, revisión, PDF).</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s1">'/sii/eboleta/emitidas/documento'</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_body_documento</span><span class="p">(</span><span class="n">contribuyente</span><span class="p">,</span> <span class="n">folio</span><span class="p">,</span> <span class="n">dte</span><span class="p">,</span> <span class="n">fecha</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EboletaEmitidas.pdf">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.eboleta.EboletaEmitidas.pdf">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pdf</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">contribuyente</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">folio</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">fecha</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        PDF de un documento de la boleta electrónica.</span>
+
+<span class="sd">        :param str contribuyente: RUT del contribuyente.</span>
+<span class="sd">        :param int folio: Folio del documento.</span>
+<span class="sd">        :param int dte: Tipo de documento.</span>
+<span class="sd">        :param str fecha: Fecha de emisión del documento (AAAA-MM-DD).</span>
+<span class="sd">        :return: Contenido del PDF del documento.</span>
+<span class="sd">        :rtype: bytes</span>
+<span class="sd">        """</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s1">'/sii/eboleta/emitidas/pdf'</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_body_documento</span><span class="p">(</span><span class="n">contribuyente</span><span class="p">,</span> <span class="n">folio</span><span class="p">,</span> <span class="n">dte</span><span class="p">,</span> <span class="n">fecha</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span></div>
+
+
+<div class="viewcode-block" id="EboletaEmitidas.email">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.eboleta.EboletaEmitidas.email">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">email</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">contribuyente</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">folio</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">fecha</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">to</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Envía por correo electrónico un documento de la boleta.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {"mensaje": "Email enviado con éxito"},</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str contribuyente: RUT del contribuyente.</span>
+<span class="sd">        :param int folio: Folio del documento.</span>
+<span class="sd">        :param int dte: Tipo de documento.</span>
+<span class="sd">        :param str fecha: Fecha de emisión del documento (AAAA-MM-DD).</span>
+<span class="sd">        :param str to: Dirección de correo de destino.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, mensaje de confirmación del envío.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_body_documento</span><span class="p">(</span><span class="n">contribuyente</span><span class="p">,</span> <span class="n">folio</span><span class="p">,</span> <span class="n">dte</span><span class="p">,</span> <span class="n">fecha</span><span class="p">)</span>
+        <span class="n">body</span><span class="p">[</span><span class="s1">'to'</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">'/sii/eboleta/emitidas/email'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2026, API Gateway.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

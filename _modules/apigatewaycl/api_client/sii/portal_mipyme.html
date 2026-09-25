@@ -1,0 +1,680 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apigatewaycl.api_client.sii.portal_mipyme &mdash; documentación de API Gateway: Cliente de API en Python - 6.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a9071d65"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            API Gateway: Cliente de API en Python
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../gettingstarted.index.html">Empezando</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dev.index.html">Desarrollo</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">apigatewaycl</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">API Gateway: Cliente de API en Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Código de módulo</a></li>
+          <li class="breadcrumb-item"><a href="../../api_client.html">apigatewaycl.api_client</a></li>
+      <li class="breadcrumb-item active">apigatewaycl.api_client.sii.portal_mipyme</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Código fuente para apigatewaycl.api_client.sii.portal_mipyme</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># API Gateway: Cliente de API en Python.</span>
+<span class="c1"># Copyright (C) API Gateway &lt;https://www.apigateway.cl&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Este programa es software libre: usted puede redistribuirlo y/o modificarlo</span>
+<span class="c1"># bajo los términos de la GNU Lesser General Public License (LGPL) publicada</span>
+<span class="c1"># por la Fundación para el Software Libre, ya sea la versión 3 de la Licencia,</span>
+<span class="c1"># o (a su elección) cualquier versión posterior de la misma.</span>
+<span class="c1">#</span>
+<span class="c1"># Este programa se distribuye con la esperanza de que sea útil, pero SIN</span>
+<span class="c1"># GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD</span>
+<span class="c1"># PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de la GNU Lesser General</span>
+<span class="c1"># Public License (LGPL) para obtener una información más detallada.</span>
+<span class="c1">#</span>
+<span class="c1"># Debería haber recibido una copia de la GNU Lesser General Public License</span>
+<span class="c1"># (LGPL) junto a este programa. En caso contrario, consulte</span>
+<span class="c1"># &lt;http://www.gnu.org/licenses/lgpl.html&gt;.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""</span>
+<span class="sd">Módulo para consultas al Portal MIPYME del SII.</span>
+
+<span class="sd">Para más información sobre la API, consulte la `documentación completa del</span>
+<span class="sd">Portal MIPYME &lt;https://www.apigateway.cl/docs&gt;`_.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApiBase</span><span class="p">,</span> <span class="n">ApiResponse</span>
+
+
+<div class="viewcode-block" id="PortalMipyme">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.PortalMipyme">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PortalMipyme</span><span class="p">(</span><span class="n">ApiBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Base para los clientes específicos del Portal Mipyme.</span>
+
+<span class="sd">    :param str identificador: Identificador del contribuyente.</span>
+<span class="sd">    :param str clave: Clave del identificador.</span>
+<span class="sd">    :param kwargs: Argumentos adicionales.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">identificador</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">clave</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Autentica con `identificador`/`clave` del contribuyente."""</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">identificador</span><span class="o">=</span><span class="n">identificador</span><span class="p">,</span>
+            <span class="n">clave</span><span class="o">=</span><span class="n">clave</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Contribuyentes">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.Contribuyentes">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Contribuyentes</span><span class="p">(</span><span class="n">PortalMipyme</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Cliente para los endpoints de contribuyentes del Portal Mipyme.</span>
+
+<span class="sd">    :param str identificador: Identificador del contribuyente.</span>
+<span class="sd">    :param str clave: Clave del identificador.</span>
+<span class="sd">    :param kwargs: Argumentos adicionales.</span>
+<span class="sd">    """</span>
+
+<div class="viewcode-block" id="Contribuyentes.info">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.Contribuyentes.info">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">contribuyente</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">33</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene información de un contribuyente específico.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "rut": 76192083,</span>
+<span class="sd">                "dv": "9",</span>
+<span class="sd">                "razon_social": "API Gateway",</span>
+<span class="sd">                "direcciones": [</span>
+<span class="sd">                  {</span>
+<span class="sd">                    "direccion": "Daniel Barros Grez 191",</span>
+<span class="sd">                    "comuna": "SANTA CRUZ",</span>
+<span class="sd">                    "ciudad": "SANTA CRUZ",</span>
+<span class="sd">                    "telefono": null</span>
+<span class="sd">                  }</span>
+<span class="sd">                ],</span>
+<span class="sd">                "actividades": [</span>
+<span class="sd">                  {</span>
+<span class="sd">                    "codigo": "619090",</span>
+<span class="sd">                    "glosa": "OTRAS ACTIVIDADES DE TELECOMUNICACIONES"</span>
+<span class="sd">                  }</span>
+<span class="sd">                ]</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str contribuyente: RUT del contribuyente.</span>
+<span class="sd">        :param str emisor: RUT del emisor del DTE.</span>
+<span class="sd">        :param int dte: Tipo de DTE.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, datos del contribuyente.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">'/sii/mipyme/contribuyentes/info/'</span>
+            <span class="s1">'</span><span class="si">%(contribuyente)s</span><span class="s1">/</span><span class="si">%(emisor)s</span><span class="s1">/</span><span class="si">%(dte)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'contribuyente'</span><span class="p">:</span> <span class="n">contribuyente</span><span class="p">,</span> <span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span> <span class="s1">'dte'</span><span class="p">:</span> <span class="n">dte</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Dte">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.Dte">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Dte</span><span class="p">(</span><span class="n">PortalMipyme</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Base para los clientes específicos de DTE del Portal Mipyme.</span>
+
+<span class="sd">    Incluye constantes para diferentes estados de DTE.</span>
+
+<span class="sd">    :param str identificador: Identificador del contribuyente.</span>
+<span class="sd">    :param str clave: Clave del identificador.</span>
+<span class="sd">    :param kwargs: Argumentos adicionales.</span>
+<span class="sd">    """</span>
+
+    <span class="n">ESTADO_EMITIDO</span> <span class="o">=</span> <span class="s1">'EMI'</span>  <span class="c1"># Documento emitido</span>
+    <span class="n">ESTADO_BORRADOR</span> <span class="o">=</span> <span class="s1">'PRV'</span>  <span class="c1"># Borrador (pre-view) de documento</span>
+    <span class="n">ESTADO_CERTIFICADO_RECHAZADO</span> <span class="o">=</span> <span class="s1">'DCD'</span>  <span class="c1"># Certificado rechazado</span>
+    <span class="n">ESTADO_EMISOR_INVALIDO</span> <span class="o">=</span> <span class="s1">'DEI'</span>  <span class="c1"># RUT emisor inválido</span>
+    <span class="n">ESTADO_FOLIO_INVALIDO</span> <span class="o">=</span> <span class="s1">'DFI'</span>  <span class="c1"># Folio DTE inválido</span>
+    <span class="n">ESTADO_INCOMPLETO</span> <span class="o">=</span> <span class="s1">'DIN'</span>  <span class="c1"># Incompleto</span>
+    <span class="n">ESTADO_FIRMA_SIN_PERMISO</span> <span class="o">=</span> <span class="s1">'DPF'</span>  <span class="c1"># Sin permiso de firma</span>
+    <span class="n">ESTADO_FIRMA_RECHAZADA</span> <span class="o">=</span> <span class="s1">'DRF'</span>  <span class="c1"># DTE rechazado por firma</span>
+    <span class="n">ESTADO_RECEPTOR_INVALIDO</span> <span class="o">=</span> <span class="s1">'DRI'</span>  <span class="c1"># RUT receptor inválido</span>
+    <span class="n">ESTADO_REPETIDO</span> <span class="o">=</span> <span class="s1">'DRR'</span>  <span class="c1"># Rechazado por repetido</span>
+    <span class="n">ESTADO_INICIALIZADO</span> <span class="o">=</span> <span class="s1">'INI'</span>  <span class="c1"># DTE inicializado</span>
+    <span class="n">ESTADO_ACEPTADO</span> <span class="o">=</span> <span class="s1">'RAC'</span>  <span class="c1"># DTE aceptado por receptor</span>
+    <span class="n">ESTADO_DISCREPANCIAS</span> <span class="o">=</span> <span class="s1">'RAD'</span>  <span class="c1"># DTE aceptado con discrepancias</span>
+    <span class="n">ESTADO_NO_RECIBIDO</span> <span class="o">=</span> <span class="s1">'RNR'</span>  <span class="c1"># DTE no recibido por receptor</span>
+    <span class="n">ESTADO_RECIBIDO</span> <span class="o">=</span> <span class="s1">'RRC'</span>  <span class="c1"># DTE recibido por receptor</span>
+    <span class="n">ESTADO_ACEPTADO_LEY_19983</span> <span class="o">=</span> <span class="s1">'RAL'</span>  <span class="c1"># DTE aceptado Ley 19.983</span>
+    <span class="n">ESTADO_RECHAZADO_RECEPTOR</span> <span class="o">=</span> <span class="s1">'RRH'</span>  <span class="c1"># DTE rechazado por receptor</span>
+    <span class="n">ESTADO_SIN_REPAROS</span> <span class="o">=</span> <span class="s1">'RSR'</span>  <span class="c1"># Recibido sin reparos</span>
+
+    <span class="n">DTE_TIPOS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">'33'</span><span class="p">:</span> <span class="s1">'33'</span><span class="p">,</span>
+        <span class="s1">'34'</span><span class="p">:</span> <span class="s1">'34'</span><span class="p">,</span>
+        <span class="s1">'35'</span><span class="p">:</span> <span class="s1">'35'</span><span class="p">,</span>
+        <span class="s1">'36'</span><span class="p">:</span> <span class="s1">'36'</span><span class="p">,</span>
+        <span class="s1">'37'</span><span class="p">:</span> <span class="s1">'37'</span><span class="p">,</span>
+        <span class="s1">'38'</span><span class="p">:</span> <span class="s1">'38'</span><span class="p">,</span>
+        <span class="s1">'39'</span><span class="p">:</span> <span class="s1">'39'</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="Dte.get_codigo_dte">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.Dte.get_codigo_dte">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_codigo_dte</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tipo</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene el código correspondiente al tipo de DTE.</span>
+
+<span class="sd">        :param str tipo: Tipo de DTE.</span>
+<span class="sd">        :return: Código del DTE.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">tipo</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">DTE_TIPOS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">DTE_TIPOS</span><span class="p">[</span><span class="n">tipo</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">tipo</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">' '</span><span class="p">,</span> <span class="s1">'-'</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Borradores">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.Borradores">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Borradores</span><span class="p">(</span><span class="n">Dte</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Cliente para documentos borradores del Portal Mipyme.</span>
+
+<span class="sd">    Un borrador es un DTE armado en el Portal MIPYME del SII, antes</span>
+<span class="sd">    de convertirse en un documento emitido de verdad.</span>
+
+<span class="sd">    :param str identificador: Identificador del contribuyente.</span>
+<span class="sd">    :param str clave: Clave del identificador.</span>
+<span class="sd">    :param kwargs: Argumentos adicionales.</span>
+<span class="sd">    """</span>
+
+<div class="viewcode-block" id="Borradores.documentos">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.Borradores.documentos">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">documentos</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">filtros</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Listado de documentos borradores del emisor.</span>
+
+<span class="sd">        Por defecto entrega todos los borradores, ordenados por fecha</span>
+<span class="sd">        ascendente. Para paginar se indica `NUM_PAG` en `filtros` (100</span>
+<span class="sd">        borradores por página) y `metadata.n_paginas` dice cuántas páginas</span>
+<span class="sd">        hay con los filtros usados.</span>
+
+<span class="sd">        Filtros disponibles: `NUM_PAG`, `CODIGO` (código del borrador),</span>
+<span class="sd">        `TPO_DOC` (código de DTE), `RUT_RECP` (RUT del receptor, con o sin</span>
+<span class="sd">        dígito verificador), `RZN_SOC` (razón social del receptor, o parte</span>
+<span class="sd">        de ella), `FEC_DESDE` y `FEC_HASTA` (AAAA-MM-DD) y `ORDEN`</span>
+<span class="sd">        (`FecAsc` o `FecDesc`).</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": [</span>
+<span class="sd">                {</span>
+<span class="sd">                  "ehdr_codigo": "4728198",</span>
+<span class="sd">                  "ptdc_codigo": "33",</span>
+<span class="sd">                  "ptdc_codigo_desc": "Factura Electronica",</span>
+<span class="sd">                  "ptes_estado": null,</span>
+<span class="sd">                  "efxp_fch_emis": "2026-09-23 18:49:38",</span>
+<span class="sd">                  "efxp_rzn_soc": "EMPRESA EMISORA SPA",</span>
+<span class="sd">                  "efxp_rut_recep": "76192083",</span>
+<span class="sd">                  "efxp_dv_recep": "9",</span>
+<span class="sd">                  "...": "..."</span>
+<span class="sd">                }</span>
+<span class="sd">              ],</span>
+<span class="sd">              "metadata": {</span>
+<span class="sd">                "timestamp": "...",</span>
+<span class="sd">                "n_documentos": 1,</span>
+<span class="sd">                "n_paginas": 1</span>
+<span class="sd">              }</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str emisor: RUT del emisor de los documentos.</span>
+<span class="sd">        :param dict filtros: Filtros de búsqueda (opcional).</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, listado de borradores con los campos del Portal</span>
+<span class="sd">            MIPYME en minúsculas; el código del borrador es `ehdr_codigo`.</span>
+<span class="sd">        :rtype: ApiResponse[list[dict[str, Any]]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/mipyme/borradores/documentos/</span><span class="si">%(emisor)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">(),</span> <span class="s1">'filtros'</span><span class="p">:</span> <span class="n">filtros</span> <span class="ow">or</span> <span class="p">{}}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Borradores.emitir">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.Borradores.emitir">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emitir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dte</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Crea un documento borrador en el Portal Mipyme.</span>
+
+<span class="sd">        No emite un DTE real ante el SII — el borrador se confirma</span>
+<span class="sd">        luego desde el propio Portal MIPYME.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "ehdr_codigo": "4728198",</span>
+<span class="sd">                "ptdc_codigo": "33",</span>
+<span class="sd">                "ptdc_codigo_desc": "Factura Electronica",</span>
+<span class="sd">                "ptes_estado": null,</span>
+<span class="sd">                "efxp_fch_emis": "2026-09-23 18:49:38",</span>
+<span class="sd">                "efxp_rzn_soc": "EMPRESA EMISORA SPA",</span>
+<span class="sd">                "efxp_rut_recep": "76192083",</span>
+<span class="sd">                "efxp_dv_recep": "9",</span>
+<span class="sd">                "...": "..."</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param dict dte: Datos del DTE a armar como borrador.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, el borrador creado.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">(),</span> <span class="s1">'dte'</span><span class="p">:</span> <span class="n">dte</span><span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">'/sii/mipyme/borradores/emitir'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Borradores.eliminar">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.Borradores.eliminar">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eliminar</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">codigo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Elimina un documento borrador del Portal Mipyme.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "ehdr_codigo": "4728198",</span>
+<span class="sd">                "ptdc_codigo": "33",</span>
+<span class="sd">                "ptdc_codigo_desc": "Factura Electronica",</span>
+<span class="sd">                "ptes_estado": null,</span>
+<span class="sd">                "efxp_fch_emis": "2026-09-23 18:49:38",</span>
+<span class="sd">                "efxp_rzn_soc": "EMPRESA EMISORA SPA",</span>
+<span class="sd">                "efxp_rut_recep": "76192083",</span>
+<span class="sd">                "efxp_dv_recep": "9",</span>
+<span class="sd">                "...": "..."</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str emisor: RUT del emisor de los documentos.</span>
+<span class="sd">        :param str codigo: Código del borrador (del listado de documentos).</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, `True` si el borrador fue eliminado.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/mipyme/borradores/eliminar/</span><span class="si">%(emisor)s</span><span class="s1">/</span><span class="si">%(codigo)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span>
+            <span class="s1">'codigo'</span><span class="p">:</span> <span class="n">codigo</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DteEmitidos">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.DteEmitidos">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DteEmitidos</span><span class="p">(</span><span class="n">Dte</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Cliente específico para gestionar DTE emitidos en el Portal Mipyme.</span>
+
+<span class="sd">    :param str identificador: Identificador del contribuyente.</span>
+<span class="sd">    :param str clave: Clave del identificador.</span>
+<span class="sd">    :param kwargs: Argumentos adicionales.</span>
+<span class="sd">    """</span>
+
+<div class="viewcode-block" id="DteEmitidos.documentos">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.DteEmitidos.documentos">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">documentos</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">filtros</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene documentos de DTE emitidos por un emisor.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": [</span>
+<span class="sd">                {</span>
+<span class="sd">                  "codigo": 12345678,</span>
+<span class="sd">                  "rut": 76192083,</span>
+<span class="sd">                  "dv": "9",</span>
+<span class="sd">                  "razon_social": "CLIENTE EJEMPLO",</span>
+<span class="sd">                  "dte": 33,</span>
+<span class="sd">                  "dte_glosa": "Factura Electrónica",</span>
+<span class="sd">                  "folio": 123,</span>
+<span class="sd">                  "fecha": "15/11/2024",</span>
+<span class="sd">                  "...": "..."</span>
+<span class="sd">                }</span>
+<span class="sd">              ],</span>
+<span class="sd">              "metadata": {</span>
+<span class="sd">                "timestamp": "...",</span>
+<span class="sd">                "n_documentos": 1926,</span>
+<span class="sd">                "n_paginas": 20</span>
+<span class="sd">              }</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str emisor: RUT del emisor.</span>
+<span class="sd">        :param dict filtros: Filtros adicionales para la consulta.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, documentos de DTE emitidos.</span>
+<span class="sd">        :rtype: ApiResponse[list[dict[str, Any]]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/mipyme/emitidos/documentos/</span><span class="si">%(emisor)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span><span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">}</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">(),</span> <span class="s1">'filtros'</span><span class="p">:</span> <span class="n">filtros</span> <span class="ow">or</span> <span class="p">{}}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DteEmitidos.pdf">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.DteEmitidos.pdf">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">codigo</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene el PDF de un DTE emitido.</span>
+
+<span class="sd">        El documento se identifica por su `codigo`, que entrega el</span>
+<span class="sd">        listado de `documentos()`; no por tipo de DTE y folio.</span>
+
+<span class="sd">        :param str emisor: RUT del emisor.</span>
+<span class="sd">        :param str codigo: Código del DTE emitido.</span>
+<span class="sd">        :return: Contenido del PDF del DTE emitido.</span>
+<span class="sd">        :rtype: bytes</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/mipyme/emitidos/pdf/</span><span class="si">%(emisor)s</span><span class="s1">/</span><span class="si">%(codigo)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span>
+            <span class="s1">'codigo'</span><span class="p">:</span> <span class="n">codigo</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span></div>
+
+
+<div class="viewcode-block" id="DteEmitidos.xml">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.DteEmitidos.xml">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">xml</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">folio</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">fecha_emision</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene el XML de un DTE emitido.</span>
+
+<span class="sd">        :param str emisor: RUT del emisor.</span>
+<span class="sd">        :param str dte: Tipo de DTE.</span>
+<span class="sd">        :param str folio: Número de folio del DTE.</span>
+<span class="sd">        :param str fecha_emision: Fecha de emisión del documento</span>
+<span class="sd">            (AAAA-MM-DD). Sin ella el Portal MIPYME no ubica el</span>
+<span class="sd">            documento y la API no entrega el XML.</span>
+<span class="sd">        :return: Contenido del XML del DTE emitido, sin decodificar.</span>
+<span class="sd">        :rtype: bytes</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/mipyme/emitidos/xml/</span><span class="si">%(emisor)s</span><span class="s1">/</span><span class="si">%(dte)s</span><span class="s1">/</span><span class="si">%(folio)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span> <span class="s1">'dte'</span><span class="p">:</span> <span class="n">dte</span><span class="p">,</span> <span class="s1">'folio'</span><span class="p">:</span> <span class="n">folio</span><span class="p">},</span>
+            <span class="n">fecha_emision</span><span class="o">=</span><span class="n">fecha_emision</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DteRecibidos">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.DteRecibidos">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DteRecibidos</span><span class="p">(</span><span class="n">Dte</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Cliente para DTE recibidos en el Portal Mipyme.</span>
+
+<span class="sd">    Proporciona métodos para obtener documentos, PDF y XML de DTE</span>
+<span class="sd">    recibidos.</span>
+
+<span class="sd">    :param str identificador: Identificador del contribuyente.</span>
+<span class="sd">    :param str clave: Clave del identificador.</span>
+<span class="sd">    :param kwargs: Argumentos adicionales.</span>
+<span class="sd">    """</span>
+
+<div class="viewcode-block" id="DteRecibidos.documentos">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.DteRecibidos.documentos">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">documentos</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">receptor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">filtros</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene documentos de DTE recibidos por un receptor.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": [</span>
+<span class="sd">                {</span>
+<span class="sd">                  "codigo": 12345678,</span>
+<span class="sd">                  "rut": 76192083,</span>
+<span class="sd">                  "dv": "9",</span>
+<span class="sd">                  "razon_social": "CLIENTE EJEMPLO",</span>
+<span class="sd">                  "dte": 33,</span>
+<span class="sd">                  "dte_glosa": "Factura Electrónica",</span>
+<span class="sd">                  "folio": 123,</span>
+<span class="sd">                  "fecha": "15/11/2024",</span>
+<span class="sd">                  "...": "..."</span>
+<span class="sd">                }</span>
+<span class="sd">              ],</span>
+<span class="sd">              "metadata": {</span>
+<span class="sd">                "timestamp": "...",</span>
+<span class="sd">                "n_documentos": 589,</span>
+<span class="sd">                "n_paginas": 6</span>
+<span class="sd">              }</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str receptor: RUT del receptor.</span>
+<span class="sd">        :param dict filtros: Filtros adicionales para la consulta.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, documentos de DTE recibidos.</span>
+<span class="sd">        :rtype: ApiResponse[list[dict[str, Any]]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/mipyme/recibidos/documentos/</span><span class="si">%(receptor)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s1">'receptor'</span><span class="p">:</span> <span class="n">receptor</span>
+        <span class="p">}</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">(),</span> <span class="s1">'filtros'</span><span class="p">:</span> <span class="n">filtros</span> <span class="ow">or</span> <span class="p">{}}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DteRecibidos.pdf">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.DteRecibidos.pdf">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">receptor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">codigo</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene el PDF de un DTE recibido.</span>
+
+<span class="sd">        El documento se identifica por su `codigo`, que entrega el</span>
+<span class="sd">        listado de `documentos()`; no por emisor, tipo de DTE y folio.</span>
+
+<span class="sd">        :param str receptor: RUT del receptor.</span>
+<span class="sd">        :param str codigo: Código del DTE recibido.</span>
+<span class="sd">        :return: Contenido del PDF del DTE recibido.</span>
+<span class="sd">        :rtype: bytes</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/mipyme/recibidos/pdf/</span><span class="si">%(receptor)s</span><span class="s1">/</span><span class="si">%(codigo)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s1">'receptor'</span><span class="p">:</span> <span class="n">receptor</span><span class="p">,</span>
+            <span class="s1">'codigo'</span><span class="p">:</span> <span class="n">codigo</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span></div>
+
+
+<div class="viewcode-block" id="DteRecibidos.xml">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.portal_mipyme.DteRecibidos.xml">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">xml</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">receptor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">folio</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">fecha_emision</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene el XML de un DTE recibido.</span>
+
+<span class="sd">        :param str receptor: RUT del receptor.</span>
+<span class="sd">        :param str emisor: RUT del emisor.</span>
+<span class="sd">        :param str dte: Tipo de DTE.</span>
+<span class="sd">        :param str folio: Número de folio del DTE.</span>
+<span class="sd">        :param str fecha_emision: Fecha de emisión del documento</span>
+<span class="sd">            (AAAA-MM-DD). Sin ella el Portal MIPYME no ubica el</span>
+<span class="sd">            documento y la API no entrega el XML.</span>
+<span class="sd">        :return: Contenido del XML del DTE recibido, sin decodificar.</span>
+<span class="sd">        :rtype: bytes</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/mipyme/recibidos/xml/'</span>
+            <span class="s1">'</span><span class="si">%(receptor)s</span><span class="s1">/</span><span class="si">%(emisor)s</span><span class="s1">/</span><span class="si">%(dte)s</span><span class="s1">/</span><span class="si">%(folio)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span>
+                <span class="s1">'receptor'</span><span class="p">:</span> <span class="n">receptor</span><span class="p">,</span>
+                <span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span>
+                <span class="s1">'dte'</span><span class="p">:</span> <span class="n">dte</span><span class="p">,</span>
+                <span class="s1">'folio'</span><span class="p">:</span> <span class="n">folio</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">fecha_emision</span><span class="o">=</span><span class="n">fecha_emision</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2026, API Gateway.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

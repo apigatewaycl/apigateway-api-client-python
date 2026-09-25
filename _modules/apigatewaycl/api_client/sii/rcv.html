@@ -1,0 +1,977 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apigatewaycl.api_client.sii.rcv &mdash; documentación de API Gateway: Cliente de API en Python - 6.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a9071d65"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            API Gateway: Cliente de API en Python
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../gettingstarted.index.html">Empezando</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dev.index.html">Desarrollo</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">apigatewaycl</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">API Gateway: Cliente de API en Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Código de módulo</a></li>
+          <li class="breadcrumb-item"><a href="../../api_client.html">apigatewaycl.api_client</a></li>
+      <li class="breadcrumb-item active">apigatewaycl.api_client.sii.rcv</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Código fuente para apigatewaycl.api_client.sii.rcv</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># API Gateway: Cliente de API en Python.</span>
+<span class="c1"># Copyright (C) API Gateway &lt;https://www.apigateway.cl&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Este programa es software libre: usted puede redistribuirlo y/o modificarlo</span>
+<span class="c1"># bajo los términos de la GNU Lesser General Public License (LGPL) publicada</span>
+<span class="c1"># por la Fundación para el Software Libre, ya sea la versión 3 de la Licencia,</span>
+<span class="c1"># o (a su elección) cualquier versión posterior de la misma.</span>
+<span class="c1">#</span>
+<span class="c1"># Este programa se distribuye con la esperanza de que sea útil, pero SIN</span>
+<span class="c1"># GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD</span>
+<span class="c1"># PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de la GNU Lesser General</span>
+<span class="c1"># Public License (LGPL) para obtener una información más detallada.</span>
+<span class="c1">#</span>
+<span class="c1"># Debería haber recibido una copia de la GNU Lesser General Public License</span>
+<span class="c1"># (LGPL) junto a este programa. En caso contrario, consulte</span>
+<span class="c1"># &lt;http://www.gnu.org/licenses/lgpl.html&gt;.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""</span>
+<span class="sd">Módulo para interactuar con el Registro de Compra y Venta del SII.</span>
+
+<span class="sd">Para más información sobre la API, consulte la `documentación completa</span>
+<span class="sd">del RCV</span>
+<span class="sd">&lt;https://www.apigateway.cl/docs&gt;`_.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApiBase</span><span class="p">,</span> <span class="n">ApiResponse</span>
+
+
+<div class="viewcode-block" id="Rcv">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.rcv.Rcv">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Rcv</span><span class="p">(</span><span class="n">ApiBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Cliente para el Registro de Compras y Ventas (RCV) de la API.</span>
+
+<span class="sd">    Proporciona métodos para obtener resúmenes y detalles de compras</span>
+<span class="sd">    y ventas.</span>
+
+<span class="sd">    :param str identificador: Identificador del contribuyente.</span>
+<span class="sd">    :param str clave: Clave del identificador.</span>
+<span class="sd">    :param kwargs: Argumentos adicionales.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">identificador</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">clave</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Autentica con `identificador`/`clave` del contribuyente."""</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">identificador</span><span class="o">=</span><span class="n">identificador</span><span class="p">,</span>
+            <span class="n">clave</span><span class="o">=</span><span class="n">clave</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Rcv.compras_resumen">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.rcv.Rcv.compras_resumen">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compras_resumen</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">receptor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">estado</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'REGISTRO'</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">formato</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene un resumen de las compras de un receptor en un periodo.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "respEstado": {</span>
+<span class="sd">                  "codRespuesta": 0,</span>
+<span class="sd">                  "msgeRespuesta": null,</span>
+<span class="sd">                  "codError": null</span>
+<span class="sd">                },</span>
+<span class="sd">                "data": [</span>
+<span class="sd">                  {</span>
+<span class="sd">                    "dcvCodigo": 1234,</span>
+<span class="sd">                    "dcvNombreTipoDoc": "Factura Electrónica",</span>
+<span class="sd">                    "dcvOperacion": null,</span>
+<span class="sd">                    "dcvTipoIngresoDoc": "DET_ELE",</span>
+<span class="sd">                    "rsmnCodigo": 1234,</span>
+<span class="sd">                    "...": "..."</span>
+<span class="sd">                  }</span>
+<span class="sd">                ]</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str receptor: RUT del receptor de las compras.</span>
+<span class="sd">        :param str periodo: Período de tiempo de las compras.</span>
+<span class="sd">        :param str estado: Estado de las compras ('REGISTRO',</span>
+<span class="sd">            'PENDIENTE', 'NO_INCLUIR', 'RECLAMADO').</span>
+<span class="sd">        :param str certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :param str formato: `'json'`.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, resumen de compras.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/rcv/compras/resumen/</span><span class="si">%(receptor)s</span><span class="s1">/</span><span class="si">%(periodo)s</span><span class="s1">/</span><span class="si">%(estado)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'receptor'</span><span class="p">:</span> <span class="n">receptor</span><span class="p">,</span> <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">,</span> <span class="s1">'estado'</span><span class="p">:</span> <span class="n">estado</span><span class="p">},</span>
+            <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">,</span>
+            <span class="n">formato</span><span class="o">=</span><span class="n">formato</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rcv.compras_detalle">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.rcv.Rcv.compras_detalle">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compras_detalle</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">receptor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">estado</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'REGISTRO'</span><span class="p">,</span>
+        <span class="n">tipo</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">formato</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene detalles de las compras para un receptor en un periodo.</span>
+
+<span class="sd">        Respuesta (ejemplo, dte=0 y estado 'REGISTRO')::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": [</span>
+<span class="sd">                {</span>
+<span class="sd">                  "dte": "33",</span>
+<span class="sd">                  "tipo_transaccion": "Del Giro",</span>
+<span class="sd">                  "rut": "76192083-9",</span>
+<span class="sd">                  "razon_social": "EMPRESA PROVEEDORA SPA",</span>
+<span class="sd">                  "folio": "123",</span>
+<span class="sd">                  "fecha": "2026-08-23",</span>
+<span class="sd">                  "fecha_recepcion": "2026-08-23 11:37:20",</span>
+<span class="sd">                  "fecha_acuse": null,</span>
+<span class="sd">                  "...": "..."</span>
+<span class="sd">                }</span>
+<span class="sd">              ],</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        Respuesta (ejemplo, un dte específico)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "respEstado": {</span>
+<span class="sd">                  "codRespuesta": 0,</span>
+<span class="sd">                  "msgeRespuesta": null,</span>
+<span class="sd">                  "codError": null</span>
+<span class="sd">                },</span>
+<span class="sd">                "data": [</span>
+<span class="sd">                  {</span>
+<span class="sd">                    "cambiarTipoTran": true,</span>
+<span class="sd">                    "dcvCodigo": 1234,</span>
+<span class="sd">                    "dcvEstadoContab": null,</span>
+<span class="sd">                    "descTipoTransaccion": "Del Giro",</span>
+<span class="sd">                    "detAnulado": null,</span>
+<span class="sd">                    "...": "..."</span>
+<span class="sd">                  }</span>
+<span class="sd">                ]</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str receptor: RUT del receptor de las compras.</span>
+<span class="sd">        :param str periodo: Período de tiempo de las compras.</span>
+<span class="sd">        :param int dte: Tipo de DTE.</span>
+<span class="sd">        :param str estado: Estado de las compras ('REGISTRO',</span>
+<span class="sd">            'PENDIENTE', 'NO_INCLUIR', 'RECLAMADO').</span>
+<span class="sd">        :param str tipo: Tipo de formato de respuesta ('rcv_csv' o</span>
+<span class="sd">            'rcv').</span>
+<span class="sd">        :param str certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :param str formato: `'json'` o `'csv'`.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, detalles de las compras: con `dte=0` y estado</span>
+<span class="sd">            `'REGISTRO'` una lista de documentos; en otro caso un dict</span>
+<span class="sd">            con `respEstado` y, en `data`, la lista de documentos. Con</span>
+<span class="sd">            `formato` `'csv'` se entrega el archivo crudo, sin</span>
+<span class="sd">            decodificar.</span>
+<span class="sd">        :rtype: ApiResponse[list[dict[str, Any]] | dict[str, Any]] | bytes</span>
+<span class="sd">        """</span>
+        <span class="n">es_registro</span> <span class="o">=</span> <span class="n">dte</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">estado</span> <span class="o">==</span> <span class="s1">'REGISTRO'</span>
+        <span class="n">tipo</span> <span class="o">=</span> <span class="s1">'rcv_csv'</span> <span class="k">if</span> <span class="n">es_registro</span> <span class="k">else</span> <span class="n">tipo</span> <span class="ow">or</span> <span class="s1">'rcv'</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/rcv/compras/detalle/</span><span class="si">%(receptor)s</span><span class="s1">/</span><span class="si">%(periodo)s</span><span class="s1">/</span><span class="si">%(dte)s</span><span class="s1">'</span>
+            <span class="s1">'/</span><span class="si">%(estado)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span>
+                <span class="s1">'receptor'</span><span class="p">:</span> <span class="n">receptor</span><span class="p">,</span>
+                <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">,</span>
+                <span class="s1">'dte'</span><span class="p">:</span> <span class="n">dte</span><span class="p">,</span>
+                <span class="s1">'estado'</span><span class="p">:</span> <span class="n">estado</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">tipo</span><span class="o">=</span><span class="n">tipo</span><span class="p">,</span>
+            <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">,</span>
+            <span class="n">formato</span><span class="o">=</span><span class="n">formato</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="c1"># Con `csv` la API responde el archivo tal cual, no JSON.</span>
+        <span class="k">if</span> <span class="n">formato</span> <span class="o">==</span> <span class="s1">'csv'</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rcv.compras_set_tipo_transaccion">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.rcv.Rcv.compras_set_tipo_transaccion">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compras_set_tipo_transaccion</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">receptor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">documento</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Asigna el tipo de transacción y código de IVA a una compra del RCV.</span>
+
+<span class="sd">        Se envía un solo documento, que debe estar en el Registro de</span>
+<span class="sd">        Compras del período; el resto mantiene su tipo de transacción.</span>
+<span class="sd">        Lleva `emisor`, `dte` (33, 34, 43, 46, 56 o 61), `folio`,</span>
+<span class="sd">        `tipo_transaccion` (1 a 7) y `codigo_iva`, que debe ser uno de</span>
+<span class="sd">        los permitidos para ese `tipo_transaccion`.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "codigo": 0,</span>
+<span class="sd">                "mensaje": "Carga de cambios de tipo de compra re...",</span>
+<span class="sd">                "estado": "ok",</span>
+<span class="sd">                "reparos": [],</span>
+<span class="sd">                "errores": []</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str receptor: RUT del receptor del documento.</span>
+<span class="sd">        :param str periodo: Período del registro (AAAAMM).</span>
+<span class="sd">        :param dict documento: Documento al que asignar el tipo de</span>
+<span class="sd">            transacción.</span>
+<span class="sd">        :param str certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`. En `data`,</span>
+<span class="sd">            el resultado del SII, donde `codigo` `0` indica éxito. Si el</span>
+<span class="sd">            SII rechaza el documento, la API responde con error.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/rcv/compras/set_tipo_transaccion/</span><span class="si">%(receptor)s</span><span class="s1">/</span><span class="si">%(periodo)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'receptor'</span><span class="p">:</span> <span class="n">receptor</span><span class="p">,</span> <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">},</span>
+            <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">(),</span>
+            <span class="s1">'documento'</span><span class="p">:</span> <span class="n">documento</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rcv.ventas_set_resumen">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.rcv.Rcv.ventas_set_resumen">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ventas_set_resumen</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">documentos</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">graba_con_reparos</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Asigna un resumen de documentos emitidos al registro de ventas.</span>
+
+<span class="sd">        Útil para agregar mensualmente el resumen de boletas emitidas.</span>
+<span class="sd">        Cada elemento de `documentos` lleva `det_tipo_doc`,</span>
+<span class="sd">        `det_nro_doc`, `det_mnt_neto`, `det_mnt_iva`, `det_mnt_exe` y</span>
+<span class="sd">        `det_mnt_total`. Los comprobantes de pago electrónico (48)</span>
+<span class="sd">        llevan además `canalTransacc` y, si corresponde,</span>
+<span class="sd">        `codRznModifica` y `txtRznModifica`.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "contribuyente": "76192083-9",</span>
+<span class="sd">                "periodo": 202608,</span>
+<span class="sd">                "resumenes": [</span>
+<span class="sd">                  {"tipo_doc": 48, "canal": 0, "registros_modificados": 1}</span>
+<span class="sd">                ]</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str emisor: RUT del emisor de los documentos.</span>
+<span class="sd">        :param str periodo: Período de emisión de los documentos</span>
+<span class="sd">            (AAAAMM).</span>
+<span class="sd">        :param list documentos: Resumen de documentos a asignar.</span>
+<span class="sd">        :param str certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :param bool graba_con_reparos: Con `False` el SII rechaza el</span>
+<span class="sd">            resumen si encuentra reparos (la API responde con error). Sin</span>
+<span class="sd">            indicarlo se aplica el valor por defecto de la API (`True`):</span>
+<span class="sd">            el resumen se graba aunque tenga reparos.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, el `contribuyente`, el `periodo` y en `resumenes`</span>
+<span class="sd">            cada resumen grabado (tipo de documento, canal de venta y</span>
+<span class="sd">            registros modificados por el SII).</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/rcv/ventas/set_resumen/</span><span class="si">%(emisor)s</span><span class="s1">/</span><span class="si">%(periodo)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span> <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">},</span>
+            <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">(),</span>
+            <span class="s1">'documentos'</span><span class="p">:</span> <span class="n">documentos</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">graba_con_reparos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">body</span><span class="p">[</span><span class="s1">'graba_con_reparos'</span><span class="p">]</span> <span class="o">=</span> <span class="n">graba_con_reparos</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rcv.ventas_resumen">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.rcv.Rcv.ventas_resumen">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ventas_resumen</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">formato</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene un resumen de las ventas de un emisor en un periodo.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "respEstado": {</span>
+<span class="sd">                  "codRespuesta": 0,</span>
+<span class="sd">                  "msgeRespuesta": null,</span>
+<span class="sd">                  "codError": null</span>
+<span class="sd">                },</span>
+<span class="sd">                "data": [</span>
+<span class="sd">                  {</span>
+<span class="sd">                    "dcvCodigo": 1234,</span>
+<span class="sd">                    "dcvNombreTipoDoc": "Factura Electrónica",</span>
+<span class="sd">                    "dcvOperacion": null,</span>
+<span class="sd">                    "dcvTipoIngresoDoc": "DET_ELE",</span>
+<span class="sd">                    "rsmnCodigo": 1234,</span>
+<span class="sd">                    "...": "..."</span>
+<span class="sd">                  }</span>
+<span class="sd">                ]</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str emisor: RUT del emisor de las ventas.</span>
+<span class="sd">        :param str periodo: Período de tiempo de las ventas.</span>
+<span class="sd">        :param str certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :param str formato: `'json'`.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, `respEstado` con el estado de la consulta al SII</span>
+<span class="sd">            y, en `data`, el resumen por tipo de documento.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/rcv/ventas/resumen/</span><span class="si">%(emisor)s</span><span class="s1">/</span><span class="si">%(periodo)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span> <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">},</span>
+            <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">,</span>
+            <span class="n">formato</span><span class="o">=</span><span class="n">formato</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rcv.ventas_detalle">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.rcv.Rcv.ventas_detalle">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ventas_detalle</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">tipo</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">formato</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene detalles de las ventas para un emisor en un periodo.</span>
+
+<span class="sd">        Respuesta (ejemplo, dte=0)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": [</span>
+<span class="sd">                {</span>
+<span class="sd">                  "dte": "33",</span>
+<span class="sd">                  "tipo_transaccion": "Del Giro",</span>
+<span class="sd">                  "rut": "12345678-9",</span>
+<span class="sd">                  "razon_social": "CLIENTE EJEMPLO",</span>
+<span class="sd">                  "folio": "123",</span>
+<span class="sd">                  "fecha": "2026-09-20",</span>
+<span class="sd">                  "fecha_recepcion": "2026-09-20 22:47:31",</span>
+<span class="sd">                  "fecha_acuse": null,</span>
+<span class="sd">                  "...": "..."</span>
+<span class="sd">                }</span>
+<span class="sd">              ],</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        Respuesta (ejemplo, un dte específico)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "respEstado": {</span>
+<span class="sd">                  "codRespuesta": 0,</span>
+<span class="sd">                  "msgeRespuesta": null,</span>
+<span class="sd">                  "codError": null</span>
+<span class="sd">                },</span>
+<span class="sd">                "data": [</span>
+<span class="sd">                  {</span>
+<span class="sd">                    "cambiarTipoTran": false,</span>
+<span class="sd">                    "dcvCodigo": 1234,</span>
+<span class="sd">                    "dcvEstadoContab": null,</span>
+<span class="sd">                    "descTipoTransaccion": "Del Giro",</span>
+<span class="sd">                    "detAnulado": null,</span>
+<span class="sd">                    "...": "..."</span>
+<span class="sd">                  }</span>
+<span class="sd">                ]</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str emisor: RUT del emisor de las ventas.</span>
+<span class="sd">        :param str periodo: Período de tiempo de las ventas.</span>
+<span class="sd">        :param int dte: Tipo de DTE.</span>
+<span class="sd">        :param str tipo: Tipo de formato de respuesta ('rcv_csv' o</span>
+<span class="sd">            'rcv').</span>
+<span class="sd">        :param str certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :param str formato: `'json'` o `'csv'`.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, detalles de las ventas: con `dte=0` una lista de</span>
+<span class="sd">            documentos; con un `dte` específico un dict con `respEstado`</span>
+<span class="sd">            y, en `data`, la lista de documentos. Con `formato` `'csv'`</span>
+<span class="sd">            se entrega el archivo crudo, sin decodificar.</span>
+<span class="sd">        :rtype: ApiResponse[list[dict[str, Any]] | dict[str, Any]] | bytes</span>
+<span class="sd">        """</span>
+        <span class="n">tipo</span> <span class="o">=</span> <span class="s1">'rcv_csv'</span> <span class="k">if</span> <span class="n">dte</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">tipo</span> <span class="ow">or</span> <span class="s1">'rcv'</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/rcv/ventas/detalle/</span><span class="si">%(emisor)s</span><span class="s1">/</span><span class="si">%(periodo)s</span><span class="s1">/</span><span class="si">%(dte)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span> <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">,</span> <span class="s1">'dte'</span><span class="p">:</span> <span class="n">dte</span><span class="p">},</span>
+            <span class="n">tipo</span><span class="o">=</span><span class="n">tipo</span><span class="p">,</span>
+            <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">,</span>
+            <span class="n">formato</span><span class="o">=</span><span class="n">formato</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="c1"># Con `csv` la API responde el archivo tal cual, no JSON.</span>
+        <span class="k">if</span> <span class="n">formato</span> <span class="o">==</span> <span class="s1">'csv'</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rcv.compras_async_solicitar">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.rcv.Rcv.compras_async_solicitar">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compras_async_solicitar</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">receptor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">estado</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'REGISTRO'</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Solicita el envío de los detalles de las compras de un receptor.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "id": 1234,</span>
+<span class="sd">                "uuid": "1234567890",</span>
+<span class="sd">                "dte": 33,</span>
+<span class="sd">                "estado": "REGISTRO",</span>
+<span class="sd">                "creada": "2025-01-01 12:00:00",</span>
+<span class="sd">                "terminada": "2025-01-01 12:00:00",</span>
+<span class="sd">                "seccion": "COMPRA",</span>
+<span class="sd">                "registros": 100</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param receptor: RUT del receptor de las compras formato</span>
+<span class="sd">            12345678-9.</span>
+<span class="sd">        :type receptor: str</span>
+
+<span class="sd">        :param periodo: Período de tiempo de las compras formato YYYYMM.</span>
+<span class="sd">        :type periodo: str</span>
+
+<span class="sd">        :param dte: Tipo de DTE formato 0 para todos los tipos de DTE</span>
+<span class="sd">            o el tipo de DTE.</span>
+<span class="sd">        :type dte: int</span>
+
+<span class="sd">        :param estado: Estado de las compras ('REGISTRO', 'PENDIENTE',</span>
+<span class="sd">            'NO_INCLUIR', 'RECLAMADO').</span>
+<span class="sd">        :type estado: str</span>
+
+<span class="sd">        :param certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :type certificacion: str</span>
+
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, solicitud de envío.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/rcv/compras/async/solicitar'</span>
+        <span class="n">url</span> <span class="o">+=</span> <span class="s1">'/</span><span class="si">%(receptor)s</span><span class="s1">/</span><span class="si">%(periodo)s</span><span class="s1">/</span><span class="si">%(dte)s</span><span class="s1">/</span><span class="si">%(estado)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s1">'receptor'</span><span class="p">:</span> <span class="n">receptor</span><span class="p">,</span>
+            <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">,</span>
+            <span class="s1">'dte'</span><span class="p">:</span> <span class="n">dte</span><span class="p">,</span>
+            <span class="s1">'estado'</span><span class="p">:</span> <span class="n">estado</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rcv.compras_async_estado">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.rcv.Rcv.compras_async_estado">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compras_async_estado</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">receptor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">id_solicitud</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">estado</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'REGISTRO'</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene el estado de la solicitud de los detalles de las compras.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "id": "1234567890",</span>
+<span class="sd">                "uuid": "1234567890",</span>
+<span class="sd">                "dte": 33,</span>
+<span class="sd">                "estado": "REGISTRO",</span>
+<span class="sd">                "creada": "2025-01-01 12:00:00",</span>
+<span class="sd">                "terminada": "2025-01-01 12:00:00",</span>
+<span class="sd">                "seccion": "COMPRA",</span>
+<span class="sd">                "registros": 100</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param receptor: RUT del receptor de las compras formato</span>
+<span class="sd">            12345678-9.</span>
+<span class="sd">        :type receptor: str</span>
+
+<span class="sd">        :param periodo: Período de tiempo de las compras formato YYYYMM.</span>
+<span class="sd">        :type periodo: str</span>
+
+<span class="sd">        :param id_solicitud: ID de la solicitud de envío de los</span>
+<span class="sd">            detalles de las compras.</span>
+<span class="sd">        :type id_solicitud: str</span>
+
+<span class="sd">        :param dte: Tipo de DTE formato 0 para todos los tipos de DTE</span>
+<span class="sd">            o el tipo de DTE.</span>
+<span class="sd">        :type dte: int</span>
+
+<span class="sd">        :param estado: Estado de las compras ('REGISTRO', 'PENDIENTE',</span>
+<span class="sd">            'NO_INCLUIR', 'RECLAMADO').</span>
+<span class="sd">        :type estado: str</span>
+
+<span class="sd">        :param certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :type certificacion: str</span>
+
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, estado de la solicitud.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/rcv/compras/async/estado/</span><span class="si">%(receptor)s</span><span class="s1">'</span>
+        <span class="n">url</span> <span class="o">+=</span> <span class="s1">'/</span><span class="si">%(periodo)s</span><span class="s1">/</span><span class="si">%(id_solicitud)s</span><span class="s1">/</span><span class="si">%(dte)s</span><span class="s1">/</span><span class="si">%(estado)s</span><span class="s1">'</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">url</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s1">'receptor'</span><span class="p">:</span> <span class="n">receptor</span><span class="p">,</span>
+            <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">,</span>
+            <span class="s1">'id_solicitud'</span><span class="p">:</span> <span class="n">id_solicitud</span><span class="p">,</span>
+            <span class="s1">'dte'</span><span class="p">:</span> <span class="n">dte</span><span class="p">,</span>
+            <span class="s1">'estado'</span><span class="p">:</span> <span class="n">estado</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rcv.compras_async_detalle">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.rcv.Rcv.compras_async_detalle">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compras_async_detalle</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">receptor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">id_solicitud</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">estado</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'REGISTRO'</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene los detalles de las compras de un receptor en un periodo.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": [</span>
+<span class="sd">                {</span>
+<span class="sd">                  "dte": 33,</span>
+<span class="sd">                  "tipo_transaccion": "Del Giro",</span>
+<span class="sd">                  "rut": "12345-0",</span>
+<span class="sd">                  "razon_social": "RAZON SOCIAL DE LA EMPRESA",</span>
+<span class="sd">                  "folio": "10518",</span>
+<span class="sd">                  "fecha": "2025-09-01",</span>
+<span class="sd">                  "fecha_recepcion": "2025-09-01 10:52:28",</span>
+<span class="sd">                  "fecha_acuse": "2025-09-01 13:39:33",</span>
+<span class="sd">                  "...": "..."</span>
+<span class="sd">                }</span>
+<span class="sd">              ],</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param receptor: RUT del receptor de las compras formato</span>
+<span class="sd">            12345678-9.</span>
+<span class="sd">        :type receptor: str</span>
+
+<span class="sd">        :param periodo: Período de tiempo de las compras formato YYYYMM.</span>
+<span class="sd">        :type periodo: str</span>
+
+<span class="sd">        :param id_solicitud: ID de la solicitud de envío de los</span>
+<span class="sd">            detalles de las compras.</span>
+<span class="sd">        :type id_solicitud: str</span>
+
+<span class="sd">        :param dte: Tipo de DTE formato 0 para todos los tipos de DTE</span>
+<span class="sd">            o el tipo de DTE.</span>
+<span class="sd">        :type dte: int</span>
+
+<span class="sd">        :param estado: Estado de las compras ('REGISTRO', 'PENDIENTE',</span>
+<span class="sd">            'NO_INCLUIR', 'RECLAMADO').</span>
+<span class="sd">        :type estado: str</span>
+
+<span class="sd">        :param certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :type certificacion: str</span>
+
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, detalles de las compras.</span>
+<span class="sd">        :rtype: ApiResponse[list[dict[str, Any]]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/rcv/compras/async/detalle/</span><span class="si">%(receptor)s</span><span class="s1">'</span>
+        <span class="n">url</span> <span class="o">+=</span> <span class="s1">'/</span><span class="si">%(periodo)s</span><span class="s1">/</span><span class="si">%(id_solicitud)s</span><span class="s1">/</span><span class="si">%(dte)s</span><span class="s1">/</span><span class="si">%(estado)s</span><span class="s1">'</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">url</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s1">'receptor'</span><span class="p">:</span> <span class="n">receptor</span><span class="p">,</span>
+            <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">,</span>
+            <span class="s1">'id_solicitud'</span><span class="p">:</span> <span class="n">id_solicitud</span><span class="p">,</span>
+            <span class="s1">'dte'</span><span class="p">:</span> <span class="n">dte</span><span class="p">,</span>
+            <span class="s1">'estado'</span><span class="p">:</span> <span class="n">estado</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rcv.ventas_async_solicitar">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.rcv.Rcv.ventas_async_solicitar">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ventas_async_solicitar</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Solicita el envío de los detalles de las ventas de un emisor.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "id": 1234,</span>
+<span class="sd">                "uuid": "1234567890",</span>
+<span class="sd">                "dte": 33,</span>
+<span class="sd">                "estado": "REGISTRO",</span>
+<span class="sd">                "creada": "2025-01-01 12:00:00",</span>
+<span class="sd">                "terminada": "2025-01-01 12:00:00",</span>
+<span class="sd">                "seccion": "VENTA",</span>
+<span class="sd">                "registros": 100</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param emisor: RUT del emisor de las ventas formato 12345678-9.</span>
+<span class="sd">        :type emisor: str</span>
+
+<span class="sd">        :param periodo: Período de tiempo de las ventas formato YYYYMM.</span>
+<span class="sd">        :type periodo: str</span>
+
+<span class="sd">        :param dte: Tipo de DTE formato 0 para todos los tipos de DTE</span>
+<span class="sd">            o el tipo de DTE.</span>
+<span class="sd">        :type dte: int</span>
+
+<span class="sd">        :param certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :type certificacion: str</span>
+
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, solicitud de envío.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/rcv/ventas/async/solicitar'</span>
+        <span class="n">url</span> <span class="o">+=</span> <span class="s1">'/</span><span class="si">%(emisor)s</span><span class="s1">/</span><span class="si">%(periodo)s</span><span class="s1">/</span><span class="si">%(dte)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span>
+            <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">,</span>
+            <span class="s1">'dte'</span><span class="p">:</span> <span class="n">dte</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rcv.ventas_async_estado">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.rcv.Rcv.ventas_async_estado">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ventas_async_estado</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">id_solicitud</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene el estado de la solicitud de los detalles de las ventas.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "id": "1234567890",</span>
+<span class="sd">                "uuid": "1234567890",</span>
+<span class="sd">                "dte": 33,</span>
+<span class="sd">                "estado": "REGISTRO",</span>
+<span class="sd">                "creada": "2025-01-01 12:00:00",</span>
+<span class="sd">                "terminada": "2025-01-01 12:00:00",</span>
+<span class="sd">                "seccion": "VENTA",</span>
+<span class="sd">                "registros": 100</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param emisor: RUT del emisor de las ventas formato 12345678-9.</span>
+<span class="sd">        :type emisor: str</span>
+
+<span class="sd">        :param periodo: Período de tiempo de las ventas formato YYYYMM.</span>
+<span class="sd">        :type periodo: str</span>
+
+<span class="sd">        :param id_solicitud: ID de la solicitud de envío de los</span>
+<span class="sd">            detalles de las ventas de un emisor.</span>
+<span class="sd">        :type id_solicitud: str</span>
+
+<span class="sd">        :param dte: Tipo de DTE formato 0 para todos los tipos de DTE</span>
+<span class="sd">            o el tipo de DTE.</span>
+<span class="sd">        :type dte: int</span>
+
+<span class="sd">        :param certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :type certificacion: str</span>
+
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, estado de la solicitud.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/rcv/ventas/async/estado/</span><span class="si">%(emisor)s</span><span class="s1">'</span>
+        <span class="n">url</span> <span class="o">+=</span> <span class="s1">'/</span><span class="si">%(periodo)s</span><span class="s1">/</span><span class="si">%(id_solicitud)s</span><span class="s1">/</span><span class="si">%(dte)s</span><span class="s1">'</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">url</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span>
+            <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">,</span>
+            <span class="s1">'id_solicitud'</span><span class="p">:</span> <span class="n">id_solicitud</span><span class="p">,</span>
+            <span class="s1">'dte'</span><span class="p">:</span> <span class="n">dte</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rcv.ventas_async_detalle">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.rcv.Rcv.ventas_async_detalle">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ventas_async_detalle</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">id_solicitud</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dte</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">certificacion</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene los detalles de las ventas de un emisor.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": [</span>
+<span class="sd">                {</span>
+<span class="sd">                  "dte": 33,</span>
+<span class="sd">                  "tipo_transaccion": "Del Giro",</span>
+<span class="sd">                  "rut": "1234-0",</span>
+<span class="sd">                  "razon_social": "RAZON SOCIAL DE LA EMPRESA",</span>
+<span class="sd">                  "folio": "12414",</span>
+<span class="sd">                  "fecha": "2025-09-01",</span>
+<span class="sd">                  "fecha_vencimiento": null,</span>
+<span class="sd">                  "fecha_recepcion": "2025-09-01 08:01:43",</span>
+<span class="sd">                  "...": "..."</span>
+<span class="sd">                }</span>
+<span class="sd">              ],</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param emisor: RUT del emisor de las ventas formato 12345678-9.</span>
+<span class="sd">        :type emisor: str</span>
+
+<span class="sd">        :param periodo: Período de tiempo de las ventas formato YYYYMM.</span>
+<span class="sd">        :type periodo: str</span>
+
+<span class="sd">        :param id_solicitud: ID de la solicitud de envío de los</span>
+<span class="sd">            detalles de las ventas de un emisor.</span>
+<span class="sd">        :type id_solicitud: str</span>
+
+<span class="sd">        :param dte: Tipo de DTE formato 0 para todos los tipos de DTE</span>
+<span class="sd">            o el tipo de DTE.</span>
+<span class="sd">        :type dte: int</span>
+
+<span class="sd">        :param certificacion: `'0'` producción, `'1'` certificación.</span>
+<span class="sd">        :type certificacion: str</span>
+
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, detalles de las ventas.</span>
+<span class="sd">        :rtype: ApiResponse[list[dict[str, Any]]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/rcv/ventas/async/detalle/</span><span class="si">%(emisor)s</span><span class="s1">'</span>
+        <span class="n">url</span> <span class="o">+=</span> <span class="s1">'/</span><span class="si">%(periodo)s</span><span class="s1">/</span><span class="si">%(id_solicitud)s</span><span class="s1">/</span><span class="si">%(dte)s</span><span class="s1">'</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">url</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span>
+            <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">,</span>
+            <span class="s1">'id_solicitud'</span><span class="p">:</span> <span class="n">id_solicitud</span><span class="p">,</span>
+            <span class="s1">'dte'</span><span class="p">:</span> <span class="n">dte</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">certificacion</span><span class="o">=</span><span class="n">certificacion</span><span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2026, API Gateway.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

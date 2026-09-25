@@ -1,0 +1,593 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apigatewaycl.api_client.sii.bhe &mdash; documentación de API Gateway: Cliente de API en Python - 6.0.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a9071d65"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            API Gateway: Cliente de API en Python
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../gettingstarted.index.html">Empezando</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../dev.index.html">Desarrollo</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">apigatewaycl</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">API Gateway: Cliente de API en Python</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Código de módulo</a></li>
+          <li class="breadcrumb-item"><a href="../../api_client.html">apigatewaycl.api_client</a></li>
+      <li class="breadcrumb-item active">apigatewaycl.api_client.sii.bhe</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Código fuente para apigatewaycl.api_client.sii.bhe</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># API Gateway: Cliente de API en Python.</span>
+<span class="c1"># Copyright (C) API Gateway &lt;https://www.apigateway.cl&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Este programa es software libre: usted puede redistribuirlo y/o modificarlo</span>
+<span class="c1"># bajo los términos de la GNU Lesser General Public License (LGPL) publicada</span>
+<span class="c1"># por la Fundación para el Software Libre, ya sea la versión 3 de la Licencia,</span>
+<span class="c1"># o (a su elección) cualquier versión posterior de la misma.</span>
+<span class="c1">#</span>
+<span class="c1"># Este programa se distribuye con la esperanza de que sea útil, pero SIN</span>
+<span class="c1"># GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o de APTITUD</span>
+<span class="c1"># PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de la GNU Lesser General</span>
+<span class="c1"># Public License (LGPL) para obtener una información más detallada.</span>
+<span class="c1">#</span>
+<span class="c1"># Debería haber recibido una copia de la GNU Lesser General Public License</span>
+<span class="c1"># (LGPL) junto a este programa. En caso contrario, consulte</span>
+<span class="c1"># &lt;http://www.gnu.org/licenses/lgpl.html&gt;.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""</span>
+<span class="sd">Módulo para Boletas de Honorarios Electrónicas, emitidas y recibidas.</span>
+
+<span class="sd">Para más información sobre la API, consulte la `documentación completa</span>
+<span class="sd">de las BHE</span>
+<span class="sd">&lt;https://www.apigateway.cl/docs&gt;`_.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApiBase</span><span class="p">,</span> <span class="n">ApiResponse</span>
+
+
+<div class="viewcode-block" id="BheEmitidas">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.bhe.BheEmitidas">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BheEmitidas</span><span class="p">(</span><span class="n">ApiBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Cliente para Boletas de Honorarios Electrónicas (BHE) emitidas.</span>
+
+<span class="sd">    Provee métodos para emitir, anular, y consultar información</span>
+<span class="sd">    relacionada con BHEs.</span>
+
+<span class="sd">    :param str identificador: Identificador del contribuyente.</span>
+<span class="sd">    :param str clave: Clave del identificador.</span>
+<span class="sd">    :param kwargs: Argumentos adicionales.</span>
+<span class="sd">    """</span>
+
+    <span class="c1"># Quién debe hacer la retención asociada al honorario para pagar al SII</span>
+    <span class="n">RETENCION_RECEPTOR</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">RETENCION_EMISOR</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="c1"># Posibles motivos de anulación de una BHE</span>
+    <span class="n">ANULACION_CAUSA_SIN_PAGO</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">ANULACION_CAUSA_SIN_PRESTACION</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">ANULACION_CAUSA_ERROR_DIGITACION</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">identificador</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">clave</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Autentica con `identificador`/`clave` del contribuyente."""</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">identificador</span><span class="o">=</span><span class="n">identificador</span><span class="p">,</span>
+            <span class="n">clave</span><span class="o">=</span><span class="n">clave</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="BheEmitidas.documentos">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.bhe.BheEmitidas.documentos">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">documentos</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">pagina</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene los documentos de BHE emitidos por un emisor en un periodo.</span>
+
+<span class="sd">        La API exige `pagina`: parte en `1` y se avanza de a una,</span>
+<span class="sd">        hasta `n_paginas`.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "boletas": [</span>
+<span class="sd">                  {</span>
+<span class="sd">                    "numero": 144,</span>
+<span class="sd">                    "rut": 0,</span>
+<span class="sd">                    "dv": "0",</span>
+<span class="sd">                    "nombre": "",</span>
+<span class="sd">                    "fecha": "2025-08-18",</span>
+<span class="sd">                    "...": "..."</span>
+<span class="sd">                  }</span>
+<span class="sd">                ],</span>
+<span class="sd">                "n_paginas": 1,</span>
+<span class="sd">                "n_boletas": 1</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str emisor: RUT del emisor de las boletas.</span>
+<span class="sd">        :param str periodo: Período de tiempo de las boletas emitidas.</span>
+<span class="sd">        :param int pagina: Página a consultar, partiendo desde `1`.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, documentos de BHE.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/bhe/emitidas/documentos/</span><span class="si">%(emisor)s</span><span class="s1">/</span><span class="si">%(periodo)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span> <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">},</span>
+            <span class="n">pagina</span><span class="o">=</span><span class="n">pagina</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BheEmitidas.emitir">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.bhe.BheEmitidas.emitir">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">emitir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">boleta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Emite una nueva Boleta de Honorarios Electrónica.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "Encabezado": {</span>
+<span class="sd">                  "Emisor": {</span>
+<span class="sd">                    "CmnaOrigen": "Región",</span>
+<span class="sd">                    "CodigoDirOrigen": "065722046",</span>
+<span class="sd">                    "DirOrigen": "Dirección",</span>
+<span class="sd">                    "GiroEmis": "Giro",</span>
+<span class="sd">                    "RUTEmisor": "12345678-9",</span>
+<span class="sd">                    "...": "..."</span>
+<span class="sd">                  },</span>
+<span class="sd">                  "IdDoc": {</span>
+<span class="sd">                    "CodigoBarras": "Código de barras",</span>
+<span class="sd">                    "CodigoInferior": "Código inferior",</span>
+<span class="sd">                    "FchEmis": "2020-09-16",</span>
+<span class="sd">                    "Folio": 155,</span>
+<span class="sd">                    "TipoDTE": 66,</span>
+<span class="sd">                    "...": "..."</span>
+<span class="sd">                  },</span>
+<span class="sd">                  "Receptor": {</span>
+<span class="sd">                    "CmnaRecep": "Región",</span>
+<span class="sd">                    "CodigoCmnaRecep": 6205,</span>
+<span class="sd">                    "CodigoRegionRecep": 6,</span>
+<span class="sd">                    "DirRecep": "Dirección",</span>
+<span class="sd">                    "RUTRecep": "0-0",</span>
+<span class="sd">                    "...": "..."</span>
+<span class="sd">                  }</span>
+<span class="sd">                },</span>
+<span class="sd">                "Detalle": [</span>
+<span class="sd">                  {</span>
+<span class="sd">                    "MontoItem": 50,</span>
+<span class="sd">                    "NmbItem": "Prueba integracion API Gateway 1"</span>
+<span class="sd">                  }</span>
+<span class="sd">                ]</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param dict boleta: Información detallada de la boleta a emitir.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, confirmación de la emisión.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">(),</span> <span class="s1">'boleta'</span><span class="p">:</span> <span class="n">boleta</span><span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">'/sii/bhe/emitidas/emitir'</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BheEmitidas.pdf">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.bhe.BheEmitidas.pdf">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">codigo</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene el PDF de una BHE emitida.</span>
+
+<span class="sd">        :param str codigo: Código único de la BHE.</span>
+<span class="sd">        :return: Contenido del PDF de la BHE.</span>
+<span class="sd">        :rtype: bytes</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/bhe/emitidas/pdf/</span><span class="si">%(codigo)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span><span class="s1">'codigo'</span><span class="p">:</span> <span class="n">codigo</span><span class="p">}</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span></div>
+
+
+<div class="viewcode-block" id="BheEmitidas.email">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.bhe.BheEmitidas.email">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">email</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">codigo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Envía por correo electrónico una BHE emitida.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "message": "La Boleta de Honorarios Electrónica s...",</span>
+<span class="sd">                "email": "ejemplo@ejemplo.com"</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str codigo: Código único de la BHE a enviar.</span>
+<span class="sd">        :param str email: Dirección de correo a la cual enviar la BHE.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, confirmación del envío.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/bhe/emitidas/email/</span><span class="si">%(codigo)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span><span class="s1">'codigo'</span><span class="p">:</span> <span class="n">codigo</span><span class="p">}</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">(),</span>
+            <span class="s1">'destinatario'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'email'</span><span class="p">:</span> <span class="n">email</span><span class="p">},</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BheEmitidas.anular">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.bhe.BheEmitidas.anular">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">anular</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">folio</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">causa</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ANULACION_CAUSA_ERROR_DIGITACION</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Anula una BHE emitida.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "boleta_anulada": "S",</span>
+<span class="sd">                "dv_autentificado": "4",</span>
+<span class="sd">                "dv_receptor": "6",</span>
+<span class="sd">                "fecha_cgi": "16/09/2020",</span>
+<span class="sd">                "monto_maximo_anulacion": "100000000",</span>
+<span class="sd">                "nombre_contribuyente": "EMISOR",</span>
+<span class="sd">                "nombre_receptor": "NACIONALES SIN RUT   (USO EXCLUSIVO F...",</span>
+<span class="sd">                "nro_boleta_eliminar": "155",</span>
+<span class="sd">                "...": "..."</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str emisor: RUT del emisor de la boleta.</span>
+<span class="sd">        :param str folio: Número de folio de la boleta.</span>
+<span class="sd">        :param int causa: Motivo de anulación de la boleta.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, confirmación de la anulación.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">'/sii/bhe/emitidas/anular/</span><span class="si">%(emisor)s</span><span class="s1">/</span><span class="si">%(folio)s</span><span class="s1">?causa=</span><span class="si">%(causa)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span> <span class="s1">'folio'</span><span class="p">:</span> <span class="n">folio</span><span class="p">,</span> <span class="s1">'causa'</span><span class="p">:</span> <span class="n">causa</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="BheRecibidas">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.bhe.BheRecibidas">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BheRecibidas</span><span class="p">(</span><span class="n">ApiBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Cliente para Boletas de Honorarios Electrónicas (BHE) recibidas.</span>
+
+<span class="sd">    Provee métodos para obtener documentos, obtener PDF y observar</span>
+<span class="sd">    BHE recibidas.</span>
+
+<span class="sd">    :param str identificador: Identificador del contribuyente.</span>
+<span class="sd">    :param str clave: Clave del identificador.</span>
+<span class="sd">    :param kwargs: Argumentos adicionales.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">identificador</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">clave</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Autentica con `identificador`/`clave` del contribuyente."""</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">identificador</span><span class="o">=</span><span class="n">identificador</span><span class="p">,</span>
+            <span class="n">clave</span><span class="o">=</span><span class="n">clave</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="BheRecibidas.documentos">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.bhe.BheRecibidas.documentos">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">documentos</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">receptor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">pagina</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene los documentos de BHE recibidos por un receptor en un periodo.</span>
+
+<span class="sd">        La API exige `pagina`: parte en `1` y se avanza de a una,</span>
+<span class="sd">        hasta `n_paginas`.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "n_paginas": 1,</span>
+<span class="sd">                "n_boletas": 1,</span>
+<span class="sd">                "boletas": [</span>
+<span class="sd">                  {</span>
+<span class="sd">                    "anulada": "",</span>
+<span class="sd">                    "codigo": "",</span>
+<span class="sd">                    "comuna": "13159",</span>
+<span class="sd">                    "dv": "9",</span>
+<span class="sd">                    "estado": "N",</span>
+<span class="sd">                    "...": "..."</span>
+<span class="sd">                  }</span>
+<span class="sd">                ]</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str receptor: RUT del receptor de las boletas.</span>
+<span class="sd">        :param str periodo: Período de tiempo de las boletas recibidas.</span>
+<span class="sd">        :param int pagina: Página a consultar, partiendo desde `1`.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, documentos de BHE.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_url</span><span class="p">(</span>
+            <span class="s1">'/sii/bhe/recibidas/documentos/</span><span class="si">%(receptor)s</span><span class="s1">/</span><span class="si">%(periodo)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'receptor'</span><span class="p">:</span> <span class="n">receptor</span><span class="p">,</span> <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">},</span>
+            <span class="n">pagina</span><span class="o">=</span><span class="n">pagina</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BheRecibidas.pdf">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.bhe.BheRecibidas.pdf">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">codigo</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Obtiene el PDF de una BHE recibida.</span>
+
+<span class="sd">        :param str codigo: Código único de la BHE.</span>
+<span class="sd">        :return: Contenido del PDF de la BHE.</span>
+<span class="sd">        :rtype: bytes</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">'/sii/bhe/recibidas/pdf/</span><span class="si">%(codigo)s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">{</span><span class="s1">'codigo'</span><span class="p">:</span> <span class="n">codigo</span><span class="p">}</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span></div>
+
+
+<div class="viewcode-block" id="BheRecibidas.observar">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.bhe.BheRecibidas.observar">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">observar</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">numero</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">causa</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ApiResponse</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Marca una observación en una BHE recibida.</span>
+
+<span class="sd">        Respuesta (ejemplo)::</span>
+
+<span class="sd">            {</span>
+<span class="sd">              "data": {</span>
+<span class="sd">                "nombre_contribuyente": "API Gateway",</span>
+<span class="sd">                "rut_arrastre": "76192083",</span>
+<span class="sd">                "dv_arrastre": "9",</span>
+<span class="sd">                "fecha_cgi": "16/08/2020",</span>
+<span class="sd">                "nro_trx": "12345678"</span>
+<span class="sd">              },</span>
+<span class="sd">              "metadata": {"timestamp": "..."}</span>
+<span class="sd">            }</span>
+
+<span class="sd">        :param str emisor: RUT del emisor de la boleta.</span>
+<span class="sd">        :param str numero: Número de la boleta.</span>
+<span class="sd">        :param int causa: Motivo de la observación.</span>
+<span class="sd">        :return: Respuesta de la API, con `data` y `metadata`.</span>
+<span class="sd">            En `data`, confirmación de la observación.</span>
+<span class="sd">        :rtype: ApiResponse[dict[str, Any]]</span>
+<span class="sd">        """</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">'/sii/bhe/recibidas/observar/</span><span class="si">%(emisor)s</span><span class="s1">/</span><span class="si">%(numero)s</span><span class="s1">'</span>
+            <span class="s1">'?causa=</span><span class="si">%(causa)s</span><span class="s1">'</span>
+            <span class="o">%</span> <span class="p">{</span><span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span> <span class="s1">'numero'</span><span class="p">:</span> <span class="n">numero</span><span class="p">,</span> <span class="s1">'causa'</span><span class="p">:</span> <span class="n">causa</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_json</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ConsultasPorTerceros">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.bhe.ConsultasPorTerceros">[documentos]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConsultasPorTerceros</span><span class="p">(</span><span class="n">ApiBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Cliente para que un tercero verifique la autenticidad de una BHE.</span>
+
+<span class="sd">    A diferencia de `BheEmitidas`/`BheRecibidas`, la autenticación es</span>
+<span class="sd">    de quien CONSULTA, no del emisor ni del receptor de la boleta.</span>
+
+<span class="sd">    :param str identificador: Identificador de quien consulta.</span>
+<span class="sd">    :param str clave: Clave del identificador.</span>
+<span class="sd">    :param kwargs: Argumentos adicionales.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">identificador</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">clave</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Autentica con `identificador`/`clave` de quien consulta."""</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">identificador</span><span class="o">=</span><span class="n">identificador</span><span class="p">,</span>
+            <span class="n">clave</span><span class="o">=</span><span class="n">clave</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="ConsultasPorTerceros.verificar">
+<a class="viewcode-back" href="../../../../apigatewaycl.api_client.sii.html#apigatewaycl.api_client.sii.bhe.ConsultasPorTerceros.verificar">[documentos]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">verificar</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">codigo_barras</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">emisor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">receptor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">periodo</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">folio</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Verifica la autenticidad de una BHE ante el SII.</span>
+
+<span class="sd">        Modos excluyentes: enviar solo `codigo_barras`, o todos de</span>
+<span class="sd">        `emisor`/`receptor`/`periodo`/`folio`.</span>
+
+<span class="sd">        :param str codigo_barras: Código de barras de la boleta.</span>
+<span class="sd">        :param str emisor: RUT del emisor de la boleta.</span>
+<span class="sd">        :param str receptor: RUT del receptor de la boleta.</span>
+<span class="sd">        :param str periodo: Fecha de la boleta (AAAA-MM-DD).</span>
+<span class="sd">        :param int folio: Folio de la boleta.</span>
+<span class="sd">        :return: PDF oficial de la boleta emitido por el SII.</span>
+<span class="sd">        :rtype: bytes</span>
+<span class="sd">        """</span>
+        <span class="c1"># Los dos modos son excluyentes: la API rechaza el cuerpo si</span>
+        <span class="c1"># llegan mezclados, así que sólo se envía lo que se indicó.</span>
+        <span class="n">criterios</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'codigo_barras'</span><span class="p">:</span> <span class="n">codigo_barras</span><span class="p">,</span>
+            <span class="s1">'emisor'</span><span class="p">:</span> <span class="n">emisor</span><span class="p">,</span>
+            <span class="s1">'receptor'</span><span class="p">:</span> <span class="n">receptor</span><span class="p">,</span>
+            <span class="s1">'periodo'</span><span class="p">:</span> <span class="n">periodo</span><span class="p">,</span>
+            <span class="s1">'folio'</span><span class="p">:</span> <span class="n">folio</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">body</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'auth'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth</span><span class="p">()}</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="n">clave</span><span class="p">:</span> <span class="n">valor</span>
+                <span class="k">for</span> <span class="n">clave</span><span class="p">,</span> <span class="n">valor</span> <span class="ow">in</span> <span class="n">criterios</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">valor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s1">'/sii/bhe/consultas_por_terceros'</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2026, API Gateway.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ejemplo &mdash; documentación de API Gateway: Cliente de API en Python - 3</title>
+  <title>Ejemplos &mdash; documentación de API Gateway: Cliente de API en Python - 6.0.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=01b451dc"></script>
+      <script src="_static/documentation_options.js?v=a9071d65"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=f85f4cfb"></script>
@@ -48,7 +48,7 @@
 <li class="toctree-l2"><a class="reference internal" href="gettingstarted.legal.html">Términos y Condiciones de Uso</a></li>
 <li class="toctree-l2"><a class="reference internal" href="gettingstarted.install.html">Instalación y actualización</a></li>
 <li class="toctree-l2"><a class="reference internal" href="gettingstarted.setup.html">Configuración</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Ejemplo</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Ejemplos</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="dev.index.html">Desarrollo</a></li>
@@ -73,7 +73,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="gettingstarted.index.html">Empezando</a></li>
-      <li class="breadcrumb-item active">Ejemplo</li>
+      <li class="breadcrumb-item active">Ejemplos</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/gettingstarted.example.rst.txt" rel="nofollow"> Ver código fuente de la página</a>
       </li>
@@ -83,75 +83,229 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="ejemplo">
-<h1>Ejemplo<a class="headerlink" href="#ejemplo" title="Link to this heading"></a></h1>
-<section id="ejemplo-de-emitir-bhes">
-<h2>Ejemplo de emitir BHEs<a class="headerlink" href="#ejemplo-de-emitir-bhes" title="Link to this heading"></a></h2>
-<p>El siguiente es un ejemplo básico de cómo emitir un documento BHE utilizando el cliente de API.</p>
-<p>Para utilizar el cliente de API de API Gateway, deberás tener definido el token de API como variable de entorno.</p>
+  <section id="ejemplos">
+<h1>Ejemplos<a class="headerlink" href="#ejemplos" title="Link to this heading"></a></h1>
+<p>Todos los ejemplos asumen que tienes el token de la API definido como
+variable de entorno.</p>
 <div class="admonition seealso">
 <p class="admonition-title">Ver también</p>
-<p>Para más información sobre este paso, referirse al la guía en Configuración.</p>
+<p>Para más información sobre este paso, referirse a la guía en
+Configuración.</p>
 </div>
-<p>Opcionalmente, puedes definir como variables de entorno el identificador y la clave del SII, o definirlos directamente en el programa.</p>
+<p>Recuerda que los recursos que responden JSON entregan el cuerpo tal cual
+lo envía la API, con <code class="docutils literal notranslate"><span class="pre">data</span></code> y <code class="docutils literal notranslate"><span class="pre">metadata</span></code>.</p>
+<section id="consultar-un-recurso-publico">
+<h2>Consultar un recurso público<a class="headerlink" href="#consultar-un-recurso-publico" title="Link to this heading"></a></h2>
+<p>Los indicadores y otros recursos públicos solo necesitan el token de la
+plataforma: no requieren credenciales del contribuyente.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">apigatewaycl.api_client.sii.indicadores</span><span class="w"> </span><span class="kn">import</span> <span class="n">Uf</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Uf</span><span class="p">()</span>
+
+<span class="c1"># El valor de la UF de un día. La respuesta trae la fecha</span>
+<span class="c1"># normalizada a AAAAMMDD como clave dentro de 'data'.</span>
+<span class="n">respuesta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">diario</span><span class="p">(</span><span class="s1">'2025-01-15'</span><span class="p">)</span>
+
+<span class="n">valores</span> <span class="o">=</span> <span class="n">respuesta</span><span class="p">[</span><span class="s1">'data'</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'UF del 15-01-2025:'</span><span class="p">,</span> <span class="n">valores</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'20250115'</span><span class="p">))</span>
+
+<span class="c1"># 'metadata' trae los datos de la consulta, como la marca de tiempo.</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Consultado en:'</span><span class="p">,</span> <span class="n">respuesta</span><span class="p">[</span><span class="s1">'metadata'</span><span class="p">][</span><span class="s1">'timestamp'</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="autenticacion-con-rut-y-clave">
+<h2>Autenticación con RUT y clave<a class="headerlink" href="#autenticacion-con-rut-y-clave" title="Link to this heading"></a></h2>
+<p>La mayoría de los recursos del SII requieren las credenciales del
+contribuyente, que se pasan al instanciar la clase.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">getenv</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">apigatewaycl.api_client.sii.rcv</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rcv</span>
+
+<span class="c1"># RUT del contribuyente, sin puntos y con dígito verificador.</span>
+<span class="n">identificador</span> <span class="o">=</span> <span class="n">getenv</span><span class="p">(</span><span class="s1">'SII_USUARIO_RUT'</span><span class="p">,</span> <span class="s1">'12345678-9'</span><span class="p">)</span>
+<span class="n">clave</span> <span class="o">=</span> <span class="n">getenv</span><span class="p">(</span><span class="s1">'SII_USUARIO_CLAVE'</span><span class="p">,</span> <span class="s1">'claveSii'</span><span class="p">)</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Rcv</span><span class="p">(</span><span class="n">identificador</span><span class="p">,</span> <span class="n">clave</span><span class="p">)</span>
+
+<span class="c1"># Resumen de compras del período (AAAAMM).</span>
+<span class="n">respuesta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">compras_resumen</span><span class="p">(</span><span class="n">identificador</span><span class="p">,</span> <span class="s1">'202501'</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">resumen</span> <span class="ow">in</span> <span class="n">respuesta</span><span class="p">[</span><span class="s1">'data'</span><span class="p">]</span> <span class="ow">or</span> <span class="p">[]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">resumen</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="autenticacion-con-certificado-digital">
+<h2>Autenticación con certificado digital<a class="headerlink" href="#autenticacion-con-certificado-digital" title="Link to this heading"></a></h2>
+<p>Algunos recursos, como el CAF y los datos privados del contribuyente, no
+admiten RUT y clave: exigen certificado digital. Se pasa en los mismos dos
+argumentos, con el <strong>certificado</strong> en formato PEM como primer argumento y
+la <strong>llave privada</strong>, también en PEM, como segundo.</p>
+<p>Para obtener ambos desde tu firma electrónica (<code class="docutils literal notranslate"><span class="pre">.p12</span></code> o <code class="docutils literal notranslate"><span class="pre">.pfx</span></code>), sigue
+el tutorial <a class="reference external" href="https://www.apigateway.cl/docs/tutoriales/extraer-pem">Extraer el certificado y la clave privada con OpenSSL</a>. Ese
+procedimiento genera dos archivos, <code class="docutils literal notranslate"><span class="pre">cert-data.txt</span></code> y <code class="docutils literal notranslate"><span class="pre">pkey-data.txt</span></code>,
+que son los que se usan acá.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">apigatewaycl.api_client.sii.caf</span><span class="w"> </span><span class="kn">import</span> <span class="n">Caf</span>
+
+<span class="c1"># Certificado: contiene uno o más bloques "BEGIN CERTIFICATE".</span>
+<span class="n">certificado</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">'cert-data.txt'</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+<span class="c1"># Llave privada: "BEGIN PRIVATE KEY" o "BEGIN RSA PRIVATE KEY".</span>
+<span class="n">llave_privada</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">'pkey-data.txt'</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Caf</span><span class="p">(</span><span class="n">certificado</span><span class="p">,</span> <span class="n">llave_privada</span><span class="p">)</span>
+
+<span class="c1"># Folios timbrables y observaciones del SII, para facturas (33).</span>
+<span class="n">respuesta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">estado_timbraje</span><span class="p">(</span><span class="s1">'12345678-9'</span><span class="p">,</span> <span class="mi">33</span><span class="p">)</span>
+
+<span class="n">datos</span> <span class="o">=</span> <span class="n">respuesta</span><span class="p">[</span><span class="s1">'data'</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Folios disponibles:'</span><span class="p">,</span> <span class="n">datos</span><span class="p">[</span><span class="s1">'dte'</span><span class="p">][</span><span class="s1">'folios_disponibles'</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Contribuyente observado:'</span><span class="p">,</span> <span class="n">datos</span><span class="p">[</span><span class="s1">'contribuyente'</span><span class="p">][</span><span class="s1">'observado'</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>El cliente reconoce el tipo de credencial por su contenido. Si el
+primer argumento es un RUT usa RUT y clave; si es un PEM lo toma
+como certificado y llave privada.</p>
+<p>Acepta el PEM tal como lo dejan los archivos del tutorial: en una
+sola línea con los saltos escapados, y con la cadena completa de
+certificación (varios bloques <code class="docutils literal notranslate"><span class="pre">BEGIN</span> <span class="pre">CERTIFICATE</span></code>).</p>
+</div>
+</section>
+<section id="descargar-un-archivo">
+<h2>Descargar un archivo<a class="headerlink" href="#descargar-un-archivo" title="Link to this heading"></a></h2>
+<p>Los recursos que responden un archivo (PDF, XML, CSV o HTML) no entregan
+JSON: devuelven el contenido sin decodificar, como <code class="docutils literal notranslate"><span class="pre">bytes</span></code>. Por eso se
+guardan en modo binario.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">apigatewaycl.api_client.sii.bhe</span><span class="w"> </span><span class="kn">import</span> <span class="n">BheEmitidas</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">BheEmitidas</span><span class="p">(</span><span class="s1">'12345678-9'</span><span class="p">,</span> <span class="s1">'claveSii'</span><span class="p">)</span>
+
+<span class="c1"># El código de la boleta sale del listado del período.</span>
+<span class="n">respuesta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">documentos</span><span class="p">(</span><span class="s1">'12345678-9'</span><span class="p">,</span> <span class="s1">'202501'</span><span class="p">)</span>
+<span class="n">boletas</span> <span class="o">=</span> <span class="n">respuesta</span><span class="p">[</span><span class="s1">'data'</span><span class="p">][</span><span class="s1">'boletas'</span><span class="p">]</span>
+
+<span class="n">pdf</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">boletas</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'codigo'</span><span class="p">])</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'boleta.pdf'</span><span class="p">,</span> <span class="s1">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">archivo</span><span class="p">:</span>
+    <span class="n">archivo</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pdf</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="recorrer-resultados-paginados">
+<h2>Recorrer resultados paginados<a class="headerlink" href="#recorrer-resultados-paginados" title="Link to this heading"></a></h2>
+<p>Los listados extensos vienen paginados. Según el recurso, la información
+para avanzar está en <code class="docutils literal notranslate"><span class="pre">data</span></code> (por ejemplo <code class="docutils literal notranslate"><span class="pre">n_paginas</span></code>) o en
+<code class="docutils literal notranslate"><span class="pre">metadata</span></code> (por ejemplo <code class="docutils literal notranslate"><span class="pre">siguiente_pagina</span></code>, que vale <code class="docutils literal notranslate"><span class="pre">None</span></code> en la
+última página).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">apigatewaycl.api_client.sii.bhe</span><span class="w"> </span><span class="kn">import</span> <span class="n">BheEmitidas</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">BheEmitidas</span><span class="p">(</span><span class="s1">'12345678-9'</span><span class="p">,</span> <span class="s1">'claveSii'</span><span class="p">)</span>
+
+<span class="n">boletas</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">pagina</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">datos</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">documentos</span><span class="p">(</span><span class="s1">'12345678-9'</span><span class="p">,</span> <span class="s1">'202501'</span><span class="p">,</span> <span class="n">pagina</span><span class="p">)[</span><span class="s1">'data'</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">datos</span><span class="p">:</span>
+        <span class="k">break</span>
+    <span class="n">boletas</span> <span class="o">+=</span> <span class="n">datos</span><span class="p">[</span><span class="s1">'boletas'</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">pagina</span> <span class="o">&gt;=</span> <span class="n">datos</span><span class="p">[</span><span class="s1">'n_paginas'</span><span class="p">]:</span>
+        <span class="k">break</span>
+    <span class="n">pagina</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Boletas del período:'</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">boletas</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="manejar-los-errores">
+<h2>Manejar los errores<a class="headerlink" href="#manejar-los-errores" title="Link to this heading"></a></h2>
+<p>Cualquier error de la API (credenciales inválidas, parámetros que faltan,
+o un rechazo del propio SII) se levanta como <code class="docutils literal notranslate"><span class="pre">ApiException</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">apigatewaycl.api_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApiException</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apigatewaycl.api_client.sii.contribuyentes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Contribuyentes</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">Contribuyentes</span><span class="p">()</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">respuesta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">situacion_tributaria</span><span class="p">(</span><span class="s1">'12345678-9'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">respuesta</span><span class="p">[</span><span class="s1">'data'</span><span class="p">])</span>
+<span class="k">except</span> <span class="n">ApiException</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+    <span class="c1"># El mensaje incluye el detalle que entrega la API.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Falló la consulta:'</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="emitir-una-bhe">
+<h2>Emitir una BHE<a class="headerlink" href="#emitir-una-bhe" title="Link to this heading"></a></h2>
+<p>El siguiente es un ejemplo completo de cómo emitir un documento BHE.</p>
+<p>Opcionalmente, puedes definir como variables de entorno el identificador y
+la clave del SII, o definirlos directamente en el programa.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Importaciones del cliente de API de API Gateway</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">getenv</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">apigatewaycl.api_client.sii.bhe</span><span class="w"> </span><span class="kn">import</span> <span class="n">BheEmitidas</span>
 
 <span class="c1"># RUT de contribuyente SII sin puntos y con Dígito Verificador. (Reemplazar segundo valor si)</span>
-<span class="n">identificador</span> <span class="o">=</span> <span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;TEST_USUARIO_IDENTIFICADOR&#39;</span><span class="p">,</span> <span class="s1">&#39;12345678-9&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="n">identificador</span> <span class="o">=</span> <span class="n">getenv</span><span class="p">(</span><span class="s1">'TEST_USUARIO_IDENTIFICADOR'</span><span class="p">,</span> <span class="s1">'12345678-9'</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 <span class="c1"># Clave de contribuyente SII.</span>
-<span class="n">clave</span> <span class="o">=</span> <span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;TEST_USUARIO_CLAVE&#39;</span><span class="p">,</span> <span class="s1">&#39;claveSii&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="n">clave</span> <span class="o">=</span> <span class="n">getenv</span><span class="p">(</span><span class="s1">'TEST_USUARIO_CLAVE'</span><span class="p">,</span> <span class="s1">'claveSii'</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
 <span class="c1"># Creación de nueva instancia de cliente de API</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">BheEmitidas</span><span class="p">(</span><span class="n">identificador</span><span class="p">,</span> <span class="n">clave</span><span class="p">)</span>
 
 <span class="c1"># RUT del emisor del BHE, sin puntos y con Dígito Verificador.</span>
-<span class="n">contribuyente_rut</span> <span class="o">=</span> <span class="s1">&#39;12345678-9&#39;</span>
+<span class="n">contribuyente_rut</span> <span class="o">=</span> <span class="s1">'12345678-9'</span>
 <span class="c1"># RUT del receptor, sin puntos y con Dígito Verificador.</span>
-<span class="n">receptor_rut</span> <span class="o">=</span> <span class="s1">&#39;66666666-6&#39;</span>
+<span class="n">receptor_rut</span> <span class="o">=</span> <span class="s1">'66666666-6'</span>
 <span class="c1"># Fecha de emisión de la BHE.</span>
-<span class="n">fecha_emision</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">fecha_emision</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="n">datos_bhe</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;Encabezado&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;IdDoc&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;FchEmis&#39;</span><span class="p">:</span> <span class="n">fecha_emision</span><span class="p">,</span>
-            <span class="s1">&#39;TipoRetencion&#39;</span><span class="p">:</span> <span class="n">BheEmitidas</span><span class="o">.</span><span class="n">RETENCION_EMISOR</span>
+    <span class="s1">'Encabezado'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">'IdDoc'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'FchEmis'</span><span class="p">:</span> <span class="n">fecha_emision</span><span class="p">,</span>
+            <span class="s1">'TipoRetencion'</span><span class="p">:</span> <span class="n">BheEmitidas</span><span class="o">.</span><span class="n">RETENCION_EMISOR</span>
         <span class="p">},</span>
-        <span class="s1">&#39;Emisor&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;RUTEmisor&#39;</span><span class="p">:</span> <span class="n">contribuyente_rut</span>
+        <span class="s1">'Emisor'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'RUTEmisor'</span><span class="p">:</span> <span class="n">contribuyente_rut</span>
         <span class="p">},</span>
-        <span class="s1">&#39;Receptor&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;RUTRecep&#39;</span><span class="p">:</span> <span class="n">receptor_rut</span><span class="p">,</span>
-            <span class="s1">&#39;RznSocRecep&#39;</span><span class="p">:</span> <span class="s1">&#39;Receptor generico&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;DirRecep&#39;</span><span class="p">:</span> <span class="s1">&#39;Santa Cruz&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;CmnaRecep&#39;</span><span class="p">:</span> <span class="s1">&#39;Santa Cruz&#39;</span>
+        <span class="s1">'Receptor'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'RUTRecep'</span><span class="p">:</span> <span class="n">receptor_rut</span><span class="p">,</span>
+            <span class="s1">'RznSocRecep'</span><span class="p">:</span> <span class="s1">'Receptor generico'</span><span class="p">,</span>
+            <span class="s1">'DirRecep'</span><span class="p">:</span> <span class="s1">'Santa Cruz'</span><span class="p">,</span>
+            <span class="s1">'CmnaRecep'</span><span class="p">:</span> <span class="s1">'Santa Cruz'</span>
         <span class="p">}</span>
     <span class="p">},</span>
-    <span class="s1">&#39;Detalle&#39;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s1">'Detalle'</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
-            <span class="s1">&#39;NmbItem&#39;</span><span class="p">:</span> <span class="s1">&#39;Prueba integracion API Gateway 1&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;MontoItem&#39;</span><span class="p">:</span> <span class="mi">50</span>
+            <span class="s1">'NmbItem'</span><span class="p">:</span> <span class="s1">'Prueba integracion API Gateway 1'</span><span class="p">,</span>
+            <span class="s1">'MontoItem'</span><span class="p">:</span> <span class="mi">50</span>
         <span class="p">},</span>
         <span class="p">{</span>
-            <span class="s1">&#39;NmbItem&#39;</span><span class="p">:</span> <span class="s1">&#39;Prueba integracion API Gateway 2&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;MontoItem&#39;</span><span class="p">:</span> <span class="mi">100</span>
+            <span class="s1">'NmbItem'</span><span class="p">:</span> <span class="s1">'Prueba integracion API Gateway 2'</span><span class="p">,</span>
+            <span class="s1">'MontoItem'</span><span class="p">:</span> <span class="mi">100</span>
         <span class="p">}</span>
     <span class="p">]</span>
 <span class="p">}</span>
 <span class="c1"># Llamado al método de emitir en BheEmitidas().</span>
-<span class="n">emitir</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">emitir</span><span class="p">(</span><span class="n">datos_bhe</span><span class="p">)</span>
+<span class="n">respuesta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">emitir</span><span class="p">(</span><span class="n">datos_bhe</span><span class="p">)</span>
+
+<span class="c1"># La API responde {'data': ..., 'metadata': {...}}: el resultado de</span>
+<span class="c1"># la emisión está en 'data'.</span>
+<span class="n">emitir</span> <span class="o">=</span> <span class="n">respuesta</span><span class="p">[</span><span class="s1">'data'</span><span class="p">]</span>
 
 <span class="c1"># Se despliega el resultado en consola, para confirmar.</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">EMISION BOLETA: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Emitir BHE ejemplo: &#39;</span><span class="p">,</span> <span class="n">emitir</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">EMISION BOLETA: </span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Emitir BHE ejemplo: '</span><span class="p">,</span> <span class="n">emitir</span><span class="p">,</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">Ver también</p>
-<p>Para saber más sobre los parámetros posibles y el cómo consumir los servicios de la API, referirse a la <a class="reference external" href="https://developers.apigateway.cl/">documentación de API Gateway.</a></p>
+<p>Para saber más sobre los parámetros posibles y el cómo consumir los servicios de la API, referirse a la <a class="reference external" href="https://www.apigateway.cl/docs">documentación de API Gateway.</a></p>
 </div>
 </section>
 </section>
@@ -167,7 +321,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Derechos de autor 2024, API Gateway.</p>
+    <p>&#169; Derechos de autor 2026, API Gateway.</p>
   </div>
 
   Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
