@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase, Respuesta
+from .. import ApiBase, ApiResponse
 
 
 class Contribuyente(ApiBase):
@@ -53,7 +53,7 @@ class Contribuyente(ApiBase):
             **kwargs,  # type: ignore[arg-type]
         )
 
-    def datos(self) -> Respuesta[dict[str, Any]]:
+    def datos(self) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene los datos de MiSii del contribuyente autenticado en el SII.
 
@@ -117,7 +117,7 @@ class Contribuyente(ApiBase):
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos del contribuyente.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/misii/contribuyente/datos'
         body = {'auth': self._get_auth()}
@@ -150,7 +150,7 @@ class Representantes(ApiBase):
             **kwargs,  # type: ignore[arg-type]
         )
 
-    def listado(self) -> Respuesta[dict[str, Any]]:
+    def listado(self) -> ApiResponse[dict[str, Any]]:
         """
         Listado de representantes del contribuyente autenticado.
 
@@ -181,7 +181,7 @@ class Representantes(ApiBase):
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos del representado, sus representantes y permisos.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/misii/representantes/listado'
         body = {'auth': self._get_auth()}
@@ -214,7 +214,7 @@ class Representados(ApiBase):
             **kwargs,  # type: ignore[arg-type]
         )
 
-    def listado(self) -> Respuesta[dict[str, Any]]:
+    def listado(self) -> ApiResponse[dict[str, Any]]:
         """
         Listado de contribuyentes que representa el usuario autenticado.
 
@@ -235,7 +235,7 @@ class Representados(ApiBase):
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos del representante, sus representados y permisos.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/misii/representados/listado'
         body = {'auth': self._get_auth()}
@@ -246,7 +246,7 @@ class Representados(ApiBase):
         self,
         rut: str,
         permisos: str,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Asigna qué contribuyente representar en las siguientes llamadas.
 
@@ -268,7 +268,7 @@ class Representados(ApiBase):
             (ej. `'RPETC,MISII'` — ver tabla de códigos en la spec).
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos del contribuyente representado.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/misii/representados/representar/%(rut)s/%(permisos)s' % {
             'rut': rut,

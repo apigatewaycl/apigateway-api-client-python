@@ -29,7 +29,7 @@ from __future__ import annotations
 from abc import ABC
 from typing import Any, ClassVar
 
-from .. import ApiBase, Respuesta
+from .. import ApiBase, ApiResponse
 
 
 class PortalMipyme(ApiBase, ABC):
@@ -69,7 +69,7 @@ class Contribuyentes(PortalMipyme):
         contribuyente: str,
         emisor: str,
         dte: int = 33,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene información de un contribuyente específico.
 
@@ -103,7 +103,7 @@ class Contribuyentes(PortalMipyme):
         :param int dte: Tipo de DTE.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos del contribuyente.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = (
             '/sii/mipyme/contribuyentes/info/'
@@ -184,7 +184,7 @@ class Borradores(Dte):
         self,
         emisor: str,
         filtros: dict[str, Any] | None = None,
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Listado de documentos borradores del emisor.
 
@@ -227,7 +227,7 @@ class Borradores(Dte):
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de borradores con los campos del Portal
             MIPYME en minúsculas; el código del borrador es `ehdr_codigo`.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = '/sii/mipyme/borradores/documentos/%(emisor)s' % {
             'emisor': emisor,
@@ -236,7 +236,7 @@ class Borradores(Dte):
         response = self.client.post(url, data=body)
         return self._json(response)
 
-    def emitir(self, dte: dict[str, Any]) -> Respuesta[dict[str, Any]]:
+    def emitir(self, dte: dict[str, Any]) -> ApiResponse[dict[str, Any]]:
         """
         Crea un documento borrador en el Portal Mipyme.
 
@@ -263,7 +263,7 @@ class Borradores(Dte):
         :param dict dte: Datos del DTE a armar como borrador.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, el borrador creado.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         body = {'auth': self._get_auth(), 'dte': dte}
         response = self.client.post('/sii/mipyme/borradores/emitir', data=body)
@@ -273,7 +273,7 @@ class Borradores(Dte):
         self,
         emisor: str,
         codigo: str,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Elimina un documento borrador del Portal Mipyme.
 
@@ -298,7 +298,7 @@ class Borradores(Dte):
         :param str codigo: Código del borrador (del listado de documentos).
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, `True` si el borrador fue eliminado.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/mipyme/borradores/eliminar/%(emisor)s/%(codigo)s' % {
             'emisor': emisor,
@@ -322,7 +322,7 @@ class DteEmitidos(Dte):
         self,
         emisor: str,
         filtros: dict[str, Any] | None = None,
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Obtiene documentos de DTE emitidos por un emisor.
 
@@ -353,7 +353,7 @@ class DteEmitidos(Dte):
         :param dict filtros: Filtros adicionales para la consulta.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, documentos de DTE emitidos.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = '/sii/mipyme/emitidos/documentos/%(emisor)s' % {'emisor': emisor}
         body = {'auth': self._get_auth(), 'filtros': filtros or {}}
@@ -425,7 +425,7 @@ class DteRecibidos(Dte):
         self,
         receptor: str,
         filtros: dict[str, Any] | None = None,
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Obtiene documentos de DTE recibidos por un receptor.
 
@@ -456,7 +456,7 @@ class DteRecibidos(Dte):
         :param dict filtros: Filtros adicionales para la consulta.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, documentos de DTE recibidos.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = '/sii/mipyme/recibidos/documentos/%(receptor)s' % {
             'receptor': receptor

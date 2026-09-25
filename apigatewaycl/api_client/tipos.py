@@ -29,13 +29,13 @@ from __future__ import annotations
 from typing import Any, TypedDict
 
 
-class Respuesta[T](TypedDict):
+class ApiResponse[T](TypedDict):
     """
     Cuerpo JSON de una respuesta exitosa de la API.
 
     `data` trae el resultado: según el recurso es un `dict` o una
-    `list`, y `T` indica cuál (`Respuesta[dict[str, Any]]` o
-    `Respuesta[list[dict[str, Any]]]`). `metadata` trae los datos de
+    `list`, y `T` indica cuál (`ApiResponse[dict[str, Any]]` o
+    `ApiResponse[list[dict[str, Any]]]`). `metadata` trae los datos de
     la consulta (`timestamp` siempre; el resto de las claves, como la
     paginación, depende del recurso y se deja abierto para no
     amarrarlo a una lista fija). Con `raise_for_status=False` una

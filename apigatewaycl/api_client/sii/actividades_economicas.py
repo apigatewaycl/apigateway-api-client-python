@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase, Respuesta
+from .. import ApiBase, ApiResponse
 
 
 class ActividadesEconomicas(ApiBase):
@@ -42,7 +42,7 @@ class ActividadesEconomicas(ApiBase):
 
     def listado(
         self, categoria: int | None = None
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene un listado de actividades económicas, filtrando por categoría.
 
@@ -78,7 +78,7 @@ class ActividadesEconomicas(ApiBase):
             (opcional).
         :return: Respuesta de la API, con `data` y `metadata`. En `data`, el
             listado de actividades económicas.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/contribuyentes/actividades_economicas',
@@ -87,7 +87,7 @@ class ActividadesEconomicas(ApiBase):
         response = self.client.get(url)
         return self._json(response)
 
-    def listado_primera_categoria(self) -> Respuesta[dict[str, Any]]:
+    def listado_primera_categoria(self) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene un listado de actividades económicas de primera categoría.
 
@@ -121,11 +121,11 @@ class ActividadesEconomicas(ApiBase):
 
         :return: Respuesta de la API, con `data` y `metadata`. En `data`, el
             listado de primera categoría.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         return self.listado(1)
 
-    def listado_segunda_categoria(self) -> Respuesta[dict[str, Any]]:
+    def listado_segunda_categoria(self) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene un listado de actividades económicas de segunda categoría.
 
@@ -159,6 +159,6 @@ class ActividadesEconomicas(ApiBase):
 
         :return: Respuesta de la API, con `data` y `metadata`. En `data`, el
             listado de segunda categoría.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         return self.listado(2)

@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import Any, cast
 
-from .. import ApiBase, Respuesta
+from .. import ApiBase, ApiResponse
 
 
 class Contribuyentes(ApiBase):
@@ -70,7 +70,7 @@ class Contribuyentes(ApiBase):
         self,
         rut: str,
         certificacion: bool | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Verifica si un contribuyente está autorizado para emitir DTE.
 
@@ -101,7 +101,7 @@ class Contribuyentes(ApiBase):
             de certificación (opcional).
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, estado de autorización.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         certificacion_flag = 1 if certificacion else 0
         url = (
@@ -116,7 +116,7 @@ class Contribuyentes(ApiBase):
         self,
         contribuyente: str,
         certificacion: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Datos privados del contribuyente autenticado.
 
@@ -145,7 +145,7 @@ class Contribuyentes(ApiBase):
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos privados del contribuyente.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/dte/contribuyentes/datos/%(contribuyente)s'
@@ -161,7 +161,7 @@ class Contribuyentes(ApiBase):
         contribuyente: str,
         datos: dict[str, Any],
         certificacion: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Actualiza los datos privados del contribuyente (emails, software).
 
@@ -190,7 +190,7 @@ class Contribuyentes(ApiBase):
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos privados del contribuyente, ya actualizados.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/dte/contribuyentes/set_datos/%(contribuyente)s'
@@ -205,7 +205,7 @@ class Contribuyentes(ApiBase):
         self,
         rut: str,
         certificacion: str | None = None,
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Listado de usuarios autorizados de un contribuyente.
 
@@ -233,7 +233,7 @@ class Contribuyentes(ApiBase):
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de usuarios, con nombre, RUN y permisos.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = self._build_url(
             '/sii/dte/contribuyentes/usuarios/%(rut)s' % {'rut': rut},
@@ -248,7 +248,7 @@ class Contribuyentes(ApiBase):
         contribuyente: str,
         usuario: dict[str, Any],
         certificacion: str | None = None,
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Asigna un usuario autorizado, o modifica sus permisos si ya existe.
 
@@ -284,7 +284,7 @@ class Contribuyentes(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`. En `data`,
             la lista completa de usuarios autorizados después del cambio
             (no solo el enviado), con sus permisos.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = self._build_url(
             '/sii/dte/contribuyentes/set_usuario/%(contribuyente)s'
@@ -299,7 +299,7 @@ class Contribuyentes(ApiBase):
         self,
         rut: str,
         certificacion: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Estado de autorización de un contribuyente, con certificado.
 
@@ -335,7 +335,7 @@ class Contribuyentes(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, autorización, resolución, dirección regional, software
             declarado, email de intercambio y documentos autorizados.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/dte/contribuyentes/autorizado/%(rut)s' % {'rut': rut},
@@ -350,7 +350,7 @@ class Contribuyentes(ApiBase):
         certificacion: str | None = None,
         dia: str | None = None,
         formato: str | None = None,
-    ) -> Respuesta[list[dict[str, Any]]] | bytes:
+    ) -> ApiResponse[list[dict[str, Any]]] | bytes:
         """
         Descarga masiva de contribuyentes autorizados a emitir DTE.
 
@@ -386,7 +386,7 @@ class Contribuyentes(ApiBase):
             `formato='json'` se entrega ya decodificado; con los dos formatos
             CSV se entrega el archivo crudo, sin decodificar (`csv_sii` viene
             en ISO-8859-1).
-        :rtype: dict | bytes
+        :rtype: ApiResponse[list[dict[str, Any]]] | bytes
         """
         url = self._build_url(
             '/sii/dte/contribuyentes/autorizados',
@@ -438,7 +438,7 @@ class Emitidos(ApiBase):
         total: int,
         firma: str | None = None,
         certificacion: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Verifica la validez de un DTE emitido.
 
@@ -466,7 +466,7 @@ class Emitidos(ApiBase):
             y 41) se verifican siempre en producción.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, resultado de la verificación del DTE.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/dte/emitidos/verificar',
@@ -493,7 +493,7 @@ class Emitidos(ApiBase):
         track_id: int,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Respuesta[dict[str, Any]] | str:
+    ) -> ApiResponse[dict[str, Any]] | str:
         """
         Estado del envío de un XML de DTE al SII.
 
@@ -529,7 +529,7 @@ class Emitidos(ApiBase):
             En `data`, estado del envío y resumen de documentos por tipo de
             DTE. Con `formato='html'` se entrega el HTML del SII como
             `str`, sin `data` ni `metadata`.
-        :rtype: dict | str
+        :rtype: ApiResponse[dict[str, Any]] | str
         """
         url = self._build_url(
             '/sii/dte/emitidos/estado_envio/%(emisor)s/%(track_id)s'
@@ -576,7 +576,7 @@ class Iecv(ApiBase):
         tipo: str,
         track_id: int,
         certificacion: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Código de reemplazo de un libro IECV, para poder rectificarlo.
 
@@ -598,7 +598,7 @@ class Iecv(ApiBase):
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, código de reemplazo del libro.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/dte/iecv/codigo_reemplazo/%(emisor)s/%(periodo)s'

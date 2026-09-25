@@ -28,7 +28,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase, Respuesta
+from .. import ApiBase, ApiResponse
 
 
 class BteEmitidas(ApiBase):
@@ -61,7 +61,7 @@ class BteEmitidas(ApiBase):
         emisor: str,
         periodo: str,
         pagina: int = 1,
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Obtiene los documentos BTE emitidos por un emisor en un periodo.
 
@@ -91,7 +91,7 @@ class BteEmitidas(ApiBase):
         :param int pagina: Página a consultar, partiendo desde `1`.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, documentos BTE.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = self._build_url(
             '/sii/bte/emitidas/documentos/%(emisor)s/%(periodo)s'
@@ -106,7 +106,7 @@ class BteEmitidas(ApiBase):
         self,
         emisor: str,
         anio: str,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Resumen anual y mensual de boletas de terceros emitidas.
 
@@ -143,7 +143,7 @@ class BteEmitidas(ApiBase):
             En `data`, resumen anual (`anual`) y, por cada mes, su propio
             resumen (`mensual`). Sin movimientos en el año, `anual` es
             `None` y `mensual` una lista vacía.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/bte/emitidas/resumen/%(emisor)s/%(anio)s' % {
             'emisor': emisor,
@@ -167,7 +167,7 @@ class BteEmitidas(ApiBase):
         response = self.client.post(url, data=body)
         return response.content
 
-    def emitir(self, datos: dict[str, Any]) -> Respuesta[dict[str, Any]]:
+    def emitir(self, datos: dict[str, Any]) -> ApiResponse[dict[str, Any]]:
         """
         Emite una nueva Boleta de Tercero Electrónica.
 
@@ -212,7 +212,7 @@ class BteEmitidas(ApiBase):
         :param dict datos: Datos de la boleta a emitir.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, confirmación de la emisión de la BTE.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         body = {'auth': self._get_auth(), 'boleta': datos}
         response = self.client.post('/sii/bte/emitidas/emitir', data=body)
@@ -224,7 +224,7 @@ class BteEmitidas(ApiBase):
         numero: str,
         causa: int = 3,
         periodo: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Anula una BTE emitida.
 
@@ -251,7 +251,7 @@ class BteEmitidas(ApiBase):
         :param str periodo: Período de emisión de la boleta (opcional).
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, confirmación de la anulación.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         body = {'auth': self._get_auth()}
         url = (
@@ -268,7 +268,7 @@ class BteEmitidas(ApiBase):
         emisor: str,
         folio: int,
         periodo: str,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Detalle de una BTE emitida específica (no un listado).
 
@@ -296,7 +296,7 @@ class BteEmitidas(ApiBase):
             buscando el folio.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos de la boleta (número, código, montos, estado).
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/bte/emitidas/documento/%(emisor)s/%(folio)s'
@@ -312,7 +312,7 @@ class BteEmitidas(ApiBase):
         emisor: str,
         receptor: str,
         periodo: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene la tasa de retención aplicada a un receptor por un emisor.
 
@@ -332,7 +332,7 @@ class BteEmitidas(ApiBase):
         :param str periodo: Período de emisión de la boleta (opcional).
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, tasa de retención.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         body = {'auth': self._get_auth()}
         url = '/sii/bte/emitidas/receptor_tasa/%(emisor)s/%(receptor)s' % {
@@ -372,7 +372,7 @@ class BteRecibidas(ApiBase):
         receptor: str,
         periodo: str,
         pagina: int,
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Obtiene los documentos BTE recibidos por un receptor en un periodo.
 
@@ -408,7 +408,7 @@ class BteRecibidas(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`. En
             `data`, la lista de boletas; en `metadata`, `n_boletas` y
             `n_paginas`.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = self._build_url(
             '/sii/bte/recibidas/documentos/%(receptor)s/%(periodo)s'

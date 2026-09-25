@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase, Respuesta
+from .. import ApiBase, ApiResponse
 
 
 class BheEmitidas(ApiBase):
@@ -71,7 +71,7 @@ class BheEmitidas(ApiBase):
         emisor: str,
         periodo: str,
         pagina: int = 1,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene los documentos de BHE emitidos por un emisor en un periodo.
 
@@ -103,7 +103,7 @@ class BheEmitidas(ApiBase):
         :param int pagina: Página a consultar, partiendo desde `1`.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, documentos de BHE.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/bhe/emitidas/documentos/%(emisor)s/%(periodo)s'
@@ -114,7 +114,7 @@ class BheEmitidas(ApiBase):
         response = self.client.post(url, data=body)
         return self._json(response)
 
-    def emitir(self, boleta: dict[str, Any]) -> Respuesta[dict[str, Any]]:
+    def emitir(self, boleta: dict[str, Any]) -> ApiResponse[dict[str, Any]]:
         """
         Emite una nueva Boleta de Honorarios Electrónica.
 
@@ -161,7 +161,7 @@ class BheEmitidas(ApiBase):
         :param dict boleta: Información detallada de la boleta a emitir.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, confirmación de la emisión.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         body = {'auth': self._get_auth(), 'boleta': boleta}
         response = self.client.post('/sii/bhe/emitidas/emitir', data=body)
@@ -184,7 +184,7 @@ class BheEmitidas(ApiBase):
         self,
         codigo: str,
         email: str,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Envía por correo electrónico una BHE emitida.
 
@@ -202,7 +202,7 @@ class BheEmitidas(ApiBase):
         :param str email: Dirección de correo a la cual enviar la BHE.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, confirmación del envío.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/bhe/emitidas/email/%(codigo)s' % {'codigo': codigo}
         body = {
@@ -217,7 +217,7 @@ class BheEmitidas(ApiBase):
         emisor: str,
         folio: str,
         causa: int = ANULACION_CAUSA_ERROR_DIGITACION,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Anula una BHE emitida.
 
@@ -243,7 +243,7 @@ class BheEmitidas(ApiBase):
         :param int causa: Motivo de anulación de la boleta.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, confirmación de la anulación.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = (
             '/sii/bhe/emitidas/anular/%(emisor)s/%(folio)s?causa=%(causa)s'
@@ -284,7 +284,7 @@ class BheRecibidas(ApiBase):
         receptor: str,
         periodo: str,
         pagina: int = 1,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene los documentos de BHE recibidos por un receptor en un periodo.
 
@@ -316,7 +316,7 @@ class BheRecibidas(ApiBase):
         :param int pagina: Página a consultar, partiendo desde `1`.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, documentos de BHE.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/bhe/recibidas/documentos/%(receptor)s/%(periodo)s'
@@ -345,7 +345,7 @@ class BheRecibidas(ApiBase):
         emisor: str,
         numero: str,
         causa: int = 1,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Marca una observación en una BHE recibida.
 
@@ -367,7 +367,7 @@ class BheRecibidas(ApiBase):
         :param int causa: Motivo de la observación.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, confirmación de la observación.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = (
             '/sii/bhe/recibidas/observar/%(emisor)s/%(numero)s'

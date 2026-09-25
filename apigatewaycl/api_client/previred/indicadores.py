@@ -28,13 +28,13 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase, Respuesta
+from .. import ApiBase, ApiResponse
 
 
 class Indicadores(ApiBase):
     """Cliente para los indicadores previsionales de Previred."""
 
-    def periodos(self) -> Respuesta[list[dict[str, Any]]]:
+    def periodos(self) -> ApiResponse[list[dict[str, Any]]]:
         """
         Listado de URLs del PDF de los indicadores previsionales.
 
@@ -52,7 +52,7 @@ class Indicadores(ApiBase):
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de indicadores con su URL de PDF y período.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         response = self.client.get('/previred/indicadores/periodos')
         return self._json(response)
@@ -69,7 +69,7 @@ class Indicadores(ApiBase):
         response = self.client.get(url)
         return response.content
 
-    def data(self, periodo: str) -> Respuesta[dict[str, Any]]:
+    def data(self, periodo: str) -> ApiResponse[dict[str, Any]]:
         """
         Datos de un indicador previsional.
 
@@ -143,7 +143,7 @@ class Indicadores(ApiBase):
             En `data`, períodos, moneda (UF/UTM/UTA), renta imponible, AFP,
             seguro de cesantía, seguro social, otras cotizaciones, ahorro
             previsional y asignación familiar.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/previred/indicadores/data/%(periodo)s' % {'periodo': periodo}
         response = self.client.get(url)

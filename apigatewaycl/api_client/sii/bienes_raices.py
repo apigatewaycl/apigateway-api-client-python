@@ -30,7 +30,7 @@ from typing import Any
 
 import requests
 
-from .. import ApiBase, Respuesta
+from .. import ApiBase, ApiResponse
 
 
 class BienesRaices(ApiBase):
@@ -110,7 +110,7 @@ class BienesRaices(ApiBase):
         )
         return self.client.get(url)
 
-    def comunas(self) -> Respuesta[list[dict[str, Any]]]:
+    def comunas(self) -> ApiResponse[list[dict[str, Any]]]:
         """
         Listado de comunas de los bienes raíces.
 
@@ -133,12 +133,12 @@ class BienesRaices(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, comunas con su código CONARA/SII, nombre, región, código
             y descripciones.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         response = self.client.get('/sii/bienes_raices/comunas')
         return self._json(response)
 
-    def comuna(self, comuna: str) -> Respuesta[dict[str, Any]]:
+    def comuna(self, comuna: str) -> ApiResponse[dict[str, Any]]:
         """
         Datos de una comuna de los bienes raíces, por nombre.
 
@@ -160,7 +160,7 @@ class BienesRaices(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, código CONARA/SII, nombre, región, código y
             descripciones de la comuna.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         body = {'filtros': {'comuna': comuna}}
         response = self.client.post('/sii/bienes_raices/comuna', data=body)
@@ -171,7 +171,7 @@ class BienesRaices(ApiBase):
         comuna: int,
         manzana: int,
         predio: int,
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Propiedades de un bien raíz por su rol (comuna/manzana/predio).
 
@@ -200,7 +200,7 @@ class BienesRaices(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de propiedades con identificación del rol,
             ubicación, inscripción, avalúos y contribuciones.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = (
             '/sii/bienes_raices/propiedades/rol'
@@ -210,7 +210,7 @@ class BienesRaices(ApiBase):
         response = self.client.get(url)
         return self._json(response)
 
-    def propiedades_contribuyente(self) -> Respuesta[list[dict[str, Any]]]:
+    def propiedades_contribuyente(self) -> ApiResponse[list[dict[str, Any]]]:
         """
         Propiedades del contribuyente autenticado.
 
@@ -239,7 +239,7 @@ class BienesRaices(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de propiedades con identificación del rol,
             ubicación, inscripción, avalúos y contribuciones.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         body = {'auth': self._get_auth()}
         response = self.client.post(
@@ -254,7 +254,7 @@ class BienesRaices(ApiBase):
         manzana: int,
         predio: int,
         eac: int,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Datos del certificado de avalúo fiscal simple de un bien raíz.
 
@@ -286,9 +286,10 @@ class BienesRaices(ApiBase):
         :param int manzana: Código de la manzana.
         :param int predio: Código del predio.
         :param int eac: Último EAC aplicado.
-        :return: Datos generales, avalúo, fecha de emisión y
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, datos generales, avalúo, fecha de emisión y
             resultado de la consulta.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         response = self._certificado(
             'avaluo_fiscal_simple',
@@ -306,7 +307,7 @@ class BienesRaices(ApiBase):
         manzana: int,
         predio: int,
         eac: int,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Datos del certificado de avalúo fiscal previo de un bien raíz.
 
@@ -338,9 +339,10 @@ class BienesRaices(ApiBase):
         :param int manzana: Código de la manzana.
         :param int predio: Código del predio.
         :param int eac: Último EAC aplicado.
-        :return: Datos generales, avalúo, fecha de emisión y
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, datos generales, avalúo, fecha de emisión y
             resultado de la consulta.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         response = self._certificado(
             'avaluo_fiscal_previo',
@@ -358,7 +360,7 @@ class BienesRaices(ApiBase):
         manzana: int,
         predio: int,
         eac: int,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Datos del certificado de antecedentes de un bien raíz.
 
@@ -401,9 +403,10 @@ class BienesRaices(ApiBase):
         :param int manzana: Código de la manzana.
         :param int predio: Código del predio.
         :param int eac: Último EAC aplicado.
-        :return: Datos generales, avalúos, contribuciones, avalúo
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, datos generales, avalúos, contribuciones, avalúo
             actualizado y fecha de emisión.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         response = self._certificado(
             'antecedentes',

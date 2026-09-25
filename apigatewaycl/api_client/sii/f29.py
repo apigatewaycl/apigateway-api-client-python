@@ -28,7 +28,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase, Respuesta
+from .. import ApiBase, ApiResponse
 
 
 class F29(ApiBase):
@@ -53,7 +53,7 @@ class F29(ApiBase):
             **kwargs,  # type: ignore[arg-type]
         )
 
-    def obtener_estados(self) -> Respuesta[list[dict[str, Any]]]:
+    def obtener_estados(self) -> ApiResponse[list[dict[str, Any]]]:
         """
         Consulta integral de fiscalización del Formulario 29.
 
@@ -76,14 +76,14 @@ class F29(ApiBase):
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de períodos con su estado de declaración.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = '/sii/f29/obtener_estados'
         body = {'auth': self._get_auth()}
         response = self.client.post(url, data=body)
         return self._json(response)
 
-    def detalles_declaracion(self, folio: str) -> Respuesta[dict[str, Any]]:
+    def detalles_declaracion(self, folio: str) -> ApiResponse[dict[str, Any]]:
         """
         Detalles de una declaración del Formulario 29 por folio.
 
@@ -109,7 +109,7 @@ class F29(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, folio, período, fecha/hora, estado e historial de la
             declaración.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/f29/detalles_declaracion/%(folio)s' % {'folio': folio}
         body = {'auth': self._get_auth()}
@@ -118,7 +118,7 @@ class F29(ApiBase):
 
     def declaraciones_listado(
         self, periodo: str
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Listado de declaraciones del Formulario 29 por período.
 
@@ -141,7 +141,7 @@ class F29(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de declaraciones (período, folio, RUT, fecha y
             estado) del período.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = '/sii/f29/declaraciones/listado/%(periodo)s' % {
             'periodo': periodo,

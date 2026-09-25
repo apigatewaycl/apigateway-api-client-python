@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase, Respuesta
+from .. import ApiBase, ApiResponse
 
 
 class Rcv(ApiBase):
@@ -64,7 +64,7 @@ class Rcv(ApiBase):
         estado: str = 'REGISTRO',
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene un resumen de las compras de un receptor en un periodo.
 
@@ -99,7 +99,7 @@ class Rcv(ApiBase):
         :param str formato: `'json'`.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, resumen de compras.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/rcv/compras/resumen/%(receptor)s/%(periodo)s/%(estado)s'
@@ -120,7 +120,7 @@ class Rcv(ApiBase):
         tipo: str | None = None,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Respuesta[list[dict[str, Any]] | dict[str, Any]] | bytes:
+    ) -> ApiResponse[list[dict[str, Any]] | dict[str, Any]] | bytes:
         """
         Obtiene detalles de las compras para un receptor en un periodo.
 
@@ -181,7 +181,7 @@ class Rcv(ApiBase):
             con `respEstado` y, en `data`, la lista de documentos. Con
             `formato` `'csv'` se entrega el archivo crudo, sin
             decodificar.
-        :rtype: dict | bytes
+        :rtype: ApiResponse[list[dict[str, Any]] | dict[str, Any]] | bytes
         """
         es_registro = dte == 0 and estado == 'REGISTRO'
         tipo = 'rcv_csv' if es_registro else tipo or 'rcv'
@@ -211,7 +211,7 @@ class Rcv(ApiBase):
         periodo: str,
         documento: dict[str, Any],
         certificacion: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Asigna el tipo de transacción y código de IVA a una compra del RCV.
 
@@ -242,7 +242,7 @@ class Rcv(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`. En `data`,
             el resultado del SII, donde `codigo` `0` indica éxito. Si el
             SII rechaza el documento, la API responde con error.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/rcv/compras/set_tipo_transaccion/%(receptor)s/%(periodo)s'
@@ -263,7 +263,7 @@ class Rcv(ApiBase):
         documentos: list[dict[str, Any]],
         certificacion: str | None = None,
         graba_con_reparos: bool | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Asigna un resumen de documentos emitidos al registro de ventas.
 
@@ -300,7 +300,7 @@ class Rcv(ApiBase):
             En `data`, el `contribuyente`, el `periodo` y en `resumenes`
             cada resumen grabado (tipo de documento, canal de venta y
             registros modificados por el SII).
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/rcv/ventas/set_resumen/%(emisor)s/%(periodo)s'
@@ -322,7 +322,7 @@ class Rcv(ApiBase):
         periodo: str,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene un resumen de las ventas de un emisor en un periodo.
 
@@ -356,7 +356,7 @@ class Rcv(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, `respEstado` con el estado de la consulta al SII
             y, en `data`, el resumen por tipo de documento.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/rcv/ventas/resumen/%(emisor)s/%(periodo)s'
@@ -376,7 +376,7 @@ class Rcv(ApiBase):
         tipo: str | None = None,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Respuesta[list[dict[str, Any]] | dict[str, Any]] | bytes:
+    ) -> ApiResponse[list[dict[str, Any]] | dict[str, Any]] | bytes:
         """
         Obtiene detalles de las ventas para un emisor en un periodo.
 
@@ -434,7 +434,7 @@ class Rcv(ApiBase):
             documentos; con un `dte` específico un dict con `respEstado`
             y, en `data`, la lista de documentos. Con `formato` `'csv'`
             se entrega el archivo crudo, sin decodificar.
-        :rtype: dict | bytes
+        :rtype: ApiResponse[list[dict[str, Any]] | dict[str, Any]] | bytes
         """
         tipo = 'rcv_csv' if dte == 0 else tipo or 'rcv'
         url = self._build_url(
@@ -458,7 +458,7 @@ class Rcv(ApiBase):
         dte: int = 0,
         estado: str = 'REGISTRO',
         certificacion: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Solicita el envío de los detalles de las compras de un receptor.
 
@@ -498,7 +498,7 @@ class Rcv(ApiBase):
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, solicitud de envío.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/rcv/compras/async/solicitar'
         url += '/%(receptor)s/%(periodo)s/%(dte)s/%(estado)s' % {
@@ -520,7 +520,7 @@ class Rcv(ApiBase):
         dte: int = 0,
         estado: str = 'REGISTRO',
         certificacion: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene el estado de la solicitud de los detalles de las compras.
 
@@ -564,7 +564,7 @@ class Rcv(ApiBase):
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, estado de la solicitud.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/rcv/compras/async/estado/%(receptor)s'
         url += '/%(periodo)s/%(id_solicitud)s/%(dte)s/%(estado)s'
@@ -588,7 +588,7 @@ class Rcv(ApiBase):
         dte: int = 0,
         estado: str = 'REGISTRO',
         certificacion: str | None = None,
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Obtiene los detalles de las compras de un receptor en un periodo.
 
@@ -635,7 +635,7 @@ class Rcv(ApiBase):
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, detalles de las compras.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = '/sii/rcv/compras/async/detalle/%(receptor)s'
         url += '/%(periodo)s/%(id_solicitud)s/%(dte)s/%(estado)s'
@@ -657,7 +657,7 @@ class Rcv(ApiBase):
         periodo: str,
         dte: int = 0,
         certificacion: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Solicita el envío de los detalles de las ventas de un emisor.
 
@@ -692,7 +692,7 @@ class Rcv(ApiBase):
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, solicitud de envío.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/rcv/ventas/async/solicitar'
         url += '/%(emisor)s/%(periodo)s/%(dte)s' % {
@@ -712,7 +712,7 @@ class Rcv(ApiBase):
         id_solicitud: str,
         dte: int = 0,
         certificacion: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene el estado de la solicitud de los detalles de las ventas.
 
@@ -751,7 +751,7 @@ class Rcv(ApiBase):
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, estado de la solicitud.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/rcv/ventas/async/estado/%(emisor)s'
         url += '/%(periodo)s/%(id_solicitud)s/%(dte)s'
@@ -773,7 +773,7 @@ class Rcv(ApiBase):
         id_solicitud: str,
         dte: int = 0,
         certificacion: str | None = None,
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Obtiene los detalles de las ventas de un emisor.
 
@@ -815,7 +815,7 @@ class Rcv(ApiBase):
 
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, detalles de las ventas.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = '/sii/rcv/ventas/async/detalle/%(emisor)s'
         url += '/%(periodo)s/%(id_solicitud)s/%(dte)s'

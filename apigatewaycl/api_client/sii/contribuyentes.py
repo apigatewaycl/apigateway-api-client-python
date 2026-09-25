@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase, Respuesta
+from .. import ApiBase, ApiResponse
 
 
 class Contribuyentes(ApiBase):
@@ -40,7 +40,7 @@ class Contribuyentes(ApiBase):
     solicitudes a la API.
     """
 
-    def situacion_tributaria(self, rut: str) -> Respuesta[dict[str, Any]]:
+    def situacion_tributaria(self, rut: str) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene la situación tributaria de un contribuyente.
 
@@ -64,7 +64,7 @@ class Contribuyentes(ApiBase):
         :param str rut: RUT del contribuyente.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, situación tributaria.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/contribuyentes/situacion_tributaria/tercero/%(rut)s' % {
             'rut': rut
@@ -76,7 +76,7 @@ class Contribuyentes(ApiBase):
         self,
         rut: str,
         serie: str,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Verifica la cédula RUT de un contribuyente por su número de serie.
 
@@ -100,7 +100,7 @@ class Contribuyentes(ApiBase):
         :param str serie: Número de serie de la cédula a verificar.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, verificación del RUT.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/contribuyentes/rut/verificar/%(rut)s/%(serie)s' % {
             'rut': rut,

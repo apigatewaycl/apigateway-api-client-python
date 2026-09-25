@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase, Respuesta
+from .. import ApiBase, ApiResponse
 
 
 class Uf(ApiBase):
@@ -40,7 +40,7 @@ class Uf(ApiBase):
     diarios.
     """
 
-    def anual(self, anio: int) -> Respuesta[dict[str, Any]]:
+    def anual(self, anio: int) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene los valores de la UF para un año específico.
 
@@ -82,13 +82,13 @@ class Uf(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`. En
             `data`, los valores de la UF del año, con el año como
             clave.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/indicadores/uf/anual/%(anio)s' % {'anio': anio}
         response = self.client.get(url)
         return self._json(response)
 
-    def mensual(self, periodo: str) -> Respuesta[dict[str, Any]]:
+    def mensual(self, periodo: str) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene los valores de la UF para un mes específico.
 
@@ -115,7 +115,7 @@ class Uf(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`. En
             `data`, los valores de la UF del mes, con el período
             (AAAAMM) como clave.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/indicadores/uf/mensual/%(periodo)s' % {
             'periodo': periodo,
@@ -123,7 +123,7 @@ class Uf(ApiBase):
         response = self.client.get(url)
         return self._json(response)
 
-    def diario(self, dia: str) -> Respuesta[dict[str, Any]]:
+    def diario(self, dia: str) -> ApiResponse[dict[str, Any]]:
         """
         Obtiene el valor de la UF para un día específico.
 
@@ -136,7 +136,7 @@ class Uf(ApiBase):
             `data`, el valor de la UF del día, con la fecha
             normalizada a AAAAMMDD como clave. Para una fecha sin
             valor publicado la clave viene presente pero en `null`.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/indicadores/uf/diario/%(dia)s' % {'dia': dia}
         response = self.client.get(url)
@@ -151,7 +151,7 @@ class CorreccionMonetaria(ApiBase):
     credenciales de un contribuyente.
     """
 
-    def anual(self, anio: int) -> Respuesta[dict[str, Any]]:
+    def anual(self, anio: int) -> ApiResponse[dict[str, Any]]:
         """
         Factores de corrección monetaria de un año.
 
@@ -177,7 +177,7 @@ class CorreccionMonetaria(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`. En
             `data`, los factores del año, con el año como clave y un
             factor por cada mes (`'1'` a `'12'`).
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/indicadores/correccion_monetaria/anual/%(anio)s' % {
             'anio': anio,
@@ -194,7 +194,7 @@ class ImpuestoSegundaCategoria(ApiBase):
     credenciales de un contribuyente.
     """
 
-    def anual(self, anio: int) -> Respuesta[dict[str, Any]]:
+    def anual(self, anio: int) -> ApiResponse[dict[str, Any]]:
         """
         Tramos del impuesto de segunda categoría de un año.
 
@@ -219,7 +219,7 @@ class ImpuestoSegundaCategoria(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`. En
             `data`, los tramos del año, con el año como clave. Cada
             tramo trae `desde`, `hasta`, `tasa`, `rebaja` y `maximo`.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = '/sii/indicadores/impuesto_segunda_categoria/anual/%(anio)s' % {
             'anio': anio
@@ -227,7 +227,7 @@ class ImpuestoSegundaCategoria(ApiBase):
         response = self.client.get(url)
         return self._json(response)
 
-    def mensual(self, periodo: str) -> Respuesta[dict[str, Any]]:
+    def mensual(self, periodo: str) -> ApiResponse[dict[str, Any]]:
         """
         Tramos del impuesto de segunda categoría de un mes.
 
@@ -253,7 +253,7 @@ class ImpuestoSegundaCategoria(ApiBase):
             `data`, los tramos del período, con el período (AAAAMM)
             como clave. Cada tramo trae `desde`, `hasta`, `tasa`,
             `rebaja` y `maximo`.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = (
             '/sii/indicadores/impuesto_segunda_categoria/mensual/%(periodo)s'

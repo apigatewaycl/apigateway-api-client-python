@@ -28,7 +28,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase, Respuesta
+from .. import ApiBase, ApiResponse
 
 
 class Cesiones(ApiBase):
@@ -96,7 +96,7 @@ class Cesiones(ApiBase):
         self,
         track_id: str,
         certificacion: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Estado de envío de una cesión.
 
@@ -114,7 +114,7 @@ class Cesiones(ApiBase):
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, estado del envío y track id.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/rtc/cesiones/estado_envio/%(track_id)s'
@@ -131,7 +131,7 @@ class Cesiones(ApiBase):
         dte: str,
         folio: str,
         certificacion: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Estado de cesión de un DTE (si está o no cedido, tenedor vigente).
 
@@ -154,7 +154,7 @@ class Cesiones(ApiBase):
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, estado de la cesión (y detalle, si hay tenedor vigente).
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/rtc/cesiones/estado/%(emisor)s/%(dte)s/%(folio)s'
@@ -172,7 +172,7 @@ class Cesiones(ApiBase):
         consulta: str,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Respuesta[list[dict[str, Any]]] | bytes:
+    ) -> ApiResponse[list[dict[str, Any]]] | bytes:
         """
         Listado de documentos cedidos en un período (máximo 1 mes).
 
@@ -209,7 +209,7 @@ class Cesiones(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de cesiones del período. Con `formato` `'xml'`,
             `'csv'` o `'txt'` se entrega el archivo crudo, sin decodificar.
-        :rtype: dict | bytes
+        :rtype: ApiResponse[list[dict[str, Any]]] | bytes
         """
         url = self._build_url(
             '/sii/rtc/cesiones/documentos/%(desde)s/%(hasta)s/%(consulta)s'

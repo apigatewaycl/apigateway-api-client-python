@@ -28,7 +28,7 @@ from __future__ import annotations
 
 from typing import Any, cast
 
-from .. import ApiBase, Respuesta
+from .. import ApiBase, ApiResponse
 
 
 class Caf(ApiBase):
@@ -60,7 +60,7 @@ class Caf(ApiBase):
         emisor: str,
         dte: int,
         certificacion: str | None = None,
-    ) -> Respuesta[dict[str, Any]]:
+    ) -> ApiResponse[dict[str, Any]]:
         """
         Estado de timbraje de un tipo de DTE.
 
@@ -92,7 +92,7 @@ class Caf(ApiBase):
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, datos del tipo de DTE y situación del contribuyente.
-        :rtype: dict
+        :rtype: ApiResponse[dict[str, Any]]
         """
         url = self._build_url(
             '/sii/dte/caf/estado_timbraje/%(emisor)s/%(dte)s'
@@ -175,7 +175,7 @@ class Caf(ApiBase):
         folio: int,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Respuesta[dict[str, Any]] | str:
+    ) -> ApiResponse[dict[str, Any]] | str:
         """
         Estado de un folio en el SII (estado, glosa, track id de envío).
 
@@ -198,7 +198,7 @@ class Caf(ApiBase):
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, estado del folio. Con `formato='html'` se entrega
             el HTML del SII como `str`, sin `data` ni `metadata`.
-        :rtype: dict | str
+        :rtype: ApiResponse[dict[str, Any]] | str
         """
         url = self._build_url(
             '/sii/dte/caf/estado/%(emisor)s/%(dte)s/%(folio)s'
@@ -222,7 +222,7 @@ class Caf(ApiBase):
         folio_final: int,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Respuesta[dict[str, Any]] | str:
+    ) -> ApiResponse[dict[str, Any]] | str:
         """
         Anula un rango de folios ya solicitados al SII.
 
@@ -250,7 +250,7 @@ class Caf(ApiBase):
             En `data`, datos de la anulación (fecha, usuario, rango). Con
             `formato='html'` se entrega el HTML del SII como `str`, sin
             `data` ni `metadata`.
-        :rtype: dict | str
+        :rtype: ApiResponse[dict[str, Any]] | str
         """
         url = self._build_url(
             '/sii/dte/caf/anular/%(emisor)s/%(dte)s/%(folio_inicial)s'
@@ -279,7 +279,7 @@ class Caf(ApiBase):
         pagina: int,
         certificacion: str | None = None,
         formato: str | None = None,
-    ) -> Respuesta[list[dict[str, Any]]] | str:
+    ) -> ApiResponse[list[dict[str, Any]]] | str:
         """
         Listado paginado de solicitudes de CAF de un emisor.
 
@@ -311,7 +311,7 @@ class Caf(ApiBase):
             `siguiente_pagina` (`None` si es la última). Con
             `formato='html'` se entrega el HTML del SII como `str`, sin
             `data` ni `metadata`.
-        :rtype: dict | str
+        :rtype: ApiResponse[list[dict[str, Any]]] | str
         """
         url = self._build_url(
             '/sii/dte/caf/solicitudes/%(emisor)s/%(dte)s'
@@ -336,7 +336,7 @@ class Caf(ApiBase):
         folio_final: int,
         estado: str,
         certificacion: str | None = None,
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Estados de un rango de folios en el SII, agrupados por tramos.
 
@@ -356,7 +356,7 @@ class Caf(ApiBase):
         :param str certificacion: `'0'` producción, `'1'` certificación.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de tramos (inicial/final/cantidad).
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = self._build_url(
             '/sii/dte/caf/estados/%(emisor)s/%(dte)s/%(folio_inicial)s'

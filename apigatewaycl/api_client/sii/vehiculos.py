@@ -28,7 +28,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import ApiBase, Respuesta
+from .. import ApiBase, ApiResponse
 
 
 class Vehiculos(ApiBase):
@@ -48,7 +48,7 @@ class Vehiculos(ApiBase):
         modelo: str | None = None,
         tipo: int | None = None,
         version: str | None = None,
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Busca la tasación fiscal de un vehículo y su permiso de circulación.
 
@@ -89,7 +89,7 @@ class Vehiculos(ApiBase):
         :param str version: Versión del vehículo.
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de vehículos que calzan con la búsqueda.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         # La API recibe los filtros como el cuerpo completo, no
         # anidados bajo una clave. Los que no se indiquen no se envían.
@@ -112,7 +112,7 @@ class Vehiculos(ApiBase):
 
     def categorias_tipos(
         self, categoria: str
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Tipos de vehículos disponibles para una categoría.
 
@@ -127,7 +127,7 @@ class Vehiculos(ApiBase):
             pesados, `'3'` motos).
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de tipos (id, nombre).
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = '/sii/vehiculos/categorias/tipos/%(categoria)s' % {
             'categoria': categoria,
@@ -137,7 +137,7 @@ class Vehiculos(ApiBase):
 
     def categorias_marcas(
         self, categoria: str
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Marcas de vehículos disponibles para una categoría.
 
@@ -152,7 +152,7 @@ class Vehiculos(ApiBase):
             pesados, `'3'` motos).
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de marcas (id, nombre).
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = '/sii/vehiculos/categorias/marcas/%(categoria)s' % {
             'categoria': categoria,
@@ -162,7 +162,7 @@ class Vehiculos(ApiBase):
 
     def categorias_caracteristicas(
         self, categoria: str
-    ) -> Respuesta[list[dict[str, Any]]]:
+    ) -> ApiResponse[list[dict[str, Any]]]:
         """
         Características disponibles para una categoría de vehículo.
 
@@ -183,7 +183,7 @@ class Vehiculos(ApiBase):
             pesados, `'3'` motos).
         :return: Respuesta de la API, con `data` y `metadata`.
             En `data`, listado de características, con sus valores posibles.
-        :rtype: dict
+        :rtype: ApiResponse[list[dict[str, Any]]]
         """
         url = '/sii/vehiculos/categorias/caracteristicas/%(categoria)s' % {
             'categoria': categoria,
