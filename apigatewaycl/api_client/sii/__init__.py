@@ -16,3 +16,5 @@
 # (LGPL) junto a este programa. En caso contrario, consulte
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
+
+"""Clientes específicos por servicio del SII (BHE, BTE, DTE, RCV, etc.)."""

@@ -17,83 +17,135 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-'''
+"""
 Módulo para consultas al Portal MIPYME del SII.
 
 Para más información sobre la API, consulte la `documentación completa del
-Portal MIPYME <https://developers.apigateway.cl/#d545a096-09be-4c9e-8d12-7b86b6bf1be6>`_.
-'''
+Portal MIPYME <https://www.apigateway.cl/docs>`_.
+"""
+
+from __future__ import annotations
 
 from abc import ABC
-from .. import ApiBase
+from typing import Any, ClassVar
+
+from .. import ApiBase, ApiResponse
+
 
 class PortalMipyme(ApiBase, ABC):
-    '''
+    """
     Base para los clientes específicos del Portal Mipyme.
 
     :param str identificador: Identificador del contribuyente.
     :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
-    '''
-    def __init__(self, identificador, clave, **kwargs):
-        super().__init__(identificador = identificador, clave = clave, **kwargs)
+    """
+
+    def __init__(
+        self,
+        identificador: str,
+        clave: str,
+        **kwargs: str,
+    ) -> None:
+        """Autentica con `identificador`/`clave` del contribuyente."""
+        super().__init__(
+            identificador=identificador,
+            clave=clave,
+            **kwargs,  # type: ignore[arg-type]
+        )
+
 
 class Contribuyentes(PortalMipyme):
-    '''
-    Cliente específico para interactuar con los endpoints de contribuyentes del Portal Mipyme.
+    """
+    Cliente para los endpoints de contribuyentes del Portal Mipyme.
 
     :param str identificador: Identificador del contribuyente.
     :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
-    '''
-    def info(self, contribuyente, emisor, dte = 33):
-        '''
+    """
+
+    def info(
+        self,
+        contribuyente: str,
+        emisor: str,
+        dte: int = 33,
+    ) -> ApiResponse[dict[str, Any]]:
+        """
         Obtiene información de un contribuyente específico.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "rut": 76192083,
+                "dv": "9",
+                "razon_social": "API Gateway",
+                "direcciones": [
+                  {
+                    "direccion": "Daniel Barros Grez 191",
+                    "comuna": "SANTA CRUZ",
+                    "ciudad": "SANTA CRUZ",
+                    "telefono": null
+                  }
+                ],
+                "actividades": [
+                  {
+                    "codigo": "619090",
+                    "glosa": "OTRAS ACTIVIDADES DE TELECOMUNICACIONES"
+                  }
+                ]
+              },
+              "metadata": {"timestamp": "..."}
+            }
 
         :param str contribuyente: RUT del contribuyente.
         :param str emisor: RUT del emisor del DTE.
         :param int dte: Tipo de DTE.
-        :return: Datos del contribuyente.
-        :rtype: dict
-        '''
-        url = '/sii/mipyme/contribuyentes/info/%(contribuyente)s/%(emisor)s/%(dte)s' % {
-            'contribuyente': contribuyente, 'emisor': emisor, 'dte': dte
-        }
-        body = {
-            'auth': self._get_auth_pass()
-        }
-        response = self.client.post(url, data = body)
-        return response.json()
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, datos del contribuyente.
+        :rtype: ApiResponse[dict[str, Any]]
+        """
+        url = (
+            '/sii/mipyme/contribuyentes/info/'
+            '%(contribuyente)s/%(emisor)s/%(dte)s'
+            % {'contribuyente': contribuyente, 'emisor': emisor, 'dte': dte}
+        )
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
+        return self._json(response)
+
 
 class Dte(PortalMipyme):
-    '''
+    """
     Base para los clientes específicos de DTE del Portal Mipyme.
+
     Incluye constantes para diferentes estados de DTE.
 
     :param str identificador: Identificador del contribuyente.
     :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
-    '''
-    ESTADO_EMITIDO = 'EMI' # Documento emitido
-    ESTADO_BORRADOR = 'PRV' # Borrador (pre-view) de documento
-    ESTADO_CERTIFICADO_RECHAZADO = 'DCD' # Certificado rechazado
-    ESTADO_EMISOR_INVALIDO = 'DEI' # RUT emisor inválido
-    ESTADO_FOLIO_INVALIDO = 'DFI' # Folio DTE inválido
-    ESTADO_INCOMPLETO = 'DIN' # Incompleto
-    ESTADO_FIRMA_SIN_PERMISO = 'DPF' # Sin permiso de firma
-    ESTADO_FIRMA_RECHAZADA = 'DRF' # DTE rechazado por firma
-    ESTADO_RECEPTOR_INVALIDO = 'DRI' # RUT receptor inválido
-    ESTADO_REPETIDO = 'DRR' # Rechazado por repetido
-    ESTADO_INICIALIZADO = 'INI' # DTE inicializado
-    ESTADO_ACEPTADO = 'RAC' # DTE aceptado por receptor
-    ESTADO_DISCREPANCIAS = 'RAD' # DTE aceptado con discrepancias
-    ESTADO_NO_RECIBIDO = 'RNR' # DTE no recibido por receptor
-    ESTADO_RECIBIDO = 'RRC' # DTE recibido por receptor
-    ESTADO_ACEPTADO_LEY_19983 = 'RAL' # DTE aceptado Ley 19.983
-    ESTADO_RECHAZADO_RECEPTOR = 'RRH' # DTE rechazado por receptor
-    ESTADO_SIN_REPAROS = 'RSR' # Recibido sin reparos
+    """
 
-    DTE_TIPOS = {
+    ESTADO_EMITIDO = 'EMI'  # Documento emitido
+    ESTADO_BORRADOR = 'PRV'  # Borrador (pre-view) de documento
+    ESTADO_CERTIFICADO_RECHAZADO = 'DCD'  # Certificado rechazado
+    ESTADO_EMISOR_INVALIDO = 'DEI'  # RUT emisor inválido
+    ESTADO_FOLIO_INVALIDO = 'DFI'  # Folio DTE inválido
+    ESTADO_INCOMPLETO = 'DIN'  # Incompleto
+    ESTADO_FIRMA_SIN_PERMISO = 'DPF'  # Sin permiso de firma
+    ESTADO_FIRMA_RECHAZADA = 'DRF'  # DTE rechazado por firma
+    ESTADO_RECEPTOR_INVALIDO = 'DRI'  # RUT receptor inválido
+    ESTADO_REPETIDO = 'DRR'  # Rechazado por repetido
+    ESTADO_INICIALIZADO = 'INI'  # DTE inicializado
+    ESTADO_ACEPTADO = 'RAC'  # DTE aceptado por receptor
+    ESTADO_DISCREPANCIAS = 'RAD'  # DTE aceptado con discrepancias
+    ESTADO_NO_RECIBIDO = 'RNR'  # DTE no recibido por receptor
+    ESTADO_RECIBIDO = 'RRC'  # DTE recibido por receptor
+    ESTADO_ACEPTADO_LEY_19983 = 'RAL'  # DTE aceptado Ley 19.983
+    ESTADO_RECHAZADO_RECEPTOR = 'RRH'  # DTE rechazado por receptor
+    ESTADO_SIN_REPAROS = 'RSR'  # Recibido sin reparos
+
+    DTE_TIPOS: ClassVar[dict[str, str]] = {
         '33': '33',
         '34': '34',
         '35': '35',
@@ -103,150 +155,368 @@ class Dte(PortalMipyme):
         '39': '39',
     }
 
-    def get_codigo_dte(self, tipo):
-        '''
+    def get_codigo_dte(self, tipo: str) -> str:
+        """
         Obtiene el código correspondiente al tipo de DTE.
 
         :param str tipo: Tipo de DTE.
         :return: Código del DTE.
         :rtype: str
-        '''
-        return self.DTE_TIPOS[tipo] if tipo in self.DTE_TIPOS else tipo.replace(' ', '-')
+        """
+        if tipo in self.DTE_TIPOS:
+            return self.DTE_TIPOS[tipo]
+        return tipo.replace(' ', '-')
+
+
+class Borradores(Dte):
+    """
+    Cliente para documentos borradores del Portal Mipyme.
+
+    Un borrador es un DTE armado en el Portal MIPYME del SII, antes
+    de convertirse en un documento emitido de verdad.
+
+    :param str identificador: Identificador del contribuyente.
+    :param str clave: Clave del identificador.
+    :param kwargs: Argumentos adicionales.
+    """
+
+    def documentos(
+        self,
+        emisor: str,
+        filtros: dict[str, Any] | None = None,
+    ) -> ApiResponse[list[dict[str, Any]]]:
+        """
+        Listado de documentos borradores del emisor.
+
+        Por defecto entrega todos los borradores, ordenados por fecha
+        ascendente. Para paginar se indica `NUM_PAG` en `filtros` (100
+        borradores por página) y `metadata.n_paginas` dice cuántas páginas
+        hay con los filtros usados.
+
+        Filtros disponibles: `NUM_PAG`, `CODIGO` (código del borrador),
+        `TPO_DOC` (código de DTE), `RUT_RECP` (RUT del receptor, con o sin
+        dígito verificador), `RZN_SOC` (razón social del receptor, o parte
+        de ella), `FEC_DESDE` y `FEC_HASTA` (AAAA-MM-DD) y `ORDEN`
+        (`FecAsc` o `FecDesc`).
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "ehdr_codigo": "4728198",
+                  "ptdc_codigo": "33",
+                  "ptdc_codigo_desc": "Factura Electronica",
+                  "ptes_estado": null,
+                  "efxp_fch_emis": "2026-09-23 18:49:38",
+                  "efxp_rzn_soc": "EMPRESA EMISORA SPA",
+                  "efxp_rut_recep": "76192083",
+                  "efxp_dv_recep": "9",
+                  "...": "..."
+                }
+              ],
+              "metadata": {
+                "timestamp": "...",
+                "n_documentos": 1,
+                "n_paginas": 1
+              }
+            }
+
+        :param str emisor: RUT del emisor de los documentos.
+        :param dict filtros: Filtros de búsqueda (opcional).
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, listado de borradores con los campos del Portal
+            MIPYME en minúsculas; el código del borrador es `ehdr_codigo`.
+        :rtype: ApiResponse[list[dict[str, Any]]]
+        """
+        url = '/sii/mipyme/borradores/documentos/%(emisor)s' % {
+            'emisor': emisor,
+        }
+        body = {'auth': self._get_auth(), 'filtros': filtros or {}}
+        response = self.client.post(url, data=body)
+        return self._json(response)
+
+    def emitir(self, dte: dict[str, Any]) -> ApiResponse[dict[str, Any]]:
+        """
+        Crea un documento borrador en el Portal Mipyme.
+
+        No emite un DTE real ante el SII — el borrador se confirma
+        luego desde el propio Portal MIPYME.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "ehdr_codigo": "4728198",
+                "ptdc_codigo": "33",
+                "ptdc_codigo_desc": "Factura Electronica",
+                "ptes_estado": null,
+                "efxp_fch_emis": "2026-09-23 18:49:38",
+                "efxp_rzn_soc": "EMPRESA EMISORA SPA",
+                "efxp_rut_recep": "76192083",
+                "efxp_dv_recep": "9",
+                "...": "..."
+              },
+              "metadata": {"timestamp": "..."}
+            }
+
+        :param dict dte: Datos del DTE a armar como borrador.
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, el borrador creado.
+        :rtype: ApiResponse[dict[str, Any]]
+        """
+        body = {'auth': self._get_auth(), 'dte': dte}
+        response = self.client.post('/sii/mipyme/borradores/emitir', data=body)
+        return self._json(response)
+
+    def eliminar(
+        self,
+        emisor: str,
+        codigo: str,
+    ) -> ApiResponse[dict[str, Any]]:
+        """
+        Elimina un documento borrador del Portal Mipyme.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": {
+                "ehdr_codigo": "4728198",
+                "ptdc_codigo": "33",
+                "ptdc_codigo_desc": "Factura Electronica",
+                "ptes_estado": null,
+                "efxp_fch_emis": "2026-09-23 18:49:38",
+                "efxp_rzn_soc": "EMPRESA EMISORA SPA",
+                "efxp_rut_recep": "76192083",
+                "efxp_dv_recep": "9",
+                "...": "..."
+              },
+              "metadata": {"timestamp": "..."}
+            }
+
+        :param str emisor: RUT del emisor de los documentos.
+        :param str codigo: Código del borrador (del listado de documentos).
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, `True` si el borrador fue eliminado.
+        :rtype: ApiResponse[dict[str, Any]]
+        """
+        url = '/sii/mipyme/borradores/eliminar/%(emisor)s/%(codigo)s' % {
+            'emisor': emisor,
+            'codigo': codigo,
+        }
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
+        return self._json(response)
+
 
 class DteEmitidos(Dte):
-    '''
+    """
     Cliente específico para gestionar DTE emitidos en el Portal Mipyme.
 
     :param str identificador: Identificador del contribuyente.
     :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
-    '''
-    def documentos(self, emisor, filtros = {}):
-        '''
+    """
+
+    def documentos(
+        self,
+        emisor: str,
+        filtros: dict[str, Any] | None = None,
+    ) -> ApiResponse[list[dict[str, Any]]]:
+        """
         Obtiene documentos de DTE emitidos por un emisor.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "codigo": 12345678,
+                  "rut": 76192083,
+                  "dv": "9",
+                  "razon_social": "CLIENTE EJEMPLO",
+                  "dte": 33,
+                  "dte_glosa": "Factura Electrónica",
+                  "folio": 123,
+                  "fecha": "15/11/2024",
+                  "...": "..."
+                }
+              ],
+              "metadata": {
+                "timestamp": "...",
+                "n_documentos": 1926,
+                "n_paginas": 20
+              }
+            }
 
         :param str emisor: RUT del emisor.
         :param dict filtros: Filtros adicionales para la consulta.
-        :return: Documentos de DTE emitidos.
-        :rtype: list[dict]
-        '''
-        url = '/sii/mipyme/emitidos/documentos/%(emisor)s' % {
-            'emisor': emisor
-        }
-        body = {
-            'auth': self._get_auth_pass(),
-            'filtros': filtros
-        }
-        response = self.client.post(url, data = body)
-        return response.json()
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, documentos de DTE emitidos.
+        :rtype: ApiResponse[list[dict[str, Any]]]
+        """
+        url = '/sii/mipyme/emitidos/documentos/%(emisor)s' % {'emisor': emisor}
+        body = {'auth': self._get_auth(), 'filtros': filtros or {}}
+        response = self.client.post(url, data=body)
+        return self._json(response)
 
-    def pdf(self, emisor, dte, folio = None):
-        '''
+    def pdf(self, emisor: str, codigo: str) -> bytes:
+        """
         Obtiene el PDF de un DTE emitido.
 
+        El documento se identifica por su `codigo`, que entrega el
+        listado de `documentos()`; no por tipo de DTE y folio.
+
         :param str emisor: RUT del emisor.
-        :param str dte: Tipo de DTE o código del DTE emitido si no se pasa folio.
-        :param str folio: Número de folio del DTE (opcional).
+        :param str codigo: Código del DTE emitido.
         :return: Contenido del PDF del DTE emitido.
         :rtype: bytes
-        '''
-        body = {
-            'auth': self._get_auth_pass()
+        """
+        url = '/sii/mipyme/emitidos/pdf/%(emisor)s/%(codigo)s' % {
+            'emisor': emisor,
+            'codigo': codigo,
         }
-        url = '/sii/mipyme/emitidos/pdf/%(emisor)s/%(dte)s/%(folio)s' % {
-            'emisor': emisor, 'dte': dte, 'folio': folio
-        } if folio else '/sii/mipyme/emitidos/pdf/%(emisor)s/%(dte)s' % {
-            'emisor': emisor, 'dte': dte
-        }
-        response = self.client.post(url, data = body)
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
         return response.content
 
-    def xml(self, emisor, dte, folio):
-        '''
+    def xml(
+        self,
+        emisor: str,
+        dte: str,
+        folio: str,
+        fecha_emision: str,
+    ) -> bytes:
+        """
         Obtiene el XML de un DTE emitido.
 
         :param str emisor: RUT del emisor.
         :param str dte: Tipo de DTE.
         :param str folio: Número de folio del DTE.
-        :return: Contenido del XML del DTE emitido.
-        :rtype: str
-        '''
-        url = '/sii/mipyme/emitidos/xml/%(emisor)s/%(dte)s/%(folio)s' % {
-            'emisor': emisor, 'dte': dte, 'folio': folio
-        }
-        body = {
-            'auth': self._get_auth_pass()
-        }
-        response = self.client.post(url, data = body)
-        return response.text
+        :param str fecha_emision: Fecha de emisión del documento
+            (AAAA-MM-DD). Sin ella el Portal MIPYME no ubica el
+            documento y la API no entrega el XML.
+        :return: Contenido del XML del DTE emitido, sin decodificar.
+        :rtype: bytes
+        """
+        url = self._build_url(
+            '/sii/mipyme/emitidos/xml/%(emisor)s/%(dte)s/%(folio)s'
+            % {'emisor': emisor, 'dte': dte, 'folio': folio},
+            fecha_emision=fecha_emision,
+        )
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
+        return response.content
+
 
 class DteRecibidos(Dte):
-    '''
-    Cliente específico para gestionar DTE recibidos en el Portal Mipyme.
-    Proporciona métodos para obtener documentos, PDF y XML de DTE recibidos.
+    """
+    Cliente para DTE recibidos en el Portal Mipyme.
+
+    Proporciona métodos para obtener documentos, PDF y XML de DTE
+    recibidos.
 
     :param str identificador: Identificador del contribuyente.
     :param str clave: Clave del identificador.
     :param kwargs: Argumentos adicionales.
-    '''
+    """
 
-    def documentos(self, receptor, filtros = {}):
-        '''
+    def documentos(
+        self,
+        receptor: str,
+        filtros: dict[str, Any] | None = None,
+    ) -> ApiResponse[list[dict[str, Any]]]:
+        """
         Obtiene documentos de DTE recibidos por un receptor.
+
+        Respuesta (ejemplo)::
+
+            {
+              "data": [
+                {
+                  "codigo": 12345678,
+                  "rut": 76192083,
+                  "dv": "9",
+                  "razon_social": "CLIENTE EJEMPLO",
+                  "dte": 33,
+                  "dte_glosa": "Factura Electrónica",
+                  "folio": 123,
+                  "fecha": "15/11/2024",
+                  "...": "..."
+                }
+              ],
+              "metadata": {
+                "timestamp": "...",
+                "n_documentos": 589,
+                "n_paginas": 6
+              }
+            }
 
         :param str receptor: RUT del receptor.
         :param dict filtros: Filtros adicionales para la consulta.
-        :return: Documentos de DTE recibidos.
-        :rtype: list[dict]
-        '''
+        :return: Respuesta de la API, con `data` y `metadata`.
+            En `data`, documentos de DTE recibidos.
+        :rtype: ApiResponse[list[dict[str, Any]]]
+        """
         url = '/sii/mipyme/recibidos/documentos/%(receptor)s' % {
             'receptor': receptor
         }
-        body = {
-            'auth': self._get_auth_pass(),
-            'filtros': filtros
-        }
-        response = self.client.post(url, data = body)
-        return response.json()
+        body = {'auth': self._get_auth(), 'filtros': filtros or {}}
+        response = self.client.post(url, data=body)
+        return self._json(response)
 
-    def pdf(self, receptor, emisor, dte, folio = None):
-        '''
+    def pdf(self, receptor: str, codigo: str) -> bytes:
+        """
         Obtiene el PDF de un DTE recibido.
 
+        El documento se identifica por su `codigo`, que entrega el
+        listado de `documentos()`; no por emisor, tipo de DTE y folio.
+
         :param str receptor: RUT del receptor.
-        :param str emisor: RUT del emisor.
-        :param str dte: Tipo de DTE o código del DTE recibido si no se pasa folio.
-        :param str folio: Número de folio del DTE (opcional).
+        :param str codigo: Código del DTE recibido.
         :return: Contenido del PDF del DTE recibido.
         :rtype: bytes
-        '''
-        body = {
-            'auth': self._get_auth_pass()
+        """
+        url = '/sii/mipyme/recibidos/pdf/%(receptor)s/%(codigo)s' % {
+            'receptor': receptor,
+            'codigo': codigo,
         }
-        url = '/sii/mipyme/recibidos/pdf/%(receptor)s/%(emisor)s/%(dte)s/%(folio)s' % {
-            'receptor': receptor, 'emisor': emisor, 'dte': dte, 'folio': folio
-        } if folio else '/sii/mipyme/recibidos/pdf/%(receptor)s/%(emisor)s/%(dte)s' % {
-            'receptor': receptor, 'emisor': emisor, 'dte': dte
-        }
-        response = self.client.post(url, data = body)
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
         return response.content
 
-    def xml(self, receptor, emisor, dte, folio):
-        '''
+    def xml(
+        self,
+        receptor: str,
+        emisor: str,
+        dte: str,
+        folio: str,
+        fecha_emision: str,
+    ) -> bytes:
+        """
         Obtiene el XML de un DTE recibido.
 
         :param str receptor: RUT del receptor.
         :param str emisor: RUT del emisor.
         :param str dte: Tipo de DTE.
         :param str folio: Número de folio del DTE.
-        :return: Contenido del XML del DTE recibido.
-        :rtype: str
-        '''
-        url = '/sii/mipyme/recibidos/xml/%(receptor)s/%(emisor)s/%(dte)s/%(folio)s' % {
-            'receptor': receptor, 'emisor': emisor, 'dte': dte, 'folio': folio
-        }
-        body = {
-            'auth': self._get_auth_pass()
-        }
-        response = self.client.post(url, data = body)
-        return response.text
+        :param str fecha_emision: Fecha de emisión del documento
+            (AAAA-MM-DD). Sin ella el Portal MIPYME no ubica el
+            documento y la API no entrega el XML.
+        :return: Contenido del XML del DTE recibido, sin decodificar.
+        :rtype: bytes
+        """
+        url = self._build_url(
+            '/sii/mipyme/recibidos/xml/'
+            '%(receptor)s/%(emisor)s/%(dte)s/%(folio)s'
+            % {
+                'receptor': receptor,
+                'emisor': emisor,
+                'dte': dte,
+                'folio': folio,
+            },
+            fecha_emision=fecha_emision,
+        )
+        body = {'auth': self._get_auth()}
+        response = self.client.post(url, data=body)
+        return response.content

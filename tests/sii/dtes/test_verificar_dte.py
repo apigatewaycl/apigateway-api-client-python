@@ -19,28 +19,46 @@
 
 import unittest
 from os import getenv
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.dte import Emitidos
 
-class TestVerificarDte(unittest.TestCase):
+pytestmark = pytest.mark.readonly
 
+
+class TestVerificarDte(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
+        cls.contribuyente_rut = getenv(
+            'TEST_CONTRIBUYENTE_IDENTIFICADOR',
+            '',
+        ).strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
         cls.client = Emitidos(cls.contribuyente_rut, contribuyente_clave)
 
     def test_verificar_dte(self):
-        receptor = getenv('TEST_DTE_EMITIDOS_VERIFICAR_RECEPTOR_RUT', '').strip()
+        receptor = getenv(
+            'TEST_DTE_EMITIDOS_VERIFICAR_RECEPTOR_RUT',
+            '',
+        ).strip()
         dte = getenv('TEST_DTE_EMITIDOS_VERIFICAR_DTE', '').strip()
         folio = getenv('TEST_DTE_EMITIDOS_VERIFICAR_FOLIO', '').strip()
         fecha = getenv('TEST_DTE_EMITIDOS_VERIFICAR_FECHA', '').strip()
         total = getenv('TEST_DTE_EMITIDOS_VERIFICAR_TOTAL', '').strip()
         firma = getenv('TEST_DTE_EMITIDOS_VERIFICAR_FIRMA', '').strip()
-        if receptor == '' or dte == '' or folio == '' or fecha == '' or total == '':
-            print('test_verificar(): no probó funcionalidad.')
-            return
+        if (
+            receptor == ''
+            or dte == ''
+            or folio == ''
+            or fecha == ''
+            or total == ''
+        ):
+            self.skipTest(
+                'faltan TEST_DTE_EMITIDOS_VERIFICAR_* en test.env.',
+            )
         try:
             verificar = self.client.verificar(
                 self.contribuyente_rut,
@@ -49,12 +67,12 @@ class TestVerificarDte(unittest.TestCase):
                 folio,
                 fecha,
                 total,
-                firma if firma != '' else None
-            )
+                firma if firma != '' else None,
+            )['data']
 
             self.assertIsNotNone(verificar)
 
             if self.verbose:
                 print('test_verificar(): verificar', verificar)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

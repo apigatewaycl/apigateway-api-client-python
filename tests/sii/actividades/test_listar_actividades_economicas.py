@@ -19,21 +19,31 @@
 
 import unittest
 from os import getenv
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
-from apigatewaycl.api_client.sii.actividades_economicas import ActividadesEconomicas
+from apigatewaycl.api_client.sii.actividades_economicas import (
+    ActividadesEconomicas,
+)
+
+pytestmark = [pytest.mark.readonly, pytest.mark.dummy]
+
 
 class TestListarActividadesEconomicas(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.client = ActividadesEconomicas(version='v1')
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
+        cls.client = ActividadesEconomicas()
 
     def test_listar_actividades_economicas(self):
         try:
-            listado = self.client.listado()
+            respuesta = self.client.listado()
+            self.assertIn('data', respuesta)
+            self.assertIn('metadata', respuesta)
+            listado = respuesta['data']
             self.assertIsNotNone(listado)
             if self.verbose:
                 print('test_listado(): listado', listado)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

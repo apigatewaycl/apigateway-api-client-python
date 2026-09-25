@@ -26,11 +26,46 @@ Este cliente de API Gateway tiene 2 formas de acceder a los recursos de la API:
     datos ya "listos" para ser usados en vez de tener que preocuparse de qué método del
     cliente genérico usar para obtenerlos en el formato requerido.
 
+Versión de la API
+-----------------
+
+Este cliente habla únicamente con la **versión 2** de la API, en
+``https://app.apigateway.cl/api/v2``. La versión 1 (legacy) no está
+soportada.
+
+Estructura de las respuestas
+----------------------------
+
+Los recursos que responden JSON entregan el cuerpo tal cual lo envía la
+API, sin transformarlo:
+
+.. code:: python
+
+    {
+        "data": ...,       # el resultado de la consulta
+        "metadata": {...}  # marca de tiempo, paginación, etc.
+    }
+
+Es decir, el dato que se busca está en la clave ``data``:
+
+.. code:: python
+
+    respuesta = uf_client.anual(2025)
+    valores = respuesta['data']
+    consultado_en = respuesta['metadata']['timestamp']
+
+Algunos recursos usan ``metadata`` para paginar. Por ejemplo, el listado
+de solicitudes de CAF entrega ahí ``siguiente_pagina``, que vale
+``None`` en la última página.
+
+Los recursos que responden un archivo (PDF, XML, CSV o HTML) entregan su
+contenido sin decodificar, como ``bytes``.
+
 Autenticación en API Gateway
 ----------------------------
 
 Lo más simple, y recomendado, es usar una variable de entorno con el
-`token del usuario <https://legacy.apigateway.cl/dashboard#api-auth>`_, la cual será
+`token del usuario <https://app.apigateway.cl/dashboard#api-auth>`_, la cual será
 reconocida automáticamente por el cliente:
 
 .. code:: shell
@@ -42,9 +77,10 @@ deberá indicar el token del usuario. Ejemplo con el cliente genérico:
 
 .. code:: python
 
-    import apigatewaycl
+    from apigatewaycl.api_client import ApiClient
+
     APIGATEWAY_API_TOKEN = "aquí-tu-token-de-usuario"
-    client = apigatewaycl.api_client.ApiClient(APIGATEWAY_API_TOKEN)
+    client = ApiClient(APIGATEWAY_API_TOKEN)
 
 El siguiente es un ejemplo con el cliente específico de Rcv. Primero se pasan
 los datos obligatorios de RUT y clave del usuario. Luego además se pasa el token
@@ -52,10 +88,11 @@ del usuario de la API.
 
 .. code:: python
 
-    import apigatewaycl
+    from apigatewaycl.api_client.sii.rcv import Rcv
+
     APIGATEWAY_API_TOKEN = "aquí-tu-token-de-usuario"
     SII_USUARIO_RUT = ""
     SII_USUARIO_CLAVE = ""
-    rcv_client = Rcv(SII_USUARIO_RUT, SII_USUARIO_CLAVE, api_token = APIGATEWAY_API_TOKEN)
+    rcv_client = Rcv(SII_USUARIO_RUT, SII_USUARIO_CLAVE, api_token=APIGATEWAY_API_TOKEN)
 
-Si se usan variables de entorno, en ambos ejemplos se puede omitir el argumento `api_token`.
+Si se usa la variable de entorno, en ambos ejemplos se puede omitir el token.

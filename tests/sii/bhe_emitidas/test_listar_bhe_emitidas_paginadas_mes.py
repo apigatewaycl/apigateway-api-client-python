@@ -18,19 +18,29 @@
 #
 
 import unittest
-from os import getenv
 from datetime import datetime
+from os import getenv
+from zoneinfo import ZoneInfo
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.bhe import BheEmitidas
+
+pytestmark = pytest.mark.readonly
+
 
 class TestListarBheEmitidasPaginadasMes(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
         clave = getenv('TEST_USUARIO_CLAVE', '').strip()
         cls.client = BheEmitidas(cls.identificador, clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
         cls.contribuyente_rut = getenv('TEST_USUARIO_RUT', '').strip()
 
     # CASO 2: boletas del periodo por mes
@@ -41,13 +51,16 @@ class TestListarBheEmitidasPaginadasMes(unittest.TestCase):
                 documentos = self.client.documentos(
                     self.contribuyente_rut,
                     self.periodo,
-                    pagina = pagina,
-                    pagina_sig_codigo = None
+                    pagina=pagina,
+                )['data']
+                print(
+                    'test_documentos_paginacion_periodo_mes(): '
+                    'Pagina %(pagina)s documentos %(documentos)s'
+                    % {
+                        'pagina': pagina,
+                        'documentos': documentos,
+                    },
                 )
-                print('test_documentos_paginacion_periodo_mes(): Pagina %(pagina)s documentos %(documentos)s' % {
-                    'pagina': pagina,
-                    'documentos': documentos,
-                })
                 pagina += 1
                 if pagina > documentos['n_paginas']:
                     break
@@ -55,4 +68,4 @@ class TestListarBheEmitidasPaginadasMes(unittest.TestCase):
             self.assertTrue(True)
 
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

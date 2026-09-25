@@ -18,28 +18,48 @@
 #
 
 import unittest
-from os import getenv
 from datetime import datetime
+from os import getenv
+from zoneinfo import ZoneInfo
+
+import pytest
+
 from apigatewaycl.api_client.sii.bhe import BheRecibidas
 
-class TestObservarBheRecibida(unittest.TestCase):
+pytestmark = pytest.mark.risky
 
+
+class TestObservarBheRecibida(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
+        cls.contribuyente_rut = getenv(
+            'TEST_CONTRIBUYENTE_IDENTIFICADOR',
+            '',
+        ).strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
         cls.client = BheRecibidas(cls.contribuyente_rut, contribuyente_clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
 
     # CASO 3: observar una boleta
     def test_observar_bhe_recibida(self):
-        observar_emisor_rut = getenv('TEST_BHE_RECIBIDAS_OBSERVAR_EMISOR_RUT', '').strip()
-        observar_numero = getenv('TEST_BHE_RECIBIDAS_OBSERVAR_NUMERO', '').strip()
+        observar_emisor_rut = getenv(
+            'TEST_BHE_RECIBIDAS_OBSERVAR_EMISOR_RUT',
+            '',
+        ).strip()
+        observar_numero = getenv(
+            'TEST_BHE_RECIBIDAS_OBSERVAR_NUMERO',
+            '',
+        ).strip()
         if observar_emisor_rut == '' or observar_numero == '':
-            print('test_observar(): no probó funcionalidad.')
-            return
-        observar = self.client.observar(observar_emisor_rut, observar_numero)
+            self.skipTest(
+                'faltan TEST_BHE_RECIBIDAS_OBSERVAR_* en test.env.',
+            )
+        respuesta = self.client.observar(observar_emisor_rut, observar_numero)
+        observar = respuesta['data']
 
         self.assertIsNotNone(observar)
 

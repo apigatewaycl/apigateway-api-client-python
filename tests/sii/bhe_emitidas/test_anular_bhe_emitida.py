@@ -18,40 +18,53 @@
 #
 
 import unittest
-from os import getenv
 from datetime import datetime
+from os import getenv
+from zoneinfo import ZoneInfo
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.bhe import BheEmitidas
+
+pytestmark = pytest.mark.risky
+
 
 class TestAnularBheEmitida(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
         cls.identificador = getenv('TEST_USUARIO_IDENTIFICADOR', '').strip()
         clave = getenv('TEST_USUARIO_CLAVE', '').strip()
         cls.client = BheEmitidas(cls.identificador, clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
         cls.contribuyente_rut = getenv('TEST_USUARIO_RUT', '').strip()
+        # Anular es IRREVERSIBLE en el SII. Este test nunca elige una
+        # boleta por su cuenta: exige el folio exacto, para que no
+        # pueda dispararse sin intención explícita.
+        cls.folio = getenv('TEST_BHE_ANULAR_FOLIO', '').strip()
+        if not cls.folio:
+            raise unittest.SkipTest(
+                'TEST_BHE_ANULAR_FOLIO no configurado: este test anula '
+                'de forma irreversible una BHE real en el SII.'
+            )
 
     # CASO 7: anular
     def test_anular_bhe_emitida(self):
         try:
-            documentos = self.client.documentos(
-                self.contribuyente_rut, self.periodo
-            )
-            if len(documentos) == 0:
-                print('test_anular(): no probó funcionalidad.')
-                return
-            boleta_numero = documentos[-1]['numero']
+            boleta_numero = self.folio
             anular = self.client.anular(
                 self.contribuyente_rut,
                 boleta_numero,
-                BheEmitidas.ANULACION_CAUSA_ERROR_DIGITACION
-            )
+                BheEmitidas.ANULACION_CAUSA_ERROR_DIGITACION,
+            )['data']
 
             self.assertIsNotNone(anular)
 
             if self.verbose:
                 print('test_anular(): anular', anular)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})

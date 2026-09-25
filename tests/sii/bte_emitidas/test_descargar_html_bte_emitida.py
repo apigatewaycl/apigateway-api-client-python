@@ -17,52 +17,76 @@
 # <http://www.gnu.org/licenses/lgpl.html>.
 #
 
-import unittest
 import os
-from os import getenv
+import unittest
 from datetime import datetime
+from os import getenv
+from zoneinfo import ZoneInfo
+
+import pytest
+
 from apigatewaycl.api_client import ApiException
 from apigatewaycl.api_client.sii.bte import BteEmitidas
 
-class TestDescargarHtmlBteEmitida(unittest.TestCase):
+pytestmark = pytest.mark.readonly
 
+
+class TestDescargarHtmlBteEmitida(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.verbose = bool(int(getenv('TEST_VERBOSE', 0)))
-        cls.contribuyente_rut = getenv('TEST_CONTRIBUYENTE_IDENTIFICADOR', '').strip()
+        cls.verbose = bool(int(getenv('TEST_VERBOSE', '0')))
+        cls.contribuyente_rut = getenv(
+            'TEST_CONTRIBUYENTE_IDENTIFICADOR',
+            '',
+        ).strip()
         contribuyente_clave = getenv('TEST_CONTRIBUYENTE_CLAVE', '').strip()
         cls.client = BteEmitidas(cls.contribuyente_rut, contribuyente_clave)
-        cls.periodo = getenv('TEST_PERIODO', datetime.now().strftime("%Y%m")).strip()
+        cls.periodo = getenv(
+            'TEST_PERIODO',
+            datetime.now(ZoneInfo('America/Santiago')).strftime('%Y%m'),
+        ).strip()
         cls.receptor_rut = getenv('TEST_BTE_EMITIDAS_RECEPTOR_RUT', '').strip()
 
     # CASO 2: bajar HTML de una boleta
     def test_descargar_html_bte_emitida(self):
         try:
             documentos = self.client.documentos(
-                self.contribuyente_rut, self.periodo
-            )
+                self.contribuyente_rut,
+                self.periodo,
+            )['data']
             if len(documentos) == 0:
-                print('test_html(): no probó funcionalidad.')
-                return
+                self.skipTest(
+                    'la API no devolvió documentos con los cuales probar.',
+                )
             boleta_codigo = documentos[0]['codigo']
             html = self.client.html(boleta_codigo)
 
-            # Retrocede dos niveles para salir de 'dte_facturacion' y entrar en 'tests'
-            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            # Retrocede dos niveles para salir de 'dte_facturacion'
+            # y entrar en 'tests'
+            base_dir = os.path.dirname(
+                os.path.dirname(os.path.dirname(__file__)),
+            )
 
             # Define la carpeta de destino correcta
-            output_dir = os.path.join(base_dir, 'archivos', 'sii', 'bte_emitidas_html')
+            output_dir = os.path.join(
+                base_dir,
+                'archivos',
+                'sii',
+                'bte_emitidas_html',
+            )
 
             # Crear la carpeta si no existe
             os.makedirs(output_dir, exist_ok=True)
 
             filename = os.path.join(
                 output_dir,
-                'APIGATEWAY_BTE_EMITIDA_%(contribuyente_rut)s_%(periodo)s_%(boleta_codigo)s.html' % {
+                'APIGATEWAY_BTE_EMITIDA_%(contribuyente_rut)s'
+                '_%(periodo)s_%(boleta_codigo)s.html'
+                % {
                     'contribuyente_rut': self.contribuyente_rut,
                     'periodo': self.periodo,
-                    'boleta_codigo': boleta_codigo
-                }
+                    'boleta_codigo': boleta_codigo,
+                },
             )
 
             with open(filename, 'wb') as f:
@@ -73,4 +97,4 @@ class TestDescargarHtmlBteEmitida(unittest.TestCase):
             if self.verbose:
                 print('test_html(): filename', filename)
         except ApiException as e:
-            self.fail("ApiException: %(e)s" % {'e': e})
+            self.fail('ApiException: %(e)s' % {'e': e})
